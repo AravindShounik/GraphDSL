@@ -1,17 +1,17 @@
 func(int) main()
 {
-    Graph G={
-        2:3:2,
-        1:2:1,
-        3:4,
-        5:1,
-        2:1,
-    }
-    int v = 10;//Velocity
-    EdgeProp<int,G> time;
-    BFS(d:G,1)
-    {
-        Edge<G> e = {d,d.parent};
-        e.time= e.weight/v;
-    }
+  Graph G = {
+    2:3:2,
+    1:2:1,
+    3:4,
+    5:1,
+    2:1,
+  }
+  int v = 10; //Velocity
+  EdgeProp<int,G> time;
+  BFS(d : G, 1)
+  {
+    Edge<G> e = {d, d.parent};
+    e.time = e.weight/v;
+  }
 }
