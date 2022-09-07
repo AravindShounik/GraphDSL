@@ -1,0 +1,24 @@
+struct point
+{
+    int x;
+    int y;
+};
+
+
+
+func(int) main()
+{
+   Graph G={
+        2:3:3,
+        1:2,
+        3:4,
+        5:1:5,
+        2:1,
+    }
+
+    NodeProp<float,G> sim;
+    BFS(d:G,1)
+    {
+        d.sim = -1.0;
+    }
+}
