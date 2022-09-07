@@ -1,0 +1,6 @@
+func (int) main()
+{
+    // Here, lexer shows an error because the $ is not read by the lexer
+    int a=3$
+    int b=2$
+}

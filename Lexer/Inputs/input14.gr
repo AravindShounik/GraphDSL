@@ -1,0 +1,8 @@
+func (int) main()
+{
+    int a;  // a will be initialised to 0
+    int b=3;    //b will be initialised to 3
+    large c,d=3;    //c will be initialised to 0 and d will be initialised to 3
+    char e; //default value of e is '\0'
+    string a;   //a is initially an empty string
+}
