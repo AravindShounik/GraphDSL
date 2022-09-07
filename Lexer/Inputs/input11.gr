@@ -1,14 +1,13 @@
-func (int) main()
+func(int) main()
 {
-    int a=0;    //This is a comment
+    int a = 0; //This is a comment
     //This is also a comment
     /*
-        This
-         is 
-         a 
-         multiline 
-         comment
+        this is 
+        a multiline 
+        comment 
     */
-    print("This is a test /*This will not be considered a comment*/ statement");
 
+    print("This is a test /*This will not be considered a comment*/ statement");
+    
 }

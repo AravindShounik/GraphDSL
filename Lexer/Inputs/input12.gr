@@ -1,6 +1,6 @@
-func (int) main()
+func(int) main
 {
-    // Here, lexer shows an error because the $ is not read by the lexer
-    int a=3$
-    int b=2$
+    //Here, lexer shows an error becausee the $
+    int a = 3$
+    int b = 2$
 }

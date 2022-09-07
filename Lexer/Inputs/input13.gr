@@ -1,4 +1,4 @@
-func (int) main()
+func(int) main()
 {
     Graph G={
         2:3:3,
@@ -7,12 +7,13 @@ func (int) main()
         5:1:5,
         2:1,
     }
-    BFS(Node d:G, 1)
+    BFS(Node d :G,1)
     {
         print("%d ",d.val); //This prints the BFS of the graph from root node as 1
     }
-    DFS(Node d:G,1)
+
+    DFS(Node d:G ,1)
     {
-        print("%d ",d.val);    //This prints the DFS of the graph from root node as 1
+        print("%d ",d.val); //This prints the DFS of graph from root node 1
     }
 }

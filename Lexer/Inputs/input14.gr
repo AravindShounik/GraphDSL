@@ -1,8 +1,8 @@
-func (int) main()
+func(int) main()
 {
-    int a;  // a will be initialised to 0
-    int b=3;    //b will be initialised to 3
-    large c,d=3;    //c will be initialised to 0 and d will be initialised to 3
+    int a; //a will be iniatilased to 0
+    int b = 3; //b will be 3
+    large c,d = 3; //c will be initialsed to 0, d will be 3
     char e; //default value of e is '\0'
-    string a;   //a is initially an empty string
+    string a; //a is initially an empty string
 }
