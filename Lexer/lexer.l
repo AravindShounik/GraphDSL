@@ -3,6 +3,7 @@
     void Comment();
     #include <stdio.h>
     #include <stdlib.h>
+    #include <assert.h>
 
 %}
 
@@ -39,6 +40,7 @@ IS                      (u|U|l|L)*
 
 "return"                { Print_Operation("RETURN")  ; }
 "small"                 { Print_Operation("SMALL")  ; }
+
 
 "static"                { Print_Operation("STATIC")  ; }
 "struct"                { Print_Operation("STRUCT")  ; }
@@ -115,6 +117,25 @@ IS                      (u|U|l|L)*
 "|"                     { Print_Operation("BIT_OR_OP");      ; }
 "?"                     { Print_Operation("COND_OP");        ; }
 
+
+
+
+L?\"(\\.|[^\\"])*\"     { Print_Operation("STRING_LITERAL"); } // yylval.str = strdup(yytext);
+{L}({L}|{D})*           { Print_Operation("IDENTIFIER"); }
+0[xX]{H}+{IS}?          { Print_Operation("HEXAL_CONST"); }  // sscanf(yytext, "0x%x", &yylval.ival);
+0{D}+{IS}?              { Print_Operation("OCTAL_CONST"); }  // sscanf(yytext, "0%o", &yylval.ival);
+{D}+{IS}?               { Print_Operation("CONST"); }  // sscanf(yytext, "%d", &yylval.ival);
+'(\\.|[^\\'])+'         { Print_Operation("CONS"); }  // yylval.ival = *((unsigned char *)yytext);
+L'(\\.|[^\\'])+'        { Print_Operation("CONST"); }  // yylval.ival = *((unsigned short*)yytext);
+{D}+{E}{FS}?            { Print_Operation("CONST"); }
+{D}*"."{D}+({E})?{FS}?  { Print_Operation("CONST"); }
+{D}+"."{D}*({E})?{FS}?  { Print_Operation("CONST"); }
+
+[ \t\v\f]               {; }
+
+.                       { Print_Operation("INVALID TOKEN");  }
+
+
 %%
 void Print_Operation(char* Token)
 {
@@ -136,14 +157,12 @@ void Comment()
 
 int yywrap(void)
 {
+
   return 1;
 }
 
 int main()
 {
-
-  yylex();
-
-
-  return 0;
+   yylex();
+   return 0;
 }
