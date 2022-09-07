@@ -1,0 +1,31 @@
+func (int) main()
+{
+    /*
+     The edge set in the graph can be given in various ways
+     first way: n1:n2 
+     An edge is in between n1 and n2 
+     second way:  n1:n2:w
+     An edge is in between n1 and n2 with weight w
+    */
+    /*
+    Graph is basically an undirected graph
+    */
+    Graph G={
+        2:3:3,
+        1:2,
+        3:4,
+        5:1:5,
+        2:1,
+    }
+    /* 
+    For directed graph, we have to use dGraph
+    */
+
+    dGraph G ={
+        2:3:3 ,
+        3:1:1 ,
+        1:2 ,
+    }
+    
+
+}

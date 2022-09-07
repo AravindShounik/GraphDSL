@@ -1,0 +1,53 @@
+func (int) main()
+{
+    bool a=false;
+
+    //Negation Operators
+    if(!a)
+    {
+        print("True");
+    }
+
+    // Increment Operators
+    int b=1;
+    b++;
+
+    //Decrement Operators
+    int c=10;
+    c--;
+
+    //Arithematic Operators
+    int d=10,e=11;
+    int f=d+e;
+    int g=e%d;
+    int h=e*d;
+    int i=e-d;
+    int i2 = 2**10;
+
+    //Relational operators
+    bool j = (3 < 5); 
+    bool k = (17 <= 8);
+    bool l = (4 == 4); 
+    bool m = (2 > 1);
+    bool n = (4 >= 3);
+
+    //logical operators
+    bool o = (3<5)&&(4>2); 
+    bool p = (3>5)||(4<2); 
+    bool q = (3>5)^(3<5);
+
+    // Bitwise operators
+    int r = 3&5; 
+    int s = 3|5; 
+    int t = 3^5; 
+    int u = 4<<1;
+
+    //Assignment operators
+    int v = 1;
+    int w += 1;
+    int x *= 4;
+    int y /= 2;
+
+    //string addition 
+    string str="abc"+"def"; 
+}
