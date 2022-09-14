@@ -25,6 +25,8 @@ EXP	([Ee][-+]?[0-9]+)
 "|" |
 "," |
 ";" |
+"{" |
+"}" |
 "(" |
 ")"     { return yytext[0]; }
 
@@ -39,10 +41,8 @@ EXP	([Ee][-+]?[0-9]+)
  /* keywords */
 
 "if"    { return IF; }
-"then"  { return THEN; }
 "else"  { return ELSE; }
 "while" { return WHILE; }
-"do"    { return DO; }
 "let"   { return LET;}
 
  /* built in functions */

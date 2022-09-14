@@ -26,9 +26,10 @@
 %token <fn> FUNC
 %token EOL
 
-%token IF THEN ELSE WHILE DO LET
+%token IF ELSE WHILE LET LOWER_THAN_ELSE
 
-
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
 %nonassoc <fn> CMP
 %right '='
 %left '+' '-'
@@ -42,18 +43,15 @@
 
 %%
 
-stmt: IF exp THEN list           { $$ = newflow('I', $2, $4, NULL); }
-   | IF exp THEN list ELSE list  { $$ = newflow('I', $2, $4, $6); }
-   | WHILE exp DO list           { $$ = newflow('W', $2, $4, NULL); }
-   | exp
+stmt: IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $5, NULL); }
+   | IF '(' exp ')' stmt ELSE stmt  { $$ = newflow('I', $3, $5, $7); }
+   | WHILE '(' exp ')' stmt           { $$ = newflow('W', $3, $5, NULL); }
+   | exp ';'
+   | '{' list '}'  { $$ = $2; }
 ;
 
-list: /* nothing */ { $$ = NULL; }
-   | stmt ';' list { if ($3 == NULL)
-	                $$ = $1;
-                      else
-			$$ = newast('L', $1, $3);
-                    }
+list: stmt { $$ = newast('L',$1,NULL); }
+   | stmt list { $$ = newast('L', $1, $2);}
    ;
 
 exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
