@@ -190,8 +190,15 @@ newinit(int inittype, struct symbol *s, struct ast *v)
   return (struct ast *)a;
 }
 
-struct ast *newinit_d(int inittype, struct symlist *sl)
+struct ast *setType(int inittype, struct symlist *sl)
 {
+  struct symlist *tmp = sl;
+  while (tmp)
+  {
+    tmp->sym->type = inittype;
+    tmp = tmp->next;
+  }
+  return (struct ast *)sl;
 }
 
 struct ast *
@@ -231,6 +238,20 @@ newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct
 
 struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt)
 {
+  struct rfor_loop *a = malloc(sizeof(struct rfor_loop));
+
+  if (!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  a->nodetype = nodetype;
+  a->d = d;
+  a->d->type = typename;
+  a->v = v;
+  a->stmt = stmt;
+  return (struct ast *)a;
 }
 
 struct symlist *
@@ -643,6 +664,14 @@ void dumpast(struct ast *a, int level)
       dumpast(((struct for_loop *)a)->inc, level);
     if (((struct for_loop *)a)->stmt)
       dumpast(((struct for_loop *)a)->stmt, level);
+    return;
+
+  case 'B':
+    /***** Fix BAD errors *****/
+    printf("rfor loop %c\n", a->nodetype);
+    struct rfor_loop *tmp = (struct rfor_loop *)a;
+    if (tmp->stmt)
+      dumpast(tmp->stmt, level);
     return;
 
   case 'F':

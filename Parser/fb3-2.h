@@ -93,6 +93,14 @@ struct for_loop
   struct ast *stmt;
 };
 
+struct rfor_loop
+{
+  int nodetype;
+  struct symbol *d;
+  struct symbol *v;
+  struct ast *stmt;
+};
+
 struct numval
 {
   int nodetype; /* type K */
@@ -127,11 +135,12 @@ struct ast *newcall(struct symbol *s, struct ast *l);
 struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newinit(int inittype, struct symbol *s, struct ast *v);
-struct ast *newinit_d(int inittype, struct symlist *sl);
 struct ast *newnum(double d);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);
 struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt);
+
+struct ast *setType(int inittype, struct symlist *sl);
 
 /* define a function */
 void dodef(struct symbol *name, struct symlist *syms, struct ast *stmts);

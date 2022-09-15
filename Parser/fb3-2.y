@@ -52,7 +52,7 @@ stmt: IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $5, NU
    | FOR '(' exp ';' exp ';' exp ')' stmt { $$ = newfor('R',$3,$5,$7,$9);}
    | FOR '(' TYPE NAME ':' NAME ')' stmt { $$ = newfor_r('B', $3, $4, $6, $8);}
    | TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
-   | TYPE symlist ';' { $$ = newinit_d($1, $2);}
+   | TYPE symlist ';' {  $$ = setType($1, $2);}
    | exp ';'
    | '{' list '}'  { $$ = $2; }
 ;
