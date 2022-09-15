@@ -9,11 +9,12 @@
  */
 
 /* symbol table */
-struct symbol {		/* a variable name */
+struct symbol
+{ /* a variable name */
   int type;
   char *name;
   double value;
-  struct ast *func;	/* stmt for the function */
+  struct ast *func;     /* stmt for the function */
   struct symlist *syms; /* list of dummy args */
 };
 
@@ -21,10 +22,11 @@ struct symbol {		/* a variable name */
 #define NHASH 9997
 struct symbol symtab[NHASH];
 
-struct symbol *lookup(char*);
+struct symbol *lookup(char *);
 
 /* list of symbols, for an argument list */
-struct symlist {
+struct symlist
+{
   struct symbol *sym;
   struct symlist *next;
 };
@@ -44,9 +46,10 @@ void symlistfree(struct symlist *sl);
  *  S list of symbols
  *  F built in function call
  *  C user function call
- */ 
+ */
 
-enum bifs {			/* built-in functions */
+enum bifs
+{ /* built-in functions */
   B_sqrt = 1,
   B_exp,
   B_log,
@@ -56,32 +59,37 @@ enum bifs {			/* built-in functions */
 /* nodes in the Abstract Syntax Tree */
 /* all have common initial nodetype */
 
-struct ast {
+struct ast
+{
   int nodetype;
   struct ast *l;
   struct ast *r;
 };
 
-struct fncall {			/* built-in function */
-  int nodetype;			/* type F */
+struct fncall
+{               /* built-in function */
+  int nodetype; /* type F */
   struct ast *l;
   enum bifs functype;
 };
 
-struct ufncall {		/* user function */
-  int nodetype;			/* type C */
-  struct ast *l;		/* list of arguments */
+struct ufncall
+{                /* user function */
+  int nodetype;  /* type C */
+  struct ast *l; /* list of arguments */
   struct symbol *s;
 };
 
-struct flow {
-  int nodetype;			/* type I or W */
-  struct ast *cond;		/* condition */
-  struct ast *tl;		/* then or do list */
-  struct ast *el;		/* optional else list */
+struct flow
+{
+  int nodetype;     /* type I or W */
+  struct ast *cond; /* condition */
+  struct ast *tl;   /* then or do list */
+  struct ast *el;   /* optional else list */
 };
 
-struct for_loop {
+struct for_loop
+{
   int nodetype;
   struct ast *init;
   struct ast *cond;
@@ -89,23 +97,27 @@ struct for_loop {
   struct ast *stmt;
 };
 
-struct numval {
-  int nodetype;			/* type K */
+struct numval
+{
+  int nodetype; /* type K */
   double number;
 };
 
-struct symref {
-  int nodetype;			/* type N */
+struct symref
+{
+  int nodetype; /* type N */
   struct symbol *s;
 };
 
-struct symasgn {
-  int nodetype;			/* type = */
+struct symasgn
+{
+  int nodetype; /* type = */
   struct symbol *s;
-  struct ast *v;		/* value */
+  struct ast *v; /* value */
 };
 
-struct syminit {
+struct syminit
+{
   int nodetype;
   struct symbol *s;
   struct ast *v;
@@ -118,10 +130,12 @@ struct ast *newfunc(int functype, struct ast *l);
 struct ast *newcall(struct symbol *s, struct ast *l);
 struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
-struct ast *newinit(int inittype,struct symbol* s,struct ast *v);
+struct ast *newinit(int inittype, struct symbol *s, struct ast *v);
+struct ast *newinit_d(int inittype, struct symlist *sl);
 struct ast *newnum(double d);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
-struct ast *newfor(int nodetype, struct ast* init, struct ast *cond, struct ast *inc, struct ast* stmt);
+struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);
+struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt);
 
 /* define a function */
 void dodef(struct symbol *name, struct symlist *syms, struct ast *stmts);
@@ -138,4 +152,3 @@ void yyerror(char *s, ...);
 
 extern int debug;
 void dumpast(struct ast *a, int level);
-
