@@ -17,6 +17,7 @@ EXP	([Ee][-+]?[0-9]+)
 
 %%
  /* single character ops */
+"@" |
 "+" |
 "-" |
 "*" |
@@ -32,10 +33,13 @@ EXP	([Ee][-+]?[0-9]+)
 ")"     { return yytext[0]; }
 
  /* Assignment Ops */
-"+="    {yylval.fn = 1;   return ASSGN;}
-"-="    {yylval.fn = 2;   return ASSGN;}
-"*="    {yylval.fn = 3;   return ASSGN;}
-"/="    {yylval.fn = 4;   return ASSGN;}
+"+="    {yylval.fn = 1;   return ASGN;}
+"-="    {yylval.fn = 2;   return ASGN;}
+"*="    {yylval.fn = 3;   return ASGN;}
+"/="    {yylval.fn = 4;   return ASGN;}
+"@="    {yylval.fn = 5;   return ASGN;}
+"**="   {yylval.fn = 6;   return ASGN;}
+
 
  /* comparison ops */
 ">"     { yylval.fn = 1; return CMP; }
@@ -73,6 +77,10 @@ EXP	([Ee][-+]?[0-9]+)
 "Levels"    {return LEVELS;}
 "Neighbours" {return NEIGHBOURS;}
 
+"&&"    {return AND;}
+"||"    {return OR;}
+"++"    {return INC;}
+"--"    {return DEC;}
 
  /* built in functions */
 "sqrt"  { yylval.fn = B_sqrt; return FUNC; }

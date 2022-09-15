@@ -29,11 +29,12 @@
 
 %token IF ELSE WHILE LET LOWER_THAN_ELSE FOR
 %token BFS DFS NODES LEVELS NEIGHBOURS
+%token INC DEC OR AND
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
 %nonassoc <fn> CMP
-%nonassoc <fn> ASSGN
+%nonassoc <fn> ASGN
 %right '='
 %left '+' '-'
 %left '*' '/'
@@ -74,7 +75,7 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | NAME                 { $$ = newref($1); }
    | NAME '=' exp         { $$ = newasgn($1, $3); }
    | NAME '(' explist ')' { $$ = newcall($1, $3); }
-   | exp ASSGN exp        { $$ = newast($2,$1,$3); }
+   | NAME ASGN exp       { $$ =  newasgn_ops($2,$1,$3); }
 ;
 
 explist: exp

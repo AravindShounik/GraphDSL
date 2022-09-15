@@ -64,7 +64,7 @@ lookup(char *sym)
 }
 
 struct ast *
-newast(int nodetype, struct ast *l, struct ast *r)
+newast(int nodetype,struct ast *l, struct ast *r)
 {
   struct ast *a = malloc(sizeof(struct ast));
 
@@ -104,7 +104,7 @@ newcmp(int cmptype, struct ast *l, struct ast *r)
     yyerror("out of space");
     exit(0);
   }
-  a->nodetype = '0' + cmptype;
+  a->nodetype = '0'+cmptype;
   a->l = l;
   a->r = r;
   return a;
@@ -154,6 +154,24 @@ newref(struct symbol *s)
   }
   a->nodetype = 'N';
   a->s = s;
+  return (struct ast *)a;
+}
+
+struct ast *
+newasgn_ops(int nodetype,struct symbol *l,struct ast *r)
+{
+  struct symasgn *a = malloc(sizeof(struct symasgn));
+
+  if (!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+  
+  a->nodetype = 'a' -1 +nodetype;
+  a->s = l;
+  a->v = r;
+
   return (struct ast *)a;
 }
 
@@ -622,6 +640,16 @@ void dumpast(struct ast *a, int level)
     dumpast(((struct symasgn *)a)->v, level);
     return;
 
+  case 'a':
+  case 'b':
+  case 'c':
+  case 'd':
+  case 'e':
+  case 'f':
+    printf("%s %s\n",map_asgn_op(a->nodetype),((struct symref *)a)->s->name);
+    dumpast(((struct symasgn *)a)->v, level);
+    return;
+
     /* expressions */
   case '+': case '-': case '*': case '/': case 'L': case 'T':
   case '1': case '2': case '3':
@@ -680,4 +708,14 @@ void dumpast(struct ast *a, int level)
     printf("bad %c\n", a->nodetype);
     return;
   }
+}
+
+
+char* M[] = {"+=","-=","*=","/=","@=","**="};
+
+char* map_asgn_op(char ch)
+{
+  if(ch - 'a' >= 6 || ch < 'a') "bad";
+  
+  return M[ch-'a'];
 }

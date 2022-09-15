@@ -139,6 +139,7 @@ struct ast *newnum(double d);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);
 struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt);
+struct ast *newasgn_ops(int nodetype,struct symbol *l,struct ast *r);
 
 struct ast *setType(int inittype, struct symlist *sl);
 
@@ -157,3 +158,7 @@ void yyerror(char *s, ...);
 
 extern int debug;
 void dumpast(struct ast *a, int level);
+
+
+/* Maping Assignment Operators */
+char* map_asgn_op(char ch);
