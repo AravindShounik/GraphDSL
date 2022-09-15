@@ -17,7 +17,9 @@
 /* symbol table */
 /* hash a symbol */
 
-extern struct symbol symtab[NHASH];
+/* simple symtab of fixed size */
+#define NHASH 9997
+struct symbol symtab[NHASH];
 
 static unsigned
 symhash(char *sym)
@@ -188,6 +190,10 @@ newinit(int inittype, struct symbol *s, struct ast *v)
   return (struct ast *)a;
 }
 
+struct ast *newinit_d(int inittype, struct symlist *sl)
+{
+}
+
 struct ast *
 newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *el)
 {
@@ -221,6 +227,10 @@ newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct
   a->inc = inc;
   a->stmt = stmt;
   return (struct ast *)a;
+}
+
+struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt)
+{
 }
 
 struct symlist *
