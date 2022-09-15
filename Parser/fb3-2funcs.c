@@ -623,17 +623,9 @@ void dumpast(struct ast *a, int level)
     return;
 
     /* expressions */
-  case '+':
-  case '-':
-  case '*':
-  case '/':
-  case 'L':
-  case '1':
-  case '2':
-  case '3':
-  case '4':
-  case '5':
-  case '6':
+  case '+': case '-': case '*': case '/': case 'L': case 'T':
+  case '1': case '2': case '3':
+  case '4': case '5': case '6': 
     printf("binop %c\n", a->nodetype);
     dumpast(a->l, level);
     dumpast(a->r, level);

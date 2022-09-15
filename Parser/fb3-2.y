@@ -25,7 +25,7 @@
 %token <d> NUMBER
 %token <s> NAME
 %token <fn> FUNC TYPE
-%token EOL
+/* %token EOL */
 
 %token IF ELSE WHILE LET LOWER_THAN_ELSE FOR
 %token BFS DFS NODES LEVELS NEIGHBOURS
@@ -39,10 +39,10 @@
 %left '*' '/'
 %nonassoc '|' UMINUS
 
-%type <a> exp stmt list explist
+%type <a> exp stmt list explist translation_list translation_unit
 %type <sl> symlist
 
-%start calclist
+%start start_unit
 
 %%
 
@@ -84,16 +84,16 @@ symlist: NAME       { $$ = newsymlist($1, NULL); }
  | NAME ',' symlist { $$ = newsymlist($1, $3); }
 ;
 
-calclist: /* nothing */
-  | calclist stmt EOL {
-    if(debug) dumpast($2, 0);
-   //   printf("= %4.4g\n> ", eval($2));
-   //   treefree($2);
-    }
-  | calclist LET NAME '(' symlist ')' '=' list EOL {
-                       dodef($3, $5, $8);
-                       printf("Defined %s\n> ", $3->name); }
-
-  | calclist error EOL { yyerrok; printf("> "); }
- ;
+translation_unit: stmt {$$=$1;}
+  | LET NAME '(' symlist ')' '{' list '}' {
+                        $$=$7;
+                       dodef($2, $4, $7);
+                      //  printf("Defined %s\n> ", $2->name); 
+                      }
+  | error {}
+;
+translation_list : translation_unit
+  | translation_list translation_unit { $$ = newast('T', $1, $2); }
+;
+start_unit : translation_list { dumpast($1,0);}
 %%

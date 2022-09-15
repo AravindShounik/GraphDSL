@@ -3,7 +3,7 @@
  * Copyright (c) 2009, Taughannock Networks. All rights reserved.
  * See the README file for license conditions and contact info.
  * $Header: /home/johnl/flnb/code/RCS/fb3-2.l,v 2.1 2009/11/08 02:53:18 johnl Exp $
- */
+*/
 /* recognize tokens for the calculator */
 
 %option noyywrap nodefault yylineno
@@ -40,7 +40,7 @@ EXP	([Ee][-+]?[0-9]+)
  /* comparison ops */
 ">"     { yylval.fn = 1; return CMP; }
 "<"     { yylval.fn = 2; return CMP; }
-"<>"    { yylval.fn = 3; return CMP; }
+"!="    { yylval.fn = 3; return CMP; }
 "=="    { yylval.fn = 4; return CMP; }
 ">="    { yylval.fn = 5; return CMP; }
 "<="    { yylval.fn = 6; return CMP; }
@@ -90,9 +90,7 @@ EXP	([Ee][-+]?[0-9]+)
 "."?[0-9]+{EXP}? { yylval.d = atof(yytext); return NUMBER; }
 
 "//".*  
-[ \t]   /* ignore white space */ 
+[ \n\t]   /* ignore white space */ 
 \\\n    printf("c> "); /* ignore line continuation */
-"\n"    { return EOL; }
-
 .	{ yyerror("Mystery character %c\n", *yytext); }
 %%
