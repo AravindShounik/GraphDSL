@@ -85,7 +85,7 @@ EXP	([Ee][-+]?[0-9]+)
 "debug"[0-9]+ { debug = atoi(&yytext[5]); printf("debug set to %d\n", debug); }
 
  /* names */
-[a-zA-Z][a-zA-Z0-9]*  { yylval.s = lookup(yytext); return NAME; }
+[a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = lookup(yytext); return NAME; }
 
  /* double */
 [0-9]+"."[0-9]*{EXP}? |
