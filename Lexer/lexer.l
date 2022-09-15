@@ -120,13 +120,13 @@ IS                      (u|U|l|L)*
 
 
 
-L?\"(\\.|[^\\"])*\"     { Print_Operation("STRING_LITERAL"); } // yylval.str = strdup(yytext);
+L?\"(\\.|[^\\"])*\"     { Print_Operation("STRING_LITERAL"); }
 {L}({L}|{D})*           { Print_Operation("IDENTIFIER"); }
-0[xX]{H}+{IS}?          { Print_Operation("HEXAL_CONST"); }  // sscanf(yytext, "0x%x", &yylval.ival);
-0{D}+{IS}?              { Print_Operation("OCTAL_CONST"); }  // sscanf(yytext, "0%o", &yylval.ival);
-{D}+{IS}?               { Print_Operation("CONST"); }  // sscanf(yytext, "%d", &yylval.ival);
-'(\\.|[^\\'])+'         { Print_Operation("CONS"); }  // yylval.ival = *((unsigned char *)yytext);
-L'(\\.|[^\\'])+'        { Print_Operation("CONST"); }  // yylval.ival = *((unsigned short*)yytext);
+0[xX]{H}+{IS}?          { Print_Operation("HEXAL_CONST"); }
+0{D}+{IS}?              { Print_Operation("OCTAL_CONST"); }
+{D}+{IS}?               { Print_Operation("CONST"); }
+'(\\.|[^\\'])+'         { Print_Operation("CONST"); }
+L'(\\.|[^\\'])+'        { Print_Operation("CONST"); }
 {D}+{E}{FS}?            { Print_Operation("CONST"); }
 {D}*"."{D}+({E})?{FS}?  { Print_Operation("CONST"); }
 {D}+"."{D}*({E})?{FS}?  { Print_Operation("CONST"); }
