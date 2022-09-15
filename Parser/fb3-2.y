@@ -16,6 +16,7 @@
   struct ast *a;
   double d;
   int i;
+  char* str;
   struct symbol *s;		/* which symbol */
   struct symlist *sl;
   int fn;			/* which function */
@@ -23,6 +24,7 @@
 
 /* declare tokens */
 %token <d> NUMBER
+%token <str> STRING
 %token <s> NAME
 %token <fn> FUNC TYPE
 /* %token EOL */
@@ -71,6 +73,7 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | '(' exp ')'          { $$ = $2; }
    | '-' exp %prec UMINUS { $$ = newast('M', $2, NULL); }
    | NUMBER               { $$ = newnum($1); }
+   | STRING               { $$ = newstr($1); }
    | FUNC '(' explist ')' { $$ = newfunc($1, $3); }
    | NAME                 { $$ = newref($1); }
    | NAME '=' exp         { $$ = newasgn($1, $3); }

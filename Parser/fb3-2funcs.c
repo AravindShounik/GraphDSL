@@ -93,6 +93,20 @@ newnum(double d)
   a->number = d;
   return (struct ast *)a;
 }
+struct ast *
+newstr(char * s)
+{
+  struct strval *a = malloc(sizeof(struct strval));
+  
+  if(!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype ='S';
+  a->s = s;
+  return (struct ast*)a;
+}
 
 struct ast *
 newcmp(int cmptype, struct ast *l, struct ast *r)
@@ -627,6 +641,10 @@ void dumpast(struct ast *a, int level)
     /* constant */
   case 'K':
     printf("number %4.4g\n", ((struct numval *)a)->number);
+    break;
+    /* string */
+  case 'S':
+    printf("string  %s\n", ((struct strval*)a)->s);
     break;
 
     /* name reference */

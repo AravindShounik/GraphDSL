@@ -8,6 +8,7 @@
 
 %option noyywrap nodefault yylineno
 %{
+# include <string.h>
 # include "fb3-2.h"
 # include "fb3-2.tab.h"
 %}
@@ -17,7 +18,6 @@ EXP	([Ee][-+]?[0-9]+)
 
 %%
  /* single character ops */
-"@" |
 "+" |
 "-" |
 "*" |
@@ -37,9 +37,6 @@ EXP	([Ee][-+]?[0-9]+)
 "-="    {yylval.fn = 2;   return ASGN;}
 "*="    {yylval.fn = 3;   return ASGN;}
 "/="    {yylval.fn = 4;   return ASGN;}
-"@="    {yylval.fn = 5;   return ASGN;}
-"**="   {yylval.fn = 6;   return ASGN;}
-
 
  /* comparison ops */
 ">"     { yylval.fn = 1; return CMP; }
@@ -77,10 +74,6 @@ EXP	([Ee][-+]?[0-9]+)
 "Levels"    {return LEVELS;}
 "Neighbours" {return NEIGHBOURS;}
 
-"&&"    {return AND;}
-"||"    {return OR;}
-"++"    {return INC;}
-"--"    {return DEC;}
 
  /* built in functions */
 "sqrt"  { yylval.fn = B_sqrt; return FUNC; }
@@ -94,8 +87,14 @@ EXP	([Ee][-+]?[0-9]+)
  /* names */
 [a-zA-Z][a-zA-Z0-9]*  { yylval.s = lookup(yytext); return NAME; }
 
+ /* number */
 [0-9]+"."[0-9]*{EXP}? |
 "."?[0-9]+{EXP}? { yylval.d = atof(yytext); return NUMBER; }
+
+ /* strings */
+\"(\\.|[^\\"])*\" {yylval.str = (char*)malloc(sizeof(char)*yyleng);
+                    strcpy(yylval.str,yytext);
+                    return STRING; }
 
 "//".*  
 [ \n\t]   /* ignore white space */ 
