@@ -15,6 +15,7 @@
 %union {
   struct ast *a;
   double d;
+  int i;
   struct symbol *s;		/* which symbol */
   struct symlist *sl;
   int fn;			/* which function */
@@ -23,10 +24,10 @@
 /* declare tokens */
 %token <d> NUMBER
 %token <s> NAME
-%token <fn> FUNC
+%token <fn> FUNC TYPE
 %token EOL
 
-%token IF ELSE WHILE LET LOWER_THAN_ELSE
+%token IF ELSE WHILE LET LOWER_THAN_ELSE FOR
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
@@ -46,6 +47,8 @@
 stmt: IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $5, NULL); }
    | IF '(' exp ')' stmt ELSE stmt  { $$ = newflow('I', $3, $5, $7); }
    | WHILE '(' exp ')' stmt           { $$ = newflow('W', $3, $5, NULL); }
+   | FOR '(' exp ';' exp ';' exp ')' stmt { $$ = newfor('R',$3,$5,$7,$9);}
+   | TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
    | exp ';'
    | '{' list '}'  { $$ = $2; }
 ;
@@ -79,8 +82,8 @@ symlist: NAME       { $$ = newsymlist($1, NULL); }
 calclist: /* nothing */
   | calclist stmt EOL {
     if(debug) dumpast($2, 0);
-     printf("= %4.4g\n> ", eval($2));
-     treefree($2);
+   //   printf("= %4.4g\n> ", eval($2));
+   //   treefree($2);
     }
   | calclist LET NAME '(' symlist ')' '=' list EOL {
                        dodef($3, $5, $8);

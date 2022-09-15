@@ -38,11 +38,21 @@ EXP	([Ee][-+]?[0-9]+)
 ">="    { yylval.fn = 5; return CMP; }
 "<="    { yylval.fn = 6; return CMP; }
 
+ /* type specifiers */
+ "void"     {yylval.fn = 1; return TYPE;}
+ "int"      {yylval.fn = 2; return TYPE;}
+ "long"     {yylval.fn = 3; return TYPE;}
+ "float"    {yylval.fn = 4; return TYPE;}
+ "double"   {yylval.fn = 5; return TYPE;}
+ "char"     {yylval.fn = 6; return TYPE;}
+ "string"   {yylval.fn = 7; return TYPE;}
+
  /* keywords */
 
 "if"    { return IF; }
 "else"  { return ELSE; }
 "while" { return WHILE; }
+"for"   { return FOR;}
 "let"   { return LET;}
 
  /* built in functions */

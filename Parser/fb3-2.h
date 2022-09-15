@@ -10,6 +10,7 @@
 
 /* symbol table */
 struct symbol {		/* a variable name */
+  int type;
   char *name;
   double value;
   struct ast *func;	/* stmt for the function */
@@ -80,6 +81,14 @@ struct flow {
   struct ast *el;		/* optional else list */
 };
 
+struct for_loop {
+  int nodetype;
+  struct ast *init;
+  struct ast *cond;
+  struct ast *inc;
+  struct ast *stmt;
+};
+
 struct numval {
   int nodetype;			/* type K */
   double number;
@@ -96,6 +105,12 @@ struct symasgn {
   struct ast *v;		/* value */
 };
 
+struct syminit {
+  int nodetype;
+  struct symbol *s;
+  struct ast *v;
+};
+
 /* build an AST */
 struct ast *newast(int nodetype, struct ast *l, struct ast *r);
 struct ast *newcmp(int cmptype, struct ast *l, struct ast *r);
@@ -103,8 +118,10 @@ struct ast *newfunc(int functype, struct ast *l);
 struct ast *newcall(struct symbol *s, struct ast *l);
 struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
+struct ast *newinit(int inittype,struct symbol* s,struct ast *v);
 struct ast *newnum(double d);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
+struct ast *newfor(int nodetype, struct ast* init, struct ast *cond, struct ast *inc, struct ast* stmt);
 
 /* define a function */
 void dodef(struct symbol *name, struct symlist *syms, struct ast *stmts);

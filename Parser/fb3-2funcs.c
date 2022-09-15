@@ -37,6 +37,7 @@ lookup(char* sym)
     if(sp->name && !strcmp(sp->name, sym)) { return sp; }
 
     if(!sp->name) {		/* new entry */
+      sp->type = 0;
       sp->name = strdup(sym);
       sp->value = 0;
       sp->func = NULL;
@@ -157,10 +158,26 @@ newasgn(struct symbol *s, struct ast *v)
 }
 
 struct ast *
+newinit(int inittype,struct symbol* s,struct ast *v)
+{
+  struct syminit *a = malloc(sizeof(struct syminit));
+  
+  if(!a) {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype = '=';
+  s->type = inittype;
+  a->s = s;
+  a->v = v;
+  return (struct ast *)a;
+}
+
+struct ast *
 newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *el)
 {
   struct flow *a = malloc(sizeof(struct flow));
-  
+
   if(!a) {
     yyerror("out of space");
     exit(0);
@@ -169,6 +186,22 @@ newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *el)
   a->cond = cond;
   a->tl = tl;
   a->el = el;
+  return (struct ast *)a;
+}
+
+struct ast *
+newfor(int nodetype, struct ast* init, struct ast *cond, struct ast *inc, struct ast* stmt){
+  struct for_loop *a = malloc(sizeof(struct for_loop));
+
+  if(!a) {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype = nodetype;
+  a->init = init;
+  a->cond = cond;
+  a->inc = inc;
+  a->stmt = stmt;
   return (struct ast *)a;
 }
 
@@ -484,6 +517,17 @@ dumpast(struct ast *a, int level)
       dumpast( ((struct flow *)a)->tl, level);
     if( ((struct flow *)a)->el)
       dumpast( ((struct flow *)a)->el, level);
+    return;
+  
+  case 'R':
+    printf("for loop %c\n", a->nodetype);
+    dumpast( ((struct for_loop *)a)->init, level);
+    if( ((struct for_loop *)a)->cond)
+      dumpast( ((struct flow *)a)->cond, level);
+    if( ((struct for_loop *)a)->inc)
+      dumpast( ((struct for_loop *)a)->inc, level);
+    if( ((struct for_loop *)a)->stmt)
+      dumpast( ((struct for_loop *)a)->stmt, level); 
     return;
 	              
   case 'F':
