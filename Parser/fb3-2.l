@@ -30,6 +30,12 @@ EXP	([Ee][-+]?[0-9]+)
 "(" |
 ")"     { return yytext[0]; }
 
+ /* Assignment Ops */
+"+="    {yylval.fn = 1;   return ASSGN;}
+"-="    {yylval.fn = 2;   return ASSGN;}
+"*="    {yylval.fn = 3;   return ASSGN;}
+"/="    {yylval.fn = 4;   return ASSGN;}
+
  /* comparison ops */
 ">"     { yylval.fn = 1; return CMP; }
 "<"     { yylval.fn = 2; return CMP; }
@@ -41,19 +47,31 @@ EXP	([Ee][-+]?[0-9]+)
  /* type specifiers */
  "void"     {yylval.fn = 1; return TYPE;}
  "int"      {yylval.fn = 2; return TYPE;}
- "long"     {yylval.fn = 3; return TYPE;}
+ "large"    {yylval.fn = 3; return TYPE;}
  "float"    {yylval.fn = 4; return TYPE;}
- "double"   {yylval.fn = 5; return TYPE;}
- "char"     {yylval.fn = 6; return TYPE;}
- "string"   {yylval.fn = 7; return TYPE;}
-
+ "char"     {yylval.fn = 5; return TYPE;}
+ "string"   {yylval.fn = 6; return TYPE;}
+ "Graph"    {yylval.fn = 7; return TYPE;}
+ "dGraph"   {yylval.fn = 8; return TYPE;}
+ "NodeSet"  {yylval.fn = 9; return TYPE;}
+ "NodeSeq"  {yylval.fn = 10;return TYPE;}
+ "NodeProp" {yylval.fn = 11;return TYPE;}
+ "EdgeProp" {yylval.fn = 12;return TYPE;}
+ "small"    {yylval.fn = 13;return TYPE;}
+ "Node"     {yylval.fn = 14;return TYPE;}
  /* keywords */
 
-"if"    { return IF; }
-"else"  { return ELSE; }
-"while" { return WHILE; }
-"for"   { return FOR;}
-"let"   { return LET;}
+"if"        { return IF; }
+"else"      { return ELSE; }
+"while"     { return WHILE; }
+"for"       { return FOR;}
+"let"       { return LET;}
+"BFS"       {return BFS;}
+"DFS"       {return DFS;}
+"Nodes"     {return NODES;}
+"Levels"    {return LEVELS;}
+"Neighbours" {return NEIGHBOURS;}
+
 
  /* built in functions */
 "sqrt"  { yylval.fn = B_sqrt; return FUNC; }
