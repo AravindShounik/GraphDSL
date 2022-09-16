@@ -1,5 +1,8 @@
-int main()
-{
-	int a, b, c;
-	double a1, b2, c3;
-}
+
+	int a;
+	int b;
+	int c;
+	float a1;
+	float b2;
+	float c3;
+

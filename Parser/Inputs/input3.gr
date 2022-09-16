@@ -1,20 +1,17 @@
 //Graph syntax
 
-int main()
-{
-    //Graph initialization
-    Graph G={
-        2:3:3, 
-        3:1:1,
+//Graph initialization
+    graph G={
+        2:3, 
+        3:1,
         1:2,
-        1:3,
-    }
+        1:3
+    };
+
     //Directed Graph initialization
-    dGraph G1={
-        2:3:4,
-        3:1:1,
+    graph G1={
+        2:3,
+        3:1,
         1:2,
-        1:3,
-    }
-    
-}
+        1:3
+    };

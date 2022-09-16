@@ -1,8 +1,7 @@
 //Redeclaring the same variable again
 // Error will be shown in semantic analysis
-int main()
-{
-    int a=3,b=2;
-    int c=a+b;
+
+    int a=3,
+    int b=2;
+    float c=a+b;
     int b=3;
-}

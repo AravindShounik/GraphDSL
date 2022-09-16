@@ -1,12 +1,11 @@
 //Syntax related errors in graphs
 
-int main()
-{
-    Graph G={2:3,
+
+    graph G={
+    2:3,
     1:2     //Here, comma is missing
     3:4:5,
     4,
     3:2,
     4:5:1;  //Here, comma is replaced by ;
-    }
-}
+    };
