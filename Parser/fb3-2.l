@@ -88,7 +88,7 @@ EXP	([Ee][-+]?[0-9]+)
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = lookup(yytext); return NAME; }
 
  /* int */
-[1-9][0-9]*     {yylval.i= atoi(yytext); return INT;}
+[0-9][0-9]*     {yylval.i= atoi(yytext); return INT;}
  /* double */
 [0-9]+"."[0-9]*{EXP}? |
 "."[0-9]+{EXP}? { yylval.d = atof(yytext); return DOUBLE; }

@@ -173,7 +173,7 @@ struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newinit(int inittype, struct symbol *s, struct ast *v);
 struct ast *newdouble(double d);
 struct ast *newint(int i);
-struct ast *newedge(int s,int d);
+struct ast *newedge(int s, int d);
 struct ast *newstr(char *s);
 struct ast *newnum(double d);
 struct ast *newstr(char *s);

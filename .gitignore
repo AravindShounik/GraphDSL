@@ -7,5 +7,11 @@ a.out
 **/.a.out
 
 lex.yy.c
+**/.lex.c
 
 .vscode
+
+**/*.tab.c
+**/*.tab.h
+
+Parser/test.txt

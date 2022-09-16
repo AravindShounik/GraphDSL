@@ -337,8 +337,11 @@ struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g
   a->nodetype = nodetype;
   a->d = d;
   a->g = g;
+
   a->stSym = stSym;
   a->stmt = stmt;
+
+  return (struct ast *)a;
 }
 struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt)
 {
@@ -361,6 +364,8 @@ struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g
   a->g = g;
   a->stSym = stSym;
   a->stmt = stmt;
+
+  return (struct ast *)a;
 }
 
 struct symlist *
@@ -799,7 +804,6 @@ void dumpast(struct ast *a, int level)
     return;
 
   case 'B':
-    /***** Fix BAD errors *****/
     printf("rfor loop %c\n", a->nodetype);
     struct rfor_loop *tmp = (struct rfor_loop *)a;
     if (tmp->stmt)
@@ -818,22 +822,24 @@ void dumpast(struct ast *a, int level)
 
   // Graphs parsing
   case 16:
-    printf("BFS: ");
+    printf("BFS: \n");
     struct bfs *tmp_bfs = (struct bfs *)a;
-    printf("Start Node : %s", tmp_bfs->stSym->name);
-    printf("Iteration on list %s using %s", tmp_bfs->g->name, tmp_bfs->d->name);
+    printf("Start Node : %s\n", tmp_bfs->stSym->name);
+    printf("Iteration on list %s using %s\n", tmp_bfs->g->name, tmp_bfs->d->name);
 
     if (tmp_bfs->stmt)
       dumpast(tmp_bfs->stmt, level);
+    return;
 
   case 17:
-    printf("DFS: ");
+    printf("DFS: \n");
     struct dfs *tmp_dfs = (struct dfs *)a;
-    printf("Start Node : %s", tmp_dfs->stSym->name);
-    printf("Iteration on list %s using %s", tmp_dfs->g->name, tmp_dfs->d->name);
+    printf("Start Node : %s\n", tmp_dfs->stSym->name);
+    printf("Iteration on list %s using %s\n", tmp_dfs->g->name, tmp_dfs->d->name);
 
     if (tmp_dfs->stmt)
       dumpast(tmp_dfs->stmt, level);
+    return;
 
   default:
     printf("bad %c\n", a->nodetype);
