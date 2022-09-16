@@ -110,11 +110,11 @@ newint(int i)
 }
 
 struct ast *
-newedge(int s,int d)
+newedge(int s, int d)
 {
   struct edgeval *a = malloc(sizeof(struct edgeval));
 
-  if(!a)
+  if (!a)
   {
     yyerror("out of space");
     exit(0);
@@ -124,7 +124,6 @@ newedge(int s,int d)
   a->dest = d;
   return (struct ast *)a;
 }
-
 
 struct ast *
 newstr(char *s)
@@ -722,11 +721,11 @@ void dumpast(struct ast *a, int level)
     break;
     /* integer */
   case 'K':
-    printf("integer %d\n", ((struct intval*)a)->number);
+    printf("integer %d\n", ((struct intval *)a)->number);
     break;
     /* edge */
   case 'E':
-    printf("edge %d -> %d\n",((struct edgeval*)a)->source,((struct edgeval*)a)->dest);
+    printf("edge %d -> %d\n", ((struct edgeval *)a)->source, ((struct edgeval *)a)->dest);
     break;
     /* string */
   case 'S':
@@ -816,6 +815,25 @@ void dumpast(struct ast *a, int level)
     printf("call %s\n", ((struct ufncall *)a)->s->name);
     dumpast(a->l, level);
     return;
+
+  // Graphs parsing
+  case 16:
+    printf("BFS: ");
+    struct bfs *tmp_bfs = (struct bfs *)a;
+    printf("Start Node : %s", tmp_bfs->stSym->name);
+    printf("Iteration on list %s using %s", tmp_bfs->g->name, tmp_bfs->d->name);
+
+    if (tmp_bfs->stmt)
+      dumpast(tmp_bfs->stmt, level);
+
+  case 17:
+    printf("DFS: ");
+    struct dfs *tmp_dfs = (struct dfs *)a;
+    printf("Start Node : %s", tmp_dfs->stSym->name);
+    printf("Iteration on list %s using %s", tmp_dfs->g->name, tmp_dfs->d->name);
+
+    if (tmp_dfs->stmt)
+      dumpast(tmp_dfs->stmt, level);
 
   default:
     printf("bad %c\n", a->nodetype);
