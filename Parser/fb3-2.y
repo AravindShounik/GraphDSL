@@ -43,8 +43,9 @@
 %left '*' '/'
 %nonassoc '|' UMINUS
 
+%type <s> arg
 %type <a> exp stmt list explist translation_list translation_unit edge literal literal_list array
-%type <sl> symlist
+%type <sl> symlist arglist
 
 %start start_unit
 
@@ -103,14 +104,22 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
 explist: exp
  | exp ',' explist  { $$ = newast('L', $1, $3); }
 ;
+
+arg: TYPE NAME { $$ = $2;$2->type = TYPE;}
+;
+
+arglist: arg        { $$ = newsymlist($1,NULL); }
+  | arg ',' arglist { $$ = newsymlist($1,$3); }
+;
+
 symlist: NAME       { $$ = newsymlist($1, NULL); }
  | NAME ',' symlist { $$ = newsymlist($1, $3); }
 ;
 
 translation_unit: stmt {$$=$1;}
-  | LET NAME '(' symlist ')' '{' list '}' {
-                        $$=$7;
-                       dodef($2, $4, $7);
+  | TYPE NAME '(' arglist ')' '{' list '}' {
+                            dodef($1,$2, $4, $7);
+                            $$= newdef($2);
                       //  printf("Defined %s\n> ", $2->name); 
                       }
   | error {}

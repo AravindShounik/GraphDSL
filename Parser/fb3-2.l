@@ -69,7 +69,6 @@ EXP	([Ee][-+]?[0-9]+)
 "else"      { return ELSE; }
 "while"     { return WHILE; }
 "for"       { return FOR;}
-"let"       { return LET;}
 "BFS"       {return BFS;}
 "DFS"       {return DFS;}
 "Nodes"     {return NODES;}

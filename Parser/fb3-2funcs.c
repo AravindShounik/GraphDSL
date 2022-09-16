@@ -139,6 +139,7 @@ newstr(char *s)
   a->s = s;
   return (struct ast *)a;
 }
+
 struct ast *
 newarray(struct ast *l)
 {
@@ -152,6 +153,21 @@ newarray(struct ast *l)
   a->nodetype = 'A';
   a->l = l;
   return (struct ast *)a;
+}
+
+struct ast *
+newdef(struct symbol *f)
+{
+  struct funcval *a=malloc(sizeof(struct funcval));
+
+  if(!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype = 'P';
+  a->f=f;
+  return (struct ast*)a;
 }
 
 struct ast *
@@ -410,12 +426,13 @@ void symlistfree(struct symlist *sl)
 }
 
 /* define a function */
-void dodef(struct symbol *name, struct symlist *syms, struct ast *func)
+void dodef(int type,struct symbol *name, struct symlist *syms, struct ast *func)
 {
   if (name->syms)
     symlistfree(name->syms);
   if (name->func)
     treefree(name->func);
+  name->type = type;
   name->syms = syms;
   name->func = func;
 }
@@ -759,7 +776,16 @@ void dumpast(struct ast *a, int level)
       dumpast(l->l, level);
       l = l->r;
     }
-    dumpast(l, level);
+    dumpast(l,level);
+    break;
+    /* function def */
+  case 'P':
+    printf("defined %s\n",((struct funcval*)a)->f->name);
+    // struct symlist* syms=f->syms;
+    // while(syms){
+    //   dumpast(syms->sym->type,level)
+    // }
+    dumpast(((struct funcval*)a)->f->func,level);
     break;
     /* name reference */
   case 'N':

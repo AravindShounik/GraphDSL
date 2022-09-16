@@ -148,6 +148,11 @@ struct arrayval
   int nodetype;  /* type A */
   struct ast *l; /* list of literals */
 };
+struct funcval
+{
+  int nodetype;
+  struct symbol *f;
+};
 
 struct symref
 {
@@ -181,7 +186,8 @@ struct ast *newdouble(double d);
 struct ast *newint(int i);
 struct ast *newedge(int s, int d);
 struct ast *newstr(char *s);
-struct ast *newarray(struct ast *l);
+struct ast *newdef(struct symbol *f);
+struct ast *newarray(struct ast*l);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);
 struct ast *rangefor(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt);
@@ -192,7 +198,7 @@ struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g
 struct ast *settype(int inittype, struct symlist *sl);
 
 /* define a function */
-void dodef(struct symbol *name, struct symlist *syms, struct ast *stmts);
+void dodef(int type,struct symbol *name, struct symlist *syms, struct ast *stmts);
 
 /* evaluate an AST */
 double eval(struct ast *);
