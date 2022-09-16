@@ -54,11 +54,11 @@ stmt: IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $5, NU
    | IF '(' exp ')' stmt ELSE stmt  { $$ = newflow('I', $3, $5, $7); }
    | WHILE '(' exp ')' stmt           { $$ = newflow('W', $3, $5, NULL); }
    | FOR '(' exp ';' exp ';' exp ')' stmt { $$ = newfor('R',$3,$5,$7,$9);}
-   | FOR '(' TYPE NAME ':' NAME ')' stmt { $$ = newfor_r('B', $3, $4, $6, $8);}
+   | FOR '(' TYPE NAME ':' NAME ')' stmt { $$ = rangefor('B', $3, $4, $6, $8);}
    | BFS '(' TYPE NAME ':' NAME ',' TYPE NAME ')' stmt { $$ = bfs(16, $3, $4, $6, $8, $9, $11); }
    | DFS '(' TYPE NAME ':' NAME ',' TYPE NAME ')' stmt { $$ = dfs(17, $3, $4, $6, $8, $9, $11); }
    | TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
-   | TYPE symlist ';' {  $$ = setType($1, $2);}
+   | TYPE symlist ';' {  $$ = settype($1, $2);}
    | exp ';'
    | '{' list '}'  { $$ = $2; }
    | TYPE '<' NAME '>' symlist ';'  

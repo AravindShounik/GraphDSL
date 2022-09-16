@@ -140,11 +140,11 @@ newstr(char *s)
   return (struct ast *)a;
 }
 struct ast *
-newarray(struct ast* l)
+newarray(struct ast *l)
 {
-  struct arrayval *a=malloc(sizeof(struct arrayval));
+  struct arrayval *a = malloc(sizeof(struct arrayval));
 
-  if(!a)
+  if (!a)
   {
     yyerror("out of space");
     exit(0);
@@ -268,7 +268,7 @@ newinit(int inittype, struct symbol *s, struct ast *v)
   return (struct ast *)a;
 }
 
-struct ast *setType(int inittype, struct symlist *sl)
+struct ast *settype(int inittype, struct symlist *sl)
 {
   struct symlist *tmp = sl;
   while (tmp)
@@ -314,7 +314,7 @@ newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct
   return (struct ast *)a;
 }
 
-struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt)
+struct ast *rangefor(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt)
 {
   struct rfor_loop *a = malloc(sizeof(struct rfor_loop));
 
@@ -753,13 +753,14 @@ void dumpast(struct ast *a, int level)
     /*array */
   case 'A':
     printf("array \n");
-    struct ast* l = ((struct arrayval*)a)->l;
-    while(l->nodetype=='L'){
-      dumpast(l->l,level);
-      l=l->r;
+    struct ast *l = ((struct arrayval *)a)->l;
+    while (l->nodetype == 'L')
+    {
+      dumpast(l->l, level);
+      l = l->r;
     }
-    dumpast(l,level);
-  break;
+    dumpast(l, level);
+    break;
     /* name reference */
   case 'N':
     printf("ref %s\n", ((struct symref *)a)->s->name);

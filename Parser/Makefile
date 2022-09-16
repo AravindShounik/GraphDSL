@@ -1,14 +1,9 @@
-fb3-2:	fb3-2.l fb3-2.y fb3-2.h fb3-2funcs.c
-	bison -d -v fb3-2.y && \
-	flex -ofb3-2.lex.c fb3-2.l && \
-	cc -g -o $@ fb3-2.tab.c fb3-2.lex.c fb3-2funcs.c -lm
-
-Mac: 
+all: 
 	bison -d -t fb3-2.y
 	flex fb3-2.l
-	gcc -o fb3-2 lex.yy.c fb3-2.tab.c fb3-2funcs.c  -lm
+	gcc lex.yy.c fb3-2.tab.c fb3-2funcs.c -lm
 
 clean:
 	rm -f fb3-2 \
 	fb3-2.tab.c fb3-2.tab.h fb3-2.lex.c \
-	fb3-2.output
+	fb3-2.output a.out
