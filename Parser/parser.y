@@ -35,25 +35,21 @@
 %token INVALID_TOKEN
 
 %%
-  graph_initialisation :
-  		       | GRAPH IDENTIFIER ASSIGN L_BRACE edge_line R_BRACE STM_DELIM
+  graph_initialisation : GRAPH IDENTIFIER ASSIGN L_BRACE edge_line R_BRACE STM_DELIM
   		       | DIRECTED_GRAPH IDENTIFIER ASSIGN L_BRACE edge_line R_BRACE STM_DELIM
   		       ;
-  edgebasic :
-  	    | CONSTANT COLON_OP CONSTANT
+  edgebasic: CONSTANT COLON_OP CONSTANT
   	    ;
-  edgeline :
- 	   | edgebasic
+  edgeline : edgebasic
  	   | edgebasic COMMA_OP edgeline
  	   ;
-  node_declaration :
-  		   | NODE LESSER_OP IDENTIFIER GREATER_OP initializer_list STM_DELIM
+  node_declaration : NODE LESSER_OP IDENTIFIER GREATER_OP initializer_list STM_DELIM
   		   ;
-  initializer_list :
-  		   | IDENTIFIER
+  initializer_list : IDENTIFIER
   		   | IDENTIFIER ASSIGN CONSTANT 
   		   | IDENTIFIER COMMA_OP initializer_list
   		   | IDENTIFIER ASSIGN CONSTANT COMMA_OP initializer_list
+         ;
 %%
 #include <stdio.h>
 
