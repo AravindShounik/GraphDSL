@@ -27,7 +27,7 @@
 %token <i> INT 
 %token <str> STRING
 %token <s> NAME
-%token <fn> FUNC TYPE GTYPE
+%token <fn> FUNC TYPE
 /* %token EOL */
 
 %token IF ELSE WHILE LOWER_THAN_ELSE FOR
@@ -64,14 +64,14 @@ condstmt : IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $
 
 initstmt : TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
    | TYPE symlist ';' {  $$ = settype($1, $2);}  
-   | GTYPE '(' NAME ')' NAME '=' exp ';' {$$ = newginit($1,$3,$5,$7);}
+   | TYPE '(' NAME ')' NAME '=' exp ';' {$$ = newginit($1,$3,$5,$7);}
 ;
 
 stmt: condstmt
    | iterstmt
    | initstmt
-   | BFS '(' GTYPE NAME ':' NAME ',' NAME ')' stmt { $$ = bfs(16, $3, $4, $6, $8, $10); }
-   | DFS '(' GTYPE NAME ':' NAME ',' NAME ')' stmt { $$ = dfs(17, $3, $4, $6, $8, $10); }
+   | BFS '(' TYPE NAME ':' NAME ',' NAME ')' stmt { $$ = bfs(16, $3, $4, $6, $8, $10); }
+   | DFS '(' TYPE NAME ':' NAME ',' NAME ')' stmt { $$ = dfs(17, $3, $4, $6, $8, $10); }
    | exp ';'
    | '{' list '}'  { $$ = $2; }
  
@@ -93,7 +93,7 @@ literal: edge
 literal_list: literal
 | literal ',' literal_list { $$ = newast('L', $1, $3); } 
 
-array: '[' literal_list ']' {$$ = newarray($2);}
+array: '{' literal_list '}' {$$ = newarray($2);}
 
 exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | exp LOG_OR  exp      { $$ = newast(1000, $1,$3);}
