@@ -19,6 +19,7 @@ EXP	([Ee][-+]?[0-9]+)
 %%
  /* single character ops */
 "+" |
+"%" |
 "-" |
 "*" |
 "/" |
@@ -33,6 +34,9 @@ EXP	([Ee][-+]?[0-9]+)
 "]" |
 "(" |
 ")"     { return yytext[0]; }
+
+"&&" {return LOG_AND;}
+"||" {return LOG_OR;}
 
  /* Assignment Ops */
 "+="    {yylval.fn = 1;   return ASGN;}

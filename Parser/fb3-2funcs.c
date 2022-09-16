@@ -813,6 +813,7 @@ void dumpast(struct ast *a, int level)
   case '-':
   case '*':
   case '/':
+  case '%':
   case 'L':
   case 'T':
   case '1':

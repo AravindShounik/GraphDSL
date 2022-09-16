@@ -32,15 +32,17 @@
 
 %token IF ELSE WHILE LET LOWER_THAN_ELSE FOR
 %token BFS DFS NODES LEVELS NEIGHBOURS
-%token INC DEC OR AND
+%token INC DEC LOG_OR LOG_AND
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
 %nonassoc <fn> CMP
 %nonassoc <fn> ASGN
 %right '='
+%left LOG_OR
+%left LOG_AND
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
 %nonassoc '|' UMINUS
 
 %type <s> arg
@@ -89,6 +91,7 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | exp '-' exp          { $$ = newast('-', $1,$3);}
    | exp '*' exp          { $$ = newast('*', $1,$3); }
    | exp '/' exp          { $$ = newast('/', $1,$3); }
+   | exp '%' exp          { $$ = newast('%', $1,$3); }
    | '|' exp              { $$ = newast('|', $2, NULL); }
    | '(' exp ')'          { $$ = $2; }
    | '-' exp %prec UMINUS { $$ = newast('M', $2, NULL); }
