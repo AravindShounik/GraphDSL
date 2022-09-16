@@ -798,7 +798,8 @@ void dumpast(struct ast *a, int level)
     printf("= %s\n", ((struct symref *)a)->s->name);
     dumpast(((struct symasgn *)a)->v, level);
     return;
-
+    
+    /* assignment ops */
   case 'a':
   case 'b':
   case 'c':
@@ -808,7 +809,7 @@ void dumpast(struct ast *a, int level)
     printf("%s %s\n", map_asgn_op(a->nodetype), ((struct symref *)a)->s->name);
     dumpast(((struct symasgn *)a)->v, level);
     return;
-
+  
     /* expressions */
   case '+':
   case '-':
@@ -824,6 +825,13 @@ void dumpast(struct ast *a, int level)
   case '5':
   case '6':
     printf("binop %c\n", a->nodetype);
+    dumpast(a->l, level);
+    dumpast(a->r, level);
+    return;
+
+  case 1000:
+  case 1001:
+    printf("binop %s\n", map_logical_op(a->nodetype));
     dumpast(a->l, level);
     dumpast(a->r, level);
     return;
@@ -893,18 +901,30 @@ void dumpast(struct ast *a, int level)
       dumpast(tmp_dfs->stmt, level);
     return;
 
+
   default:
     printf("bad %c\n", a->nodetype);
     return;
   }
 }
 
-char *M[] = {"+=", "-=", "*=", "/=", "@=", "**="};
+char *assignment_op_map[] = {"+=", "-=", "*=", "/=", "@=", "**="};
+char *logical_op_map[]  = {"||","&&"};
 
 char *map_asgn_op(char ch)
 {
   if (ch - 'a' >= 6 || ch < 'a')
     "bad";
 
-  return M[ch - 'a'];
+  return assignment_op_map[ch - 'a'];
+}
+
+char *map_logical_op(int val)
+{
+  if(val == 1000 || val == 1001)
+  {
+    return logical_op_map[val - 1000];
+  }
+
+  return "BADDD";
 }

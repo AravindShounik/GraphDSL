@@ -215,3 +215,4 @@ void dumpast(struct ast *a, int level);
 
 /* Maping Assignment Operators */
 char *map_asgn_op(char ch);
+char *map_logical_op(int val);

@@ -87,8 +87,10 @@ literal_list: literal
 array: '[' literal_list ']' {$$ = newarray($2);}
 
 exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
+   | exp LOG_OR  exp      { $$ = newast(1000, $1,$3)}
+   | exp LOG_AND exp      { $$ = newast(1001, $1,$3)}
    | exp '+' exp          { $$ = newast('+', $1,$3); }
-   | exp '-' exp          { $$ = newast('-', $1,$3);}
+   | exp '-' exp          { $$ = newast('-', $1,$3); }
    | exp '*' exp          { $$ = newast('*', $1,$3); }
    | exp '/' exp          { $$ = newast('/', $1,$3); }
    | exp '%' exp          { $$ = newast('%', $1,$3); }
