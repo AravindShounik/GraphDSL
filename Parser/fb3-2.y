@@ -70,8 +70,8 @@ initstmt : TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
 stmt: condstmt
    | iterstmt
    | initstmt
-   | BFS '(' TYPE NAME ':' NAME ',' TYPE NAME ')' stmt { $$ = bfs(16, $3, $4, $6, $8, $9, $11); }
-   | DFS '(' TYPE NAME ':' NAME ',' TYPE NAME ')' stmt { $$ = dfs(17, $3, $4, $6, $8, $9, $11); }
+   | BFS '(' GTYPE NAME ':' NAME ',' NAME ')' stmt { $$ = bfs(16, $3, $4, $6, $8, $10); }
+   | DFS '(' GTYPE NAME ':' NAME ',' NAME ')' stmt { $$ = dfs(17, $3, $4, $6, $8, $10); }
    | exp ';'
    | '{' list '}'  { $$ = $2; }
  
