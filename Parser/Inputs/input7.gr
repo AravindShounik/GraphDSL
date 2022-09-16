@@ -1,0 +1,18 @@
+func (int) main()
+{
+    //Node syntax
+
+    //Node set Syntax
+
+    Graph G={
+        1:2,
+        2:3:1,
+        2:4:5,
+        3:4:3,
+    }
+    Node<G> n=2;
+    nodeSet<G> s;
+    s.add(2);
+    s.add(3);
+    s.add(1);
+}

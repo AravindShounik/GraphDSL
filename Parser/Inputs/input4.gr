@@ -1,0 +1,8 @@
+//Redeclaring the same variable again
+// Error will be shown in semantic analysis
+func (int) main()
+{
+    int a=3,b=2;
+    int c=a+b;
+    int b=3;
+}

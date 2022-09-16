@@ -1,0 +1,8 @@
+//Basic data Structure Parsing
+
+func (int) main(){
+    int a=3;
+    int b;
+    char c;
+    Graph g;
+}
