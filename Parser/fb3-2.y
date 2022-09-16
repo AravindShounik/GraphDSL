@@ -43,7 +43,7 @@
 %left '*' '/'
 %nonassoc '|' UMINUS
 
-%type <a> exp stmt list explist translation_list translation_unit
+%type <a> exp stmt list explist translation_list translation_unit edge
 %type <sl> symlist
 
 %start start_unit
@@ -67,6 +67,8 @@ list: stmt { $$ = newast('L',$1,NULL); }
    | stmt list { $$ = newast('L', $1, $2);}
    ;
 
+edge: INT ':' INT         { $$ = newedge($1,$3);}
+
 exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | exp '+' exp          { $$ = newast('+', $1,$3); }
    | exp '-' exp          { $$ = newast('-', $1,$3);}
@@ -75,6 +77,7 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | '|' exp              { $$ = newast('|', $2, NULL); }
    | '(' exp ')'          { $$ = $2; }
    | '-' exp %prec UMINUS { $$ = newast('M', $2, NULL); }
+   | edge                 
    | DOUBLE               { $$ = newdouble($1); }
    | INT                  { $$ = newint($1); }
    | STRING               { $$ = newstr($1); }

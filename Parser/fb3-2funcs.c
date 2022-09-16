@@ -109,6 +109,22 @@ newint(int i)
   return (struct ast *)a;
 }
 
+struct ast *
+newedge(int s,int d)
+{
+  struct edgeval *a = malloc(sizeof(struct edgeval));
+
+  if(!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype = 'E';
+  a->source = s;
+  a->dest = d;
+  return (struct ast *)a;
+}
+
 
 struct ast *
 newstr(char *s)
@@ -704,8 +720,13 @@ void dumpast(struct ast *a, int level)
   case 'D':
     printf("double %4.4g\n", ((struct doubleval *)a)->number);
     break;
+    /* integer */
   case 'K':
     printf("integer %d\n", ((struct intval*)a)->number);
+    break;
+    /* edge */
+  case 'E':
+    printf("edge %d -> %d\n",((struct edgeval*)a)->source,((struct edgeval*)a)->dest);
     break;
     /* string */
   case 'S':
