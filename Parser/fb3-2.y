@@ -61,6 +61,9 @@ stmt: IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $5, NU
    | TYPE symlist ';' {  $$ = setType($1, $2);}
    | exp ';'
    | '{' list '}'  { $$ = $2; }
+   | TYPE NAME '=' '{' graphList '}' ';' /* Graph Initialisation */
+   | TYPE '<' NAME '>' symlist ';'  /* NodeSet, EdgeSet Definition */ 
+   | TYPE '<' NAME '>' NAME '=' exp ';' /* NodeSet, EdgeSet Definition And Initialization */
 ;
 
 list: stmt { $$ = newast('L',$1,NULL); }
@@ -87,6 +90,12 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | NAME '(' explist ')' { $$ = newcall($1, $3); }
    | NAME ASGN exp       { $$ =  newasgn_ops($2,$1,$3); }
 ;
+
+/* Graph Initialisation Nodes and Edges List */
+graphList: INT ':' INT ':' INT ',' graphList 
+  | INT ':' INT ',' graphList
+  | INT ':' INT ':' INT 
+  | INT ':' INT 
 
 explist: exp
  | exp ',' explist  { $$ = newast('L', $1, $3); }
