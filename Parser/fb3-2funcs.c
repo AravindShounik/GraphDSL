@@ -286,14 +286,12 @@ newinit(int inittype, struct symbol *s, struct ast *v)
 
 struct ast *settype(int inittype, struct symlist *sl)
 {
-  struct symlist *tmp = sl;
-  while (tmp)
-  {
-    printf("%s ", tmp->sym->name);
-    tmp->sym->type = inittype;
-    tmp = tmp->next;
-  }
-  return (struct ast *)sl;
+  struct symlistdef *tmp = malloc(sizeof(struct symlistdef));
+
+  tmp->sl = sl;
+  tmp->nodetype = 200;
+
+  return (struct ast *)tmp;
 }
 
 struct ast *
@@ -798,7 +796,7 @@ void dumpast(struct ast *a, int level)
     printf("= %s\n", ((struct symref *)a)->s->name);
     dumpast(((struct symasgn *)a)->v, level);
     return;
-    
+
     /* assignment ops */
   case 'a':
   case 'b':
@@ -809,7 +807,7 @@ void dumpast(struct ast *a, int level)
     printf("%s %s\n", map_asgn_op(a->nodetype), ((struct symref *)a)->s->name);
     dumpast(((struct symasgn *)a)->v, level);
     return;
-  
+
     /* expressions */
   case '+':
   case '-':
@@ -901,6 +899,18 @@ void dumpast(struct ast *a, int level)
       dumpast(tmp_dfs->stmt, level);
     return;
 
+  /* symlist */
+  case 200:
+    printf("Symlist : ");
+    struct symlist *tmp1 = malloc(sizeof(struct symlist));
+    tmp1 = ((struct symlistdef *)a)->sl;
+    while (tmp1)
+    {
+      printf("%s ", tmp1->sym->name);
+      tmp1 = tmp1->next;
+    }
+    printf("\n");
+    return;
 
   default:
     printf("bad %c\n", a->nodetype);
@@ -909,7 +919,7 @@ void dumpast(struct ast *a, int level)
 }
 
 char *assignment_op_map[] = {"+=", "-=", "*=", "/=", "@=", "**="};
-char *logical_op_map[]  = {"||","&&"};
+char *logical_op_map[] = {"||", "&&"};
 
 char *map_asgn_op(char ch)
 {
@@ -921,7 +931,7 @@ char *map_asgn_op(char ch)
 
 char *map_logical_op(int val)
 {
-  if(val == 1000 || val == 1001)
+  if (val == 1000 || val == 1001)
   {
     return logical_op_map[val - 1000];
   }

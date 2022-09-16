@@ -27,6 +27,12 @@ struct symlist
   struct symlist *next;
 };
 
+struct symlistdef
+{
+  int nodetype;
+  struct symlist *sl;
+};
+
 struct symlist *newsymlist(struct symbol *sym, struct symlist *next);
 void symlistfree(struct symlist *sl);
 
