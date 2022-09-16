@@ -1,9 +1,0 @@
-int s="234";
-int s = 2:3;
-int s=3+4.0234567;
-int p=func(a+b,c+d);
-int a=b+c;
-int c=b+a;
-let b(a,b) {
-    a=a+b;
-}

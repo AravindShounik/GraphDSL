@@ -179,7 +179,7 @@ struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newinit(int inittype, struct symbol *s, struct ast *v);
 struct ast *newdouble(double d);
 struct ast *newint(int i);
-struct ast *newedge(int s,int d);
+struct ast *newedge(int s, int d);
 struct ast *newstr(char *s);
 struct ast *newarray(struct ast*l);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
