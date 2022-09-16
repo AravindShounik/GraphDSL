@@ -139,6 +139,20 @@ newstr(char *s)
   a->s = s;
   return (struct ast *)a;
 }
+struct ast *
+newarray(struct ast* l)
+{
+  struct arrayval *a=malloc(sizeof(struct arrayval));
+
+  if(!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype = 'A';
+  a->l = l;
+  return (struct ast *)a;
+}
 
 struct ast *
 newcmp(int cmptype, struct ast *l, struct ast *r)
@@ -731,7 +745,16 @@ void dumpast(struct ast *a, int level)
   case 'S':
     printf("string  %s\n", ((struct strval *)a)->s);
     break;
-
+    /*array */
+  case 'A':
+    printf("array \n");
+    struct ast* l = ((struct arrayval*)a)->l;
+    while(l->nodetype=='L'){
+      dumpast(l->l,level);
+      l=l->r;
+    }
+    dumpast(l,level);
+  break;
     /* name reference */
   case 'N':
     printf("ref %s\n", ((struct symref *)a)->s->name);

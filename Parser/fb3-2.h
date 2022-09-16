@@ -143,6 +143,12 @@ struct strval
   char *s;
 };
 
+struct arrayval
+{
+  int nodetype; /* type A */
+  struct ast* l; /* list of literals */
+};
+
 struct symref
 {
   int nodetype; /* type N */
@@ -175,8 +181,7 @@ struct ast *newdouble(double d);
 struct ast *newint(int i);
 struct ast *newedge(int s,int d);
 struct ast *newstr(char *s);
-struct ast *newnum(double d);
-struct ast *newstr(char *s);
+struct ast *newarray(struct ast*l);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);
 struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt);
