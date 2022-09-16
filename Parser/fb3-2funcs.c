@@ -284,6 +284,24 @@ newinit(int inittype, struct symbol *s, struct ast *v)
   return (struct ast *)a;
 }
 
+struct ast *
+newginit(int inittype, struct symbol* g,struct symbol *s, struct ast *v)
+{
+  struct syminit *a = malloc(sizeof(struct syminit));
+
+  if (!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+  s->g = g;
+  a->nodetype = '=';
+  s->type = inittype;
+  a->s = s;
+  a->v = v;
+  return (struct ast *)a;  
+}
+
 struct ast *settype(int inittype, struct symlist *sl)
 {
   struct symlistdef *tmp = malloc(sizeof(struct symlistdef));

@@ -55,18 +55,21 @@ EXP	([Ee][-+]?[0-9]+)
  /* type specifiers */
  "void"     {yylval.fn = 1; return TYPE;}
  "int"      {yylval.fn = 2; return TYPE;}
- "large"    {yylval.fn = 3; return TYPE;}
- "float"    {yylval.fn = 4; return TYPE;}
- "char"     {yylval.fn = 5; return TYPE;}
- "string"   {yylval.fn = 6; return TYPE;}
- "Graph"    {yylval.fn = 7; return TYPE;}
- "dGraph"   {yylval.fn = 8; return TYPE;}
- "NodeSet"  {yylval.fn = 9; return TYPE;}
- "NodeSeq"  {yylval.fn = 10;return TYPE;}
- "NodeProp" {yylval.fn = 11;return TYPE;}
- "EdgeProp" {yylval.fn = 12;return TYPE;}
- "small"    {yylval.fn = 13;return TYPE;}
- "Node"     {yylval.fn = 14;return TYPE;}
+ "small"    {yylval.fn = 3;return TYPE;}
+ "large"    {yylval.fn = 4; return TYPE;}
+ "float"    {yylval.fn = 5; return TYPE;}
+ "char"     {yylval.fn = 6; return TYPE;}
+ "string"   {yylval.fn = 7; return TYPE;}
+
+ /* graph types */
+ "graph"    {yylval.fn = 1; return GTYPE;}
+ "dgraph"   {yylval.fn = 2; return GTYPE;}
+ "node"     {yylval.fn = 3;return GTYPE;}
+ "node_set"  {yylval.fn = 4; return GTYPE;}
+ "node_seq"  {yylval.fn = 5;return GTYPE;}
+ "node_prop" {yylval.fn = 6;return GTYPE;}
+ "edge_prop" {yylval.fn = 7;return GTYPE;}
+
 
  /* keywords */
 "if"        { return IF; }

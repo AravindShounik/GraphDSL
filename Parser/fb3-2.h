@@ -14,6 +14,7 @@ struct symbol
   int type;
   char *name;
   double value;
+  struct symbol* g;
   struct ast *func;     /* stmt for the function */
   struct symlist *syms; /* list of dummy args */
 };
@@ -188,6 +189,7 @@ struct ast *newcall(struct symbol *s, struct ast *l);
 struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newinit(int inittype, struct symbol *s, struct ast *v);
+struct ast *newginit(int inittype, struct symbol* g,struct symbol *s, struct ast *v);
 struct ast *newdouble(double d);
 struct ast *newint(int i);
 struct ast *newedge(int s, int d);

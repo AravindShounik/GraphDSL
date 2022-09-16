@@ -27,10 +27,10 @@
 %token <i> INT 
 %token <str> STRING
 %token <s> NAME
-%token <fn> FUNC TYPE
+%token <fn> FUNC TYPE GTYPE
 /* %token EOL */
 
-%token IF ELSE WHILE LET LOWER_THAN_ELSE FOR
+%token IF ELSE WHILE LOWER_THAN_ELSE FOR
 %token BFS DFS NODES LEVELS NEIGHBOURS
 %token INC DEC LOG_OR LOG_AND
 
@@ -46,26 +46,35 @@
 %nonassoc '|' UMINUS
 
 %type <s> arg
-%type <a> exp stmt list explist translation_list translation_unit edge literal literal_list array
+%type <a> exp stmt iterstmt condstmt initstmt list explist translation_list translation_unit edge literal literal_list array
 %type <sl> symlist arglist
 
 %start start_unit
 
 %%
 
-stmt: IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $5, NULL); }
-   | IF '(' exp ')' stmt ELSE stmt  { $$ = newflow('I', $3, $5, $7); }
-   | WHILE '(' exp ')' stmt           { $$ = newflow('W', $3, $5, NULL); }
+iterstmt : WHILE '(' exp ')' stmt           { $$ = newflow('W', $3, $5, NULL); }
    | FOR '(' exp ';' exp ';' exp ')' stmt { $$ = newfor('R',$3,$5,$7,$9);}
    | FOR '(' TYPE NAME ':' NAME ')' stmt { $$ = rangefor('B', $3, $4, $6, $8);}
-   | BFS '(' TYPE NAME ':' NAME ',' NAME ')' stmt { $$ = bfs(16, $3, $4, $6, $8, $10); }
-   | DFS '(' TYPE NAME ':' NAME ',' NAME ')' stmt { $$ = dfs(17, $3, $4, $6, $8, $10); }
-   | TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
-   | TYPE symlist ';' {  $$ = settype($1, $2);}
+;
+
+condstmt : IF '(' exp ')' stmt %prec LOWER_THAN_ELSE   { $$ = newflow('I', $3, $5, NULL); }
+   | IF '(' exp ')' stmt ELSE stmt  { $$ = newflow('I', $3, $5, $7); }
+;
+
+initstmt : TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
+   | TYPE symlist ';' {  $$ = settype($1, $2);}  
+   | GTYPE '(' NAME ')' NAME '=' exp ';' {$$ = newginit($1,$3,$5,$7);}
+;
+
+stmt: condstmt
+   | iterstmt
+   | initstmt
+   | BFS '(' TYPE NAME ':' NAME ',' TYPE NAME ')' stmt { $$ = bfs(16, $3, $4, $6, $8, $9, $11); }
+   | DFS '(' TYPE NAME ':' NAME ',' TYPE NAME ')' stmt { $$ = dfs(17, $3, $4, $6, $8, $9, $11); }
    | exp ';'
    | '{' list '}'  { $$ = $2; }
-   | TYPE '<' NAME '>' symlist ';'  
-   | TYPE '<' NAME '>' NAME '=' exp ';' 
+ 
 ;
 
 list: stmt { $$ = newast('L',$1,NULL); }
