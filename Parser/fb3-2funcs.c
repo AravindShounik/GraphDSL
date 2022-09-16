@@ -64,7 +64,7 @@ lookup(char *sym)
 }
 
 struct ast *
-newast(int nodetype,struct ast *l, struct ast *r)
+newast(int nodetype, struct ast *l, struct ast *r)
 {
   struct ast *a = malloc(sizeof(struct ast));
 
@@ -111,18 +111,18 @@ newint(int i)
 
 
 struct ast *
-newstr(char * s)
+newstr(char *s)
 {
   struct strval *a = malloc(sizeof(struct strval));
-  
-  if(!a)
+
+  if (!a)
   {
     yyerror("out of space");
     exit(0);
   }
-  a->nodetype ='S';
+  a->nodetype = 'S';
   a->s = s;
-  return (struct ast*)a;
+  return (struct ast *)a;
 }
 
 struct ast *
@@ -135,7 +135,7 @@ newcmp(int cmptype, struct ast *l, struct ast *r)
     yyerror("out of space");
     exit(0);
   }
-  a->nodetype = '0'+cmptype;
+  a->nodetype = '0' + cmptype;
   a->l = l;
   a->r = r;
   return a;
@@ -189,7 +189,7 @@ newref(struct symbol *s)
 }
 
 struct ast *
-newasgn_ops(int nodetype,struct symbol *l,struct ast *r)
+newasgn_ops(int nodetype, struct symbol *l, struct ast *r)
 {
   struct symasgn *a = malloc(sizeof(struct symasgn));
 
@@ -198,8 +198,8 @@ newasgn_ops(int nodetype,struct symbol *l,struct ast *r)
     yyerror("out of space");
     exit(0);
   }
-  
-  a->nodetype = 'a' -1 +nodetype;
+
+  a->nodetype = 'a' - 1 + nodetype;
   a->s = l;
   a->v = r;
 
@@ -301,6 +301,51 @@ struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol
   a->v = v;
   a->stmt = stmt;
   return (struct ast *)a;
+}
+
+struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt)
+{
+  // symbol d checks :  check for typename . it should be a node or levels
+
+  //  symbol g checks : check for typename (not provided in syntax, check thru symbol table) . it should be a graph type list (G.Nodes or G.Levels)
+
+  //  symbol stSym : check for typename . it should be a node.
+
+  struct bfs *a = malloc(sizeof(struct bfs));
+
+  if (!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  a->nodetype = nodetype;
+  a->d = d;
+  a->g = g;
+  a->stSym = stSym;
+  a->stmt = stmt;
+}
+struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt)
+{
+  // symbol d checks :  check for typename . it should be a node or levels
+
+  //  symbol g checks : check for typename (not provided in syntax, check thru symbol table) . it should be a graph type list (G.Nodes or G.Levels)
+
+  //  symbol stSym : check for typename . it should be a node.
+
+  struct dfs *a = malloc(sizeof(struct dfs));
+
+  if (!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  a->nodetype = nodetype;
+  a->d = d;
+  a->g = g;
+  a->stSym = stSym;
+  a->stmt = stmt;
 }
 
 struct symlist *
@@ -664,7 +709,7 @@ void dumpast(struct ast *a, int level)
     break;
     /* string */
   case 'S':
-    printf("string  %s\n", ((struct strval*)a)->s);
+    printf("string  %s\n", ((struct strval *)a)->s);
     break;
 
     /* name reference */
@@ -684,14 +729,23 @@ void dumpast(struct ast *a, int level)
   case 'd':
   case 'e':
   case 'f':
-    printf("%s %s\n",map_asgn_op(a->nodetype),((struct symref *)a)->s->name);
+    printf("%s %s\n", map_asgn_op(a->nodetype), ((struct symref *)a)->s->name);
     dumpast(((struct symasgn *)a)->v, level);
     return;
 
     /* expressions */
-  case '+': case '-': case '*': case '/': case 'L': case 'T':
-  case '1': case '2': case '3':
-  case '4': case '5': case '6': 
+  case '+':
+  case '-':
+  case '*':
+  case '/':
+  case 'L':
+  case 'T':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
     printf("binop %c\n", a->nodetype);
     dumpast(a->l, level);
     dumpast(a->r, level);
@@ -748,12 +802,12 @@ void dumpast(struct ast *a, int level)
   }
 }
 
+char *M[] = {"+=", "-=", "*=", "/=", "@=", "**="};
 
-char* M[] = {"+=","-=","*=","/=","@=","**="};
-
-char* map_asgn_op(char ch)
+char *map_asgn_op(char ch)
 {
-  if(ch - 'a' >= 6 || ch < 'a') "bad";
-  
-  return M[ch-'a'];
+  if (ch - 'a' >= 6 || ch < 'a')
+    "bad";
+
+  return M[ch - 'a'];
 }

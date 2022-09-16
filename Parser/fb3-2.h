@@ -101,6 +101,24 @@ struct rfor_loop
   struct ast *stmt;
 };
 
+struct bfs
+{
+  int nodetype;
+  struct symbol *d;
+  struct symbol *g;
+  struct symbol *stSym;
+  struct ast *stmt;
+};
+
+struct dfs
+{
+  int nodetype;
+  struct symbol *d;
+  struct symbol *g;
+  struct symbol *stSym;
+  struct ast *stmt;
+};
+
 struct doubleval
 {
   int nodetype; /* type D */
@@ -114,7 +132,7 @@ struct intval
 struct strval
 {
   int nodetype; /* type S */
-  char* s;
+  char *s;
 };
 
 struct symref
@@ -147,12 +165,15 @@ struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newinit(int inittype, struct symbol *s, struct ast *v);
 struct ast *newdouble(double d);
 struct ast *newint(int i);
-struct ast *newstr(char* s);
+struct ast *newstr(char *s);
+struct ast *newnum(double d);
+struct ast *newstr(char *s);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);
 struct ast *newfor_r(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt);
-struct ast *newasgn_ops(int nodetype,struct symbol *l,struct ast *r);
-
+struct ast *newasgn_ops(int nodetype, struct symbol *l, struct ast *r);
+struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt);
+struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt);
 
 struct ast *setType(int inittype, struct symlist *sl);
 
@@ -172,6 +193,5 @@ void yyerror(char *s, ...);
 extern int debug;
 void dumpast(struct ast *a, int level);
 
-
 /* Maping Assignment Operators */
-char* map_asgn_op(char ch);
+char *map_asgn_op(char ch);
