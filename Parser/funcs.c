@@ -12,7 +12,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
-#include "fb3-2.h"
+#include "funcs.h"
 
 /* symbol table */
 /* hash a symbol */

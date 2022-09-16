@@ -1,9 +1,9 @@
 all: 
-	bison -d -t fb3-2.y
-	flex fb3-2.l
-	gcc lex.yy.c fb3-2.tab.c fb3-2funcs.c -lm
+	bison -d -t parser.y
+	flex lexer.l
+	gcc lex.yy.c parser.tab.c funcs.c -lm
 
 clean:
-	rm -f fb3-2 \
-	fb3-2.tab.c fb3-2.tab.h fb3-2.lex.c \
-	fb3-2.output a.out
+	rm -f parser \
+	parser.tab.c parser.tab.h parser.lex.c lex.yy.c \
+	parser.output a.out
