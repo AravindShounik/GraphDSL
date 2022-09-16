@@ -1,4 +1,4 @@
-func (int) main()
+int main()
 {
     //Nodeset Another example
     Graph G={

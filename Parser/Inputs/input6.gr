@@ -1,6 +1,6 @@
 //Syntax related errors in graphs
 
-func (int) main()
+int main()
 {
     Graph G={2:3,
     1:2     //Here, comma is missing

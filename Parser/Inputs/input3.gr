@@ -1,6 +1,6 @@
 //Graph syntax
 
-func (int) main()
+int main()
 {
     //Graph initialization
     Graph G={

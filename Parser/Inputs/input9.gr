@@ -1,4 +1,4 @@
-func(int) main()
+int main()
 {
 	int a, b, c;
 	double a1, b2, c3;
