@@ -80,9 +80,24 @@ newast(int nodetype,struct ast *l, struct ast *r)
 }
 
 struct ast *
-newnum(double d)
+newdouble(double d)
 {
-  struct numval *a = malloc(sizeof(struct numval));
+  struct doubleval *a = malloc(sizeof(struct doubleval));
+
+  if (!a)
+  {
+    yyerror("out of space");
+    exit(0);
+  }
+  a->nodetype = 'D';
+  a->number = d;
+  return (struct ast *)a;
+}
+
+struct ast *
+newint(int i)
+{
+  struct intval *a = malloc(sizeof(struct intval));
 
   if (!a)
   {
@@ -90,9 +105,11 @@ newnum(double d)
     exit(0);
   }
   a->nodetype = 'K';
-  a->number = d;
+  a->number = i;
   return (struct ast *)a;
 }
+
+
 struct ast *
 newstr(char * s)
 {
@@ -342,7 +359,7 @@ eval(struct ast *a)
   {
     /* constant */
   case 'K':
-    v = ((struct numval *)a)->number;
+    v = ((struct doubleval *)a)->number;
     break;
 
     /* name reference */
@@ -638,9 +655,12 @@ void dumpast(struct ast *a, int level)
 
   switch (a->nodetype)
   {
-    /* constant */
+    /* double */
+  case 'D':
+    printf("double %4.4g\n", ((struct doubleval *)a)->number);
+    break;
   case 'K':
-    printf("number %4.4g\n", ((struct numval *)a)->number);
+    printf("integer %d\n", ((struct intval*)a)->number);
     break;
     /* string */
   case 'S':

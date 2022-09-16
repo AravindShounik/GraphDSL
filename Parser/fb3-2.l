@@ -61,8 +61,8 @@ EXP	([Ee][-+]?[0-9]+)
  "EdgeProp" {yylval.fn = 12;return TYPE;}
  "small"    {yylval.fn = 13;return TYPE;}
  "Node"     {yylval.fn = 14;return TYPE;}
- /* keywords */
 
+ /* keywords */
 "if"        { return IF; }
 "else"      { return ELSE; }
 "while"     { return WHILE; }
@@ -87,9 +87,12 @@ EXP	([Ee][-+]?[0-9]+)
  /* names */
 [a-zA-Z][a-zA-Z0-9]*  { yylval.s = lookup(yytext); return NAME; }
 
- /* number */
+ /* double */
 [0-9]+"."[0-9]*{EXP}? |
-"."?[0-9]+{EXP}? { yylval.d = atof(yytext); return NUMBER; }
+"."[0-9]+{EXP}? { yylval.d = atof(yytext); return DOUBLE; }
+ /* int */
+[1-9][0-9]*     {yylval.i= atoi(yytext); return INT;}
+
 
  /* strings */
 \"(\\.|[^\\"])*\" {yylval.str = (char*)malloc(sizeof(char)*yyleng);

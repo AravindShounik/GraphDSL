@@ -101,12 +101,16 @@ struct rfor_loop
   struct ast *stmt;
 };
 
-struct numval
+struct doubleval
 {
-  int nodetype; /* type K */
+  int nodetype; /* type D */
   double number;
 };
-
+struct intval
+{
+  int nodetype; /* type I */
+  int number;
+};
 struct strval
 {
   int nodetype; /* type S */
@@ -141,7 +145,8 @@ struct ast *newcall(struct symbol *s, struct ast *l);
 struct ast *newref(struct symbol *s);
 struct ast *newasgn(struct symbol *s, struct ast *v);
 struct ast *newinit(int inittype, struct symbol *s, struct ast *v);
-struct ast *newnum(double d);
+struct ast *newdouble(double d);
+struct ast *newint(int i);
 struct ast *newstr(char* s);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);

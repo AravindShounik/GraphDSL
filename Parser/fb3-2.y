@@ -23,7 +23,8 @@
 }
 
 /* declare tokens */
-%token <d> NUMBER
+%token <d> DOUBLE 
+%token <i> INT 
 %token <str> STRING
 %token <s> NAME
 %token <fn> FUNC TYPE
@@ -72,7 +73,8 @@ exp: exp CMP exp          { $$ = newcmp($2, $1, $3); }
    | '|' exp              { $$ = newast('|', $2, NULL); }
    | '(' exp ')'          { $$ = $2; }
    | '-' exp %prec UMINUS { $$ = newast('M', $2, NULL); }
-   | NUMBER               { $$ = newnum($1); }
+   | DOUBLE               { $$ = newdouble($1); }
+   | INT                  { $$ = newint($1); }
    | STRING               { $$ = newstr($1); }
    | FUNC '(' explist ')' { $$ = newfunc($1, $3); }
    | NAME                 { $$ = newref($1); }
