@@ -158,16 +158,16 @@ newarray(struct ast *l)
 struct ast *
 newdef(struct symbol *f)
 {
-  struct funcval *a=malloc(sizeof(struct funcval));
+  struct funcval *a = malloc(sizeof(struct funcval));
 
-  if(!a)
+  if (!a)
   {
     yyerror("out of space");
     exit(0);
   }
   a->nodetype = 'P';
-  a->f=f;
-  return (struct ast*)a;
+  a->f = f;
+  return (struct ast *)a;
 }
 
 struct ast *
@@ -289,6 +289,7 @@ struct ast *settype(int inittype, struct symlist *sl)
   struct symlist *tmp = sl;
   while (tmp)
   {
+    printf("%s ", tmp->sym->name);
     tmp->sym->type = inittype;
     tmp = tmp->next;
   }
@@ -348,7 +349,7 @@ struct ast *rangefor(int nodetype, int typename, struct symbol *d, struct symbol
   return (struct ast *)a;
 }
 
-struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt)
+struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, struct symbol *stSym, struct ast *stmt)
 {
   // symbol d checks :  check for typename . it should be a node or levels
 
@@ -373,7 +374,7 @@ struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g
 
   return (struct ast *)a;
 }
-struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt)
+struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, struct symbol *stSym, struct ast *stmt)
 {
   // symbol d checks :  check for typename . it should be a node or levels
 
@@ -426,7 +427,7 @@ void symlistfree(struct symlist *sl)
 }
 
 /* define a function */
-void dodef(int type,struct symbol *name, struct symlist *syms, struct ast *func)
+void dodef(int type, struct symbol *name, struct symlist *syms, struct ast *func)
 {
   if (name->syms)
     symlistfree(name->syms);
@@ -776,16 +777,16 @@ void dumpast(struct ast *a, int level)
       dumpast(l->l, level);
       l = l->r;
     }
-    dumpast(l,level);
+    dumpast(l, level);
     break;
     /* function def */
   case 'P':
-    printf("defined %s\n",((struct funcval*)a)->f->name);
+    printf("defined %s\n", ((struct funcval *)a)->f->name);
     // struct symlist* syms=f->syms;
     // while(syms){
     //   dumpast(syms->sym->type,level)
     // }
-    dumpast(((struct funcval*)a)->f->func,level);
+    dumpast(((struct funcval *)a)->f->func, level);
     break;
     /* name reference */
   case 'N':

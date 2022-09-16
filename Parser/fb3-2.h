@@ -187,18 +187,18 @@ struct ast *newint(int i);
 struct ast *newedge(int s, int d);
 struct ast *newstr(char *s);
 struct ast *newdef(struct symbol *f);
-struct ast *newarray(struct ast*l);
+struct ast *newarray(struct ast *l);
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
 struct ast *newfor(int nodetype, struct ast *init, struct ast *cond, struct ast *inc, struct ast *stmt);
 struct ast *rangefor(int nodetype, int typename, struct symbol *d, struct symbol *v, struct ast *stmt);
 struct ast *newasgn_ops(int nodetype, struct symbol *l, struct ast *r);
-struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt);
-struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, int typename_stSym, struct symbol *stSym, struct ast *stmt);
+struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, struct symbol *stSym, struct ast *stmt);
+struct ast *bfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g, struct symbol *stSym, struct ast *stmt);
 
 struct ast *settype(int inittype, struct symlist *sl);
 
 /* define a function */
-void dodef(int type,struct symbol *name, struct symlist *syms, struct ast *stmts);
+void dodef(int type, struct symbol *name, struct symlist *syms, struct ast *stmts);
 
 /* evaluate an AST */
 double eval(struct ast *);
