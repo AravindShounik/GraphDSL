@@ -208,9 +208,6 @@ struct ast *settype(int inittype, struct symlist *sl);
 /* define a function */
 void dodef(int type, struct symbol *name, struct symlist *syms, struct ast *stmts);
 
-/* evaluate an AST */
-double eval(struct ast *);
-
 /* delete and free an AST */
 void treefree(struct ast *);
 

@@ -67,6 +67,12 @@ initstmt : TYPE NAME '=' exp ';' { $$ = newinit($1,$2,$4);}
    | TYPE '(' NAME ')' NAME '=' exp ';' {$$ = newginit($1,$3,$5,$7);}
 ;
 
+/* init : NAME          { $$ = }
+   | NAME '=' exp 
+initlist: arg        { $$ = newsymlist($1,NULL); }
+  | arg ',' initlist { $$ = newsymlist($1,$3); }
+; */
+
 stmt: condstmt
    | iterstmt
    | initstmt
