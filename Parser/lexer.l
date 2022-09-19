@@ -104,8 +104,9 @@ EXP	([Ee][-+]?[0-9]+)
                     strcpy(yylval.str,yytext);
                     return STRING; }
 
-"//".*  
+"//".*  {}
 [ \n\t]   /* ignore white space */ 
 \\\n    printf("c> "); /* ignore line continuation */
+"/*"([^*]|\*+[^*/])*\**"*/" {}
 .	{ yyerror("Mystery character %c\n", *yytext); }
 %%
