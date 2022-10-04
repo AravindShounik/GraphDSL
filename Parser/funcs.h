@@ -15,6 +15,7 @@ struct symbol
   char *name;
   double value;
   struct symbol* g;
+  struct ast* v; /* value as an expression */
   struct ast *func;     /* stmt for the function */
   struct symlist *syms; /* list of dummy args */
 };
@@ -34,7 +35,7 @@ struct symlistdef
   struct symlist *sl;
 };
 
-struct symlist *newsymlist(struct symbol *sym, struct symlist *next);
+struct symlist *newsymlist(struct symbol *sym, struct symlist *next, struct ast* v);
 void symlistfree(struct symlist *sl);
 
 /* node types

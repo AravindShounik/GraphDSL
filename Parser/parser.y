@@ -128,12 +128,14 @@ explist: exp
 arg: TYPE NAME { $$ = $2;$2->type = TYPE;}
 ;
 
-arglist: arg        { $$ = newsymlist($1,NULL); }
-  | arg ',' arglist { $$ = newsymlist($1,$3); }
+arglist: arg        { $$ = newsymlist($1,NULL, NULL); }
+  | arg ',' arglist { $$ = newsymlist($1,$3, NULL); }
 ;
 
-symlist: NAME       { $$ = newsymlist($1, NULL); }
- | NAME ',' symlist { $$ = newsymlist($1, $3); }
+symlist: NAME { $$ = newsymlist($1, NULL, NULL); }
+ | NAME '=' exp { $$ = newsymlist($1, NULL, $3); }
+ | NAME '=' exp ',' symlist { $$ = newsymlist($1, $5, $3); }
+ | NAME ',' symlist { $$ = newsymlist($1, $3, NULL); }
 ;
 
 translation_unit: stmt {$$=$1;}
