@@ -69,7 +69,7 @@ struct node
   std::string strvalue{};
   int numvalue{};
   double doublevalue{};
-
+  node_vec params;
   // define constructor and required functions
   template<typename... T>
   node(node_type t, T&&... args) : type(t), params{ std::forward<T>(args)... } {}
@@ -80,7 +80,6 @@ struct node
   node(int v) : type(node::number), numvalue(v) {}
   node(double v) : type(node::double_const), doublevalue(v) {}
 
-  bool is_pure()  const;
 
   node operator%=(expression&& b) && {return node(node_type::copy, std::move(b), std::move(*this));}
 
