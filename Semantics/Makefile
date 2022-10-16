@@ -16,10 +16,10 @@ endif
 YACC     := bison
 YFLAGS   := -v -Wall
 
-ANAME    := calc++
-PNAME    := calc++-parser
-LNAME    := calc++-scanner
-DNAME    := calc++-driver
+ANAME    := main
+PNAME    := parser
+LNAME    := lexer
+DNAME    := driver
 
 ${ANAME}: ${ANAME}.o ${DNAME}.o ${PNAME}.o ${LNAME}.o
 

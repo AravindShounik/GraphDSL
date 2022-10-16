@@ -1,41 +1,41 @@
-#include "calc++-driver.hh"
-#include "calc++-parser.hh"
+#include "driver.hh"
+#include "parser.hh"
 
-calcxx_driver::calcxx_driver ()
+Driver::Driver ()
     : trace_scanning (false), trace_parsing (false)
 {
     variables["one"] = 1;
     variables["two"] = 2;
 }
 
-calcxx_driver::~calcxx_driver ()
+Driver::~Driver ()
 {
 }
 
-int calcxx_driver::parse (const std::string &f)
+int Driver::parse (const std::string &f)
 {
     file = f;
     scan_begin ();
-    yy::gralgo parser (*this);
+    yy::parser parser (*this);
     parser.set_debug_level (trace_parsing);
     int res = parser.parse ();
     scan_end ();
     return res;
 }
 
-void calcxx_driver::error (const yy::location& l, const std::string& m)
+void Driver::error (const yy::location& l, const std::string& m)
 {
     std::cerr << l << ": " << m << std::endl;
 }
 
-void calcxx_driver::error (const std::string& m)
+void Driver::error (const std::string& m)
 {
     std::cerr << m << std::endl;
 }
 
 // CHANGE: functions moved from the bottom of `calc++-scanner.ll`
 
-void calcxx_driver::scan_begin()
+void Driver::scan_begin()
 {
     lexer.set_debug( trace_scanning );
 
@@ -52,7 +52,7 @@ void calcxx_driver::scan_begin()
     }
 }
 
-void calcxx_driver::scan_end ()
+void Driver::scan_end ()
 {
     instream.close();
 }

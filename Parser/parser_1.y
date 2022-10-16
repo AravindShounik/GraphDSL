@@ -390,8 +390,8 @@ initializer
 	;
 
 initializer_list
+	: initializer { $$ = $1; }
 	/* : designation initializer { $$ = } */
-	| initializer { $$ = $1; }
 	/* | initializer_list ',' designation initializer */
 	| initializer_list ',' initializer { $$ = append($1, $3); }
 	;

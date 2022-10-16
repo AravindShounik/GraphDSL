@@ -2,7 +2,7 @@
 
 #ifndef YY_DECL
 #define YY_DECL                                                         \
-    yy::gralgo::symbol_type CalcFlexLexer::yylex(calcxx_driver& driver)
+    yy::parser::symbol_type GrFlexLexer::yylex(Driver& driver)
 #endif
 
 // We need this for yyFlexLexer. If we don't #undef yyFlexLexer, the
@@ -11,16 +11,16 @@
 #undef yyFlexLexer
 #include <FlexLexer.h>
 
-// We need this for the yy::gralgo::symbol_type:
-#include "calc++-parser.hh"
+// We need this for the yy::parser::symbol_type:
+#include "parser.hh"
 
-class CalcFlexLexer : public yyFlexLexer {
+class GrFlexLexer : public yyFlexLexer {
 public:
     // Use the superclass's constructor:
     using yyFlexLexer::yyFlexLexer;
 
     // Provide the interface to `yylex`; `flex` will emit the
     // definition into `calc++-scanner.cc`:
-    yy::gralgo::symbol_type yylex(calcxx_driver& driver);
+    yy::parser::symbol_type yylex(Driver& driver);
 
 };

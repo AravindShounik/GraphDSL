@@ -1,10 +1,10 @@
 #include <iostream>
-#include "calc++-driver.hh"
+#include "driver.hh"
 
 int main (int argc, char *argv[])
 {
     int res = 0;
-    calcxx_driver driver;
+    Driver driver;
     for (int i = 1; i < argc; ++i)
         if (argv[i] == std::string ("-p"))
             driver.trace_parsing = true;
