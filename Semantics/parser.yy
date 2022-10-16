@@ -9,9 +9,89 @@
 
 %code requires
 {
+#include <iostream>
 #include <string>
+#include <map>
+#include <vector>
+#include <algorithm>
+
 class Driver;
+
+enum class id_type {
+  function,
+  parameter,
+  variable
+};
+
+enum class type_name {
+  INT,
+  BOOL,
+  FLOAT,
+  CHAR,
+  VOID,
+  GRAPH,
+  DGRAPH,
+  NODE_SET,
+  NODE_PROP,
+  NODE_SEQ,
+  EDGE_SET,
+  EDGE_PROP,
+  EDGE_SEQ
+};
+struct identifier {
+  id_type type;
+  type_name v_type;
+  std::string name;
+  std::size_t index = 0;
+};
+
+#define ENUM_NODES(f) \
+  f(identifier) f(string) f(number) \
+  f(add) f(neg) f(eq) \
+  f(cor) f(cand) f(loop) \
+  f(addrof) f(deref) \
+  f(fcall) \
+  f(copy) \
+  f(comma) \
+  f(ret)
+
+
+#define f(n) n,
+enum class node_type { ENUM_NODES(f) };
+#undef f
+
+struct node;
+typedef std::vector<struct node> node_vec; 
+struct node
+{
+  node_type type;
+  identifier ident{};
+  std::string strvalue{};
+  int numvalue{};
+
+  // define constructor and required functions
+};
+
+#define f(n) \
+template<typename ...T> \
+node exp_##n(T&& ...args) \
+{ \
+  return node(ex_type::n, std::forward<T>((args)...)); \
+} \
+ENUM_NODES(f)
+#undef f
+
+struct function 
+{
+  std::string name;
+  unsigned num_params = 0;
+  unsigned num_vars = 0;
+  node code;
+};
+
+
 }
+
 
 // The parsing context.
 %param { Driver& driver }
@@ -103,8 +183,9 @@ class Driver;
 %token <std::string> IDENTIFIER "identifier" STRING_LITERAL
 %token <int> NUMBER "number"
 %token <double> DOUBLE
-%type  <int> expr
 %type<std::string> identifier
+%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr
+%type<type_name> typename
 
 /* Operator precedence */
 %left  ','

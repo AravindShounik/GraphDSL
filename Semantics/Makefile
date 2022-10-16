@@ -57,4 +57,4 @@ clean:
 	rm -f $(LNAME:=.cc) $(LNAME:=.hh) $(PNAME:=.hh) $(PNAME:=.cc)
 	rm -f $(PNAME:=.output) position.hh stack.hh location.hh
 	rm -f ${ANAME}
-	rm -f smake.* *~ *.o *.i
+	rm -f smake.* *~ *.o *.i *.tab.cc *.tab.hh
