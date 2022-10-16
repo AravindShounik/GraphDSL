@@ -35,7 +35,7 @@ namespace yy { gralgo::symbol_type yylex(); }
 %left  "&&"
 %left  "==" "!="
 %left  '+' '-'
-%left  '*'
+%left  '*' '/' '%'
 %right '&' "++" "--"
 %left  '(' '['
 %token<long>        NUMCONST
@@ -114,6 +114,9 @@ expr: NUMCONST
 |     expr '=' expr
 |     expr '+' expr
 |     expr '-' expr %prec '+'
+|     expr '*' expr
+|     expr '/' expr %prec '*'
+|     expr '%' expr
 |     expr "+=" expr
 |     expr "-=" expr
 |     "++" expr
