@@ -296,7 +296,7 @@ expr: NUMBER
 |     '!' expr  %prec '&'
 |     expr '?' expr ':' expr
 ;
-function: typename identifier '(' paramdecls ')' stmt
+function: typename identifier '(' paramdecls ')' '{' stmt '}' 
 ;
 paramdecls: paramdecl
 |           %empty
