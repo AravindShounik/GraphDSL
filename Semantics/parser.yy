@@ -265,8 +265,8 @@ edge: NUMBER ':' NUMBER
 compound_stmt:  '{'
 |               compound_stmt stmt
 ;
-selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE
-|               IF p_expr stmt ELSE stmt   { $$ = node_cand(M($2), M($3)); }
+selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = node_cand(M($2), M($3)); }
+|               IF p_expr stmt ELSE stmt   
 ;
 iteration_stmt: WHILE p_expr stmt          { $$ = node_loop(M($2), M($3)); }
 |               FOR '(' expr ';' expr ';' expr ')' stmt
