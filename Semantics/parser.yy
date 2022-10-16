@@ -74,9 +74,9 @@ struct node
 
 #define f(n) \
 template<typename ...T> \
-node exp_##n(T&& ...args) \
+node node_##n(T&& ...args) \
 { \
-  return node(ex_type::n, std::forward<T>((args)...)); \
+  return node(node_type::n, std::forward<T>((args)...)); \
 } \
 ENUM_NODES(f)
 #undef f
