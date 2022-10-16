@@ -416,7 +416,7 @@ struct ast *dfs(int nodetype, int typename_d, struct symbol *d, struct symbol *g
 }
 
 struct symlist *
-newsymlist(struct symbol *sym, struct symlist *next)
+newsymlist(struct symbol *sym, struct symlist *next, struct ast* v)
 {
   struct symlist *sl = malloc(sizeof(struct symlist));
 
@@ -427,6 +427,7 @@ newsymlist(struct symbol *sym, struct symlist *next)
   }
   sl->sym = sym;
   sl->next = next;
+  sl->sym->v = v;
   return sl;
 }
 
@@ -518,7 +519,7 @@ void yyerror(char *s, ...)
 
 int main()
 {
-  printf("> ");
+  printf("> \n");
   return yyparse();
 }
 
@@ -532,7 +533,7 @@ void dumpast(struct ast *a, int level)
 
   if (!a)
   {
-    printf("NULL\n");
+    // printf("NULL\n");
     return;
   }
 
@@ -544,7 +545,7 @@ void dumpast(struct ast *a, int level)
     break;
     /* integer */
   case 'K':
-    printf("integer %d\n", ((struct intval *)a)->number);
+    printf("int %d\n", ((struct intval *)a)->number);
     break;
     /* edge */
   case 'E':
@@ -576,7 +577,7 @@ void dumpast(struct ast *a, int level)
     break;
     /* name reference */
   case 'N':
-    printf("ref %s\n", ((struct symref *)a)->s->name);
+    printf("var %s\n", ((struct symref *)a)->s->name);
     break;
 
     /* assignment */
@@ -610,16 +611,22 @@ void dumpast(struct ast *a, int level)
   case '4':
   case '5':
   case '6':
-    printf("binop %c\n", a->nodetype);
+    printf("%c\n", a->nodetype);
+    int tmplevel = level;
     dumpast(a->l, level);
+    level = tmplevel;
     dumpast(a->r, level);
+    level = tmplevel;
     return;
 
   case 1000:
   case 1001:
     printf("binop %s\n", map_logical_op(a->nodetype));
+    int tmplevel1 = level;
     dumpast(a->l, level);
+    level = tmplevel1;
     dumpast(a->r, level);
+    level = tmplevel1;
     return;
 
   case '|':

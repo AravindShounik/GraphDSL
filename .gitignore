@@ -14,4 +14,4 @@ lex.yy.c
 **/*.tab.c
 **/*.tab.h
 
-Parser/test.txt
+Parser/test.*
