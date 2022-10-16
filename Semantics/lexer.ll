@@ -85,6 +85,12 @@ EXP	([Ee][-+]?[0-9]+)
 ">="    { return yy::parser::make_GEQ(loc); }
 "<="    { return yy::parser::make_LEQ(loc); }
 
+
+"continue"     {return yy::parser::make_CONTINUE(loc);}
+"BREAK"     {return yy::parser::make_BREAK(loc);}
+"RETURN"     {return yy::parser::make_RETURN(loc);}
+
+
  /* type specifiers */
 "void"     {return yy::parser::make_VOID(loc);}
 "int"      {return yy::parser::make_INT(loc);}

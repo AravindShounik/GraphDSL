@@ -26,7 +26,7 @@ namespace yy { gralgo::symbol_type yylex(); }
 }
 
 %token             END 0
-%token             FOR "for" WHILE "while" IF "if" ELSE "else" INT "int" FLOAT "float" STRING "string" GRAPH "graph" NODEPROP "nodeprop" NODESET "nodeset" EDGEPROP "edgeprop" EDGESET "edgeset" BFS "bfs" DFS "dfs"
+%token             FOR "for" WHILE "while" IF "if" ELSE "else" INT "int" FLOAT "float" STRING "string" GRAPH "graph" NODEPROP "nodeprop" NODESET "nodeset" EDGEPROP "edgeprop" EDGESET "edgeset" NODESEQ "nodeseq" EDGESEQ "edgeseq" BFS "bfs" DFS "dfs"
 %token             OR "||"  AND "&&"  EQ "=="  NE "!="  PP "++"  MM "--"  PL_EQ "+="  MI_EQ "-="
 %token             CONTINUE "continue" BREAK "break" RETURN "return" 
 %left  ','
@@ -73,18 +73,18 @@ empty_stmt: ';'
 vardec_stmt: typename vardec1
 |            vardec_stmt ',' vardec1
 ;
-vardec1: identifier '=' initializer
-|        identifier
+vardec1: identifier '=' initializer ';'
+|        identifier ';'
 ;
 initializer: expr
-/* |            edge */
-/* |            '{' initializer_list '}' */
+|            edge
+|            '{' initializer_list '}'
 ;
 initializer_list: initializer
 |                 initializer_list ',' initializer
 ;
-/* edge: NUMCONST ':' NUMCONST
-; */
+edge: NUMCONST ':' NUMCONST
+;
 
 compound_stmt:  '{'
 |               compound_stmt stmt
@@ -145,10 +145,12 @@ typename: INT
 |         FLOAT
 |         STRING
 |         GRAPH
-/* |         NODEPROP '<' identifier '>'
-|         EDGEPROP '<' identifier '>'
+|         NODEPROP '<' identifier '>'
 |         NODESET '<' identifier '>'
-|         EDGESET '<' identifier '>' */
+|         NODESEQ '<' identifier '>'
+|         EDGEPROP '<' identifier '>'
+|         EDGESET '<' identifier '>'
+|         EDGESEQ '<' identifier '>'
 ;
 identifier: IDENTIFIER;
 

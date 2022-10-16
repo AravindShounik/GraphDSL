@@ -69,6 +69,11 @@ class Driver;
   EQ "=="
   GEQ ">="
   LEQ "<="
+
+  BREAK "break"
+  CONTINUE "continue"
+  RETURN "return"
+  
   VOID "void"
   INT "int"
   FLOAT "float"
@@ -98,7 +103,22 @@ class Driver;
 %token <std::string> IDENTIFIER "identifier" STRING_LITERAL
 %token <int> NUMBER "number"
 %token <double> DOUBLE
-%type  <int> exp
+%type  <int> expr
+%type<std::string> identifier
+
+/* Operator precedence */
+%left  ','
+%right '?' ':' '=' "+=" "-="
+%left  "||"
+%left  "&&"
+%left  "==" "!="
+%left  '+' '-'
+%left  '*' '/' '%'
+%right '&' "++" "--"
+%left  '(' '['
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
 
 // No %destructors are needed, since memory will be reclaimed by the
 // regular destructors.
@@ -106,26 +126,119 @@ class Driver;
 
 // Grammar:
 %%
-%start unit;
-unit: assignments exp  { driver.result = $2; };
+%start program;
 
-assignments:
-  %empty                 {}
-| assignments assignment {};
+program: declarations;
+declarations: declarations declaration
+|             %empty
+;
+declaration: vardec_stmt
+|            function
+;
+stmt: compound_stmt '}'
+|     selection_stmt
+|     jump_stmt
+|     expression_stmt
+|     empty_stmt
+|     vardec_stmt
+|     iteration_stmt
+;
+expression_stmt: exprs ';'
+;
+jump_stmt: CONTINUE ';'
+|          BREAK ';'
+|          RETURN ';'
+|          RETURN expr ';'
+;
+empty_stmt: ';'
+;
+vardec_stmt: typename vardec1
+|            vardec_stmt ',' vardec1
+;
+vardec1: identifier '=' initializer ';'
+|        identifier ';'
+;
+initializer: expr
+|            edge
+|            '{' initializer_list '}'
+;
+initializer_list: initializer
+|                 initializer_list ',' initializer
+;
+edge: NUMBER ':' NUMBER
+;
 
-assignment:
-  "identifier" "=" exp { driver.variables[$1] = $3; };
+compound_stmt:  '{'
+|               compound_stmt stmt
+;
+selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE
+|               IF p_expr stmt ELSE stmt 
+;
+iteration_stmt: WHILE p_expr stmt
+|               FOR '(' expr ';' expr ';' expr ')' stmt
+|               FOR '(' typename identifier ':' identifier ')' stmt
+|               BFS '(' typename identifier ':' identifier ')' stmt
+|               DFS '(' typename identifier ':' identifier ')' stmt
+;
+p_expr: '(' expr ')'
+;
+exprs: expr
+|      exprs ',' expr
+;
 
-%left "+" "-";
-%left "*" "/";
-exp:
-  exp "+" exp   { $$ = $1 + $3; }
-| exp "-" exp   { $$ = $1 - $3; }
-| exp "*" exp   { $$ = $1 * $3; }
-| exp "/" exp   { $$ = $1 / $3; }
-| "(" exp ")"   { std::swap ($$, $2); }
-| "identifier"  { $$ = driver.variables[$1]; }
-| "number"      { std::swap ($$, $1); };
+expr: NUMBER
+|     STRING_LITERAL
+|     identifier
+|     '(' exprs ')'
+|     expr '[' exprs ']'
+|     expr '(' ')'
+|     expr '(' exprs ')'
+|     expr '=' expr
+|     expr '+' expr
+|     expr '-' expr %prec '+'
+|     expr '*' expr
+|     expr '/' expr %prec '*'
+|     expr '%' expr
+|     expr "+=" expr
+|     expr "-=" expr
+|     "++" expr
+|     "--" expr %prec "++"
+|     expr "++" 
+|     expr "--" %prec "++"
+|     expr "||" expr
+|     expr "&&" expr
+|     expr "==" expr
+|     expr "!=" expr %prec "=="
+|     '&' expr
+|     '*' expr  %prec '&'
+|     '-' expr  %prec '&'
+|     '!' expr  %prec '&'
+|     expr '?' expr ':' expr
+;
+function: typename identifier '(' paramdecls ')' stmt
+;
+paramdecls: paramdecl
+|           %empty
+;
+paramdecl:  paramdecl ',' typename identifier
+|           typename identifier
+;
+typename: VOID
+|         INT
+|         CHAR
+|         FLOAT
+|         STRING
+|         GRAPH
+|         DGRAPH
+|         NODE_PROP '<' identifier '>'
+|         NODE_SET '<' identifier '>'
+|         NODE_SEQ '<' identifier '>'
+|         EDGE_PROP '<' identifier '>'
+|         EDGE_SET '<' identifier '>'
+|         EDGE_SEQ '<' identifier '>'
+;
+identifier: IDENTIFIER;
+
 %%
 
 // Register errors to the driver:
