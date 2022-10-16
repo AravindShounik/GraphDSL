@@ -77,6 +77,12 @@ struct node
   node()  : type(node_type::nop)  {}
   node(const identifier& i) : type(node_type::ident), ident(i)  {}
   node(identifier&& i)  : type(node_type::string), ident(std::move(i))  {}
+  node(int v) : type(node::number), numvalue(v) {}
+  node(double v) : type(node::double_const), doublevalue(v) {}
+
+  bool is_pure()  const;
+
+  node operator%=(expression&& b) && {return node(node_type::copy, std::move(b), std::move(*this));}
 
 };
 
