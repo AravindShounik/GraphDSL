@@ -1,7 +1,7 @@
 all: 
 	bison -d -t parser.y
 	flex lexer.l
-	gcc lex.yy.c parser.tab.c funcs.c -lm
+	g++ lex.yy.c parser.tab.c funcs.c -lm
 
 clean:
 	rm -f parser \

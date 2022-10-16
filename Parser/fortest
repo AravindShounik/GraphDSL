@@ -1,0 +1,2 @@
+node(G) pranv = 1;
+BFS(node x:G,src) {a=1;}
