@@ -68,8 +68,16 @@ struct node
   identifier ident{};
   std::string strvalue{};
   int numvalue{};
+  double doublevalue{};
 
   // define constructor and required functions
+  template<typename... T>
+  node(node_type t, T&&... args) : type(t), params{ std::forward<T>(args)... } {}
+
+  node()  : type(node_type::nop)  {}
+  node(const identifier& i) : type(node_type::ident), ident(i)  {}
+  node(identifier&& i)  : type(node_type::string), ident(std::move(i))  {}
+
 };
 
 #define f(n) \
@@ -182,7 +190,7 @@ struct function
 // Use variant-based semantic values: %type and %token expect genuine types
 %token <std::string> IDENTIFIER "identifier" STRING_LITERAL
 %token <int> NUMBER "number"
-%token <double> DOUBLE
+%token <double> DOUBLE_CONST "double_const"
 %type<std::string> identifier
 %type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr
 %type<type_name> typename
