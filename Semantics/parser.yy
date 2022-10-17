@@ -83,7 +83,7 @@ struct node
   node(identifier&& i)  : type(node_type::string), ident(std::move(i))  {}
   node(int v) : type(node_type::number), numvalue(v) {}
   node(double v) : type(node_type::double_const), doublevalue(v) {}
-
+  node(std::string&& v) : type(node_type::string), strvalue(std::move(v)) {}
 
   node operator%=(node&& b) && {return node(node_type::copy, std::move(b), std::move(*this));}
 

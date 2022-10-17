@@ -129,7 +129,7 @@ EXP	([Ee][-+]?[0-9]+)
 }
 
 [0-9]+"."[0-9]*{EXP}? |
-"."[0-9]+{EXP}? { return yy::parser::make_DOUBLE(atof(yytext), loc); }
+"."[0-9]+{EXP}? { return yy::parser::make_DOUBLE_CONST(atof(yytext), loc); }
 
  /* strings */
 \"(\\.|[^\\"])*\" {return yy::parser::make_STRING_LITERAL(yytext, loc);}
