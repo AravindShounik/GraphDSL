@@ -53,6 +53,7 @@ struct identifier {
   f(fcall) \
   f(copy) \
   f(comma) \
+  f(mul) f(div) f(mod)\
   f(ret)
 
 
@@ -276,23 +277,23 @@ iteration_stmt: WHILE p_expr stmt          { $$ = node_loop(M($2), M($3)); }
 ;
 p_expr: '(' expr ')'
 ;
-exprs: expr
+exprs: expr                     { $$ = M($1); };
 |      exprs ',' expr
 ;
 
-expr: NUMBER
-|     STRING_LITERAL
-|     identifier
-|     '(' exprs ')'
-|     expr '[' exprs ']'
-|     expr '(' ')'
+expr: NUMBER                    { $$ = $1;    }
+|     STRING_LITERAL            { $$ = M($1); }
+|     identifier                // { $$ = ctx.use($1);   }
+|     '(' exprs ')'             { $$ = M($2); }
+|     expr '[' exprs ']'        { $$ = node_deref(node_add(M($1), M($3))); }
+|     expr '(' ')'              { $$ = node_fcall(M($1)); }
 |     expr '(' exprs ')'
-|     expr '=' expr            { $$ = M($1) %= M($3); }
-|     expr '+' expr            { $$ = node_add( M($1), M($3)); }
-|     expr '-' expr %prec '+'  { $$ = node_add( M($1), node_neg(M($3))); }
-|     expr '*' expr
-|     expr '/' expr %prec '*'
-|     expr '%' expr
+|     expr '=' expr             { $$ = M($1) %= M($3); }
+|     expr '+' expr             { $$ = node_add( M($1), M($3)); }
+|     expr '-' expr %prec '+'   { $$ = node_add( M($1), node_neg(M($3))); }
+|     expr '*' expr             { $$ = node_mul( M($1), M($3)); }
+|     expr '/' expr %prec '*'   { $$ = node_div( M($1), M($3)); }
+|     expr '%' expr             { $$ = node_mod( M($1), M($3));}
 |     expr "+=" expr            //{ if(!$3.is_pure()) { $$ = ctx.temp() %= node_addrof(M($1)); $1 = node_deref($$.params.back()); } $$ = node_comma(M($$), M($1) %= node_add(C($1), M($3))); }
 |     expr "-=" expr            //{ if(!$3.is_pure()) { $$ = ctx.temp() %= node_addrof(M($1)); $1 = node_deref($$.params.back()); } $$ = node_comma(M($$), M($1) %= node_add(C($1), node_neg(M($3)))); }
 |     "++" expr                 //{ if(!$2.is_pure()) { $$ = ctx.temp() %= node_addrof(M($2)); $2 = node_deref($$.params.back()); } $$ = node_comma(M($$), M($2) %= node_add(C($2),  1l)); }
@@ -331,7 +332,7 @@ typename: VOID
 |         EDGE_SET '<' identifier '>'
 |         EDGE_SEQ '<' identifier '>'
 ;
-identifier: IDENTIFIER;
+identifier: IDENTIFIER               { $$ = M($1); };
 
 %%
 
