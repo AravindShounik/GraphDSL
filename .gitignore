@@ -15,3 +15,11 @@ lex.yy.c
 **/*.tab.h
 
 Parser/test.*
+
+
+Semantics/location.hh
+Semantics/parser.cc
+Semantics/parser.hh
+Semantics/position.hh
+Semantics/stack.hh
+Semantics/parser.output

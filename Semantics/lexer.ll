@@ -33,7 +33,7 @@ static yy::location loc;
 %option noyywrap nounput batch debug noinput
 
 /* Regex abbreviations: */
-id    [a-zA-Z][a-zA-Z_0-9]*
+id    [a-zA-Z_][a-zA-Z_0-9]*
 int   [0-9]+
 blank [ \t]
 EXP	([Ee][-+]?[0-9]+)
