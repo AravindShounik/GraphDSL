@@ -12,6 +12,8 @@
 // lexer class:
 #include "GrFlexLexer.hh"
 
+#include "context.hh"
+
 // Conducting the whole scanning and parsing of Calc++.
 class Driver
 {
@@ -19,7 +21,7 @@ public:
     Driver ();
     virtual ~Driver ();
     
-    std::map<std::string, int> variables;
+    context ctx;
     
     int result;
     

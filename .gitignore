@@ -5,6 +5,7 @@
 
 a.out
 **/.a.out
+**/*.o
 
 lex.yy.c
 **/.lex.c
@@ -16,10 +17,11 @@ lex.yy.c
 
 Parser/test.*
 
-
+Semantics/lexer.cc
 Semantics/location.hh
 Semantics/parser.cc
 Semantics/parser.hh
 Semantics/position.hh
 Semantics/stack.hh
 Semantics/parser.output
+Semantics/main

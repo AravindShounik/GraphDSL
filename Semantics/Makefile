@@ -20,19 +20,20 @@ ANAME    := main
 PNAME    := parser
 LNAME    := lexer
 DNAME    := driver
+CNAME    := context
 
-${ANAME}: ${ANAME}.o ${DNAME}.o ${PNAME}.o ${LNAME}.o
+${ANAME}: ${ANAME}.o ${DNAME}.o ${PNAME}.o ${LNAME}.o ${CNAME}.o
 
-objs: ${PNAME}.o ${LNAME}.o ${DNAME}.o ${ANAME}.o
+objs: ${PNAME}.o ${LNAME}.o ${DNAME}.o ${ANAME}.o ${CNAME}.o
 
 # Application dependencies:
-${ANAME}.o: ${ANAME}.cc ${DNAME}.o
+${ANAME}.o: ${ANAME}.cc ${DNAME}.o ${CNAME}.o
 
 # Driver dependencies:
-${DNAME}.o: ${DNAME}.cc ${DNAME}.hh ${PNAME}.hh
+${DNAME}.o: ${DNAME}.cc ${DNAME}.hh ${PNAME}.hh ${CNAME}.hh
 
 # Parser dependencies:
-${PNAME}.o: ${PNAME}.cc ${PNAME}.hh
+${PNAME}.o: ${PNAME}.cc ${PNAME}.hh ${CNAME}.hh
 
 # Lexer dependencies:
 ${LNAME}.o: ${LNAME}.cc ${PNAME}.hh 
@@ -54,7 +55,7 @@ ${LNAME}.o: ${LNAME}.cc ${PNAME}.hh
 
 
 clean:
-	rm -f $(LNAME:=.cc) $(LNAME:=.hh) $(PNAME:=.hh) $(PNAME:=.cc)
+	rm -f $(LNAME:=.cc) $(LNAME:=.hh) $(PNAME:=.hh) $(PNAME:=.cc) 
 	rm -f $(PNAME:=.output) position.hh stack.hh location.hh
 	rm -f ${ANAME}
 	rm -f smake.* *~ *.o *.i *.tab.cc *.tab.hh

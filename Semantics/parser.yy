@@ -57,7 +57,7 @@ struct identifier {
   f(copy) \
   f(comma) \
   f(mul) f(div) f(mod) \
-  f(ret) f(nop) 
+  f(ret) f(br) f(cont) f(nop) 
 
 
 #define f(n) n,
@@ -131,46 +131,7 @@ struct function
 #include "driver.hh"
 #define yylex driver.lexer.yylex
 
-struct context
-{
-    yy::location loc;
-    std::vector<std::map<std::string, identifier>> scopes;
-    std::vector<function> func_list;
-    unsigned tempcounter = 0;
-    function fun;
-    std::vector<std::pair<yy::location,std::string>> error_list;
-public:
-    const identifier& define(const std::string& name, identifier&& f)
-    {
-        auto r = scopes.back().emplace(name, std::move(f));
-        if(!r.second) error_list.emplace_back(loc, "Duplicate definition <"+name+">");
-        return r.first->second;
-    }
-    node def(const std::string& name,type_name type)     { return define(name, identifier{id_type::variable,type, fun.num_vars++,   name}); }
-    node defun(const std::string& name)   { return define(name, identifier{id_type::function, type_name::FUNC,  func_list.size(), name}); }
-    node defparm(const std::string& name,type_name type) { return define(name, identifier{id_type::parameter,type, fun.num_params++, name}); }
-    node temp()                           { return def("$I" + std::to_string(tempcounter++), type_name::INT); }
-    node use(const std::string& name)
-    {
-        for(auto j = scopes.crbegin(); j != scopes.crend(); ++j)
-        {
-          auto i = j->find(name);
-          if(i != j->end())
-            return i->second;
-        }
-        error_list.emplace_back(loc, "Undefined identifier <"+name+">");
-    }
-    void add_function(std::string&& name, node&& code,type_name ret)
-    {
-        fun.code = n_comma(std::move(code), n_ret(0)); // Add implicit "return 0;" at the end
-        fun.name = std::move(name);
-        fun.ret_type = ret;
-        func_list.push_back(std::move(fun));
-        fun = {};
-    }
-    void operator ++() { scopes.emplace_back(); } // Enter scope
-    void operator --() { scopes.pop_back();     } // Exit scope
-};
+#define ctx driver.ctx
 #define M(x) std::move(x)
 #define C(x) node(x)
 }
@@ -244,7 +205,7 @@ public:
 %token <int> NUMBER "number"
 %token <double> DOUBLE_CONST "double_const"
 %type<std::string> identifier
-%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr
+%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr 
 %type<type_name> typename
 
 /* Operator precedence */
@@ -269,14 +230,38 @@ public:
 %%
 %start program;
 
-program: declarations;
-declarations: declarations declaration
+program: { ++ctx; } declarations {--ctx; };
+declarations: declarations declaration { }
 |             %empty
 ;
 declaration: vardec_stmt
 |            function
 ;
-stmt: compound_stmt '}'
+
+function: typename identifier { ctx.defun($2); ++ctx; } '(' paramdecls ')' '{' stmt '}' { ctx.add_function(M($2), M($8), $1); --ctx; } 
+;
+paramdecls: paramdecl
+|           %empty
+;
+paramdecl:  paramdecl ',' typename identifier { ctx.defparam($4, $3); }
+|           typename identifier { ctx.defparam($2, $1); }
+;
+typename: VOID
+|         INT
+|         CHAR
+|         FLOAT
+|         STRING
+|         GRAPH
+|         DGRAPH
+|         NODE_PROP '<' identifier '>'
+|         NODE_SET '<' identifier '>'
+|         NODE_SEQ '<' identifier '>'
+|         EDGE_PROP '<' identifier '>'
+|         EDGE_SET '<' identifier '>'
+|         EDGE_SEQ '<' identifier '>'
+;
+
+stmt: compound_stmt '}' { $$ = M($1); --ctx; }
 |     selection_stmt
 |     jump_stmt
 |     expression_stmt
@@ -284,7 +269,7 @@ stmt: compound_stmt '}'
 |     vardec_stmt
 |     iteration_stmt
 ;
-expression_stmt: exprs ';'
+expression_stmt: exprs ';' { $$ = M($1); }
 ;
 jump_stmt: CONTINUE ';'
 |          BREAK ';'
@@ -356,28 +341,7 @@ expr: NUMBER                    { $$ = $1;    }
 |     '!' expr  %prec '&'       { $$ = n_eq(M($2), 0); }
 |     expr '?' expr ':' expr    //{ auto i = ctx.temp(); $$ = node_comma(node_cor(node_cand(M($1), node_comma(C(i) %= M($3), 1l)), C(i) %= M($5)), C(i)); }
 ;
-function: typename identifier '(' paramdecls ')' '{' stmt '}' 
-;
-paramdecls: paramdecl
-|           %empty
-;
-paramdecl:  paramdecl ',' typename identifier
-|           typename identifier
-;
-typename: VOID
-|         INT
-|         CHAR
-|         FLOAT
-|         STRING
-|         GRAPH
-|         DGRAPH
-|         NODE_PROP '<' identifier '>'
-|         NODE_SET '<' identifier '>'
-|         NODE_SEQ '<' identifier '>'
-|         EDGE_PROP '<' identifier '>'
-|         EDGE_SET '<' identifier '>'
-|         EDGE_SEQ '<' identifier '>'
-;
+
 identifier: IDENTIFIER               { $$ = M($1); };
 
 %%

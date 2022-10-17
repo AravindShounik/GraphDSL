@@ -4,13 +4,13 @@
 Driver::Driver ()
     : trace_scanning (false), trace_parsing (false)
 {
-    variables["one"] = 1;
-    variables["two"] = 2;
+  
 }
 
 Driver::~Driver ()
 {
 }
+
 
 int Driver::parse (const std::string &f)
 {
