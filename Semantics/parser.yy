@@ -238,7 +238,7 @@ declaration: vardec_stmt
 |            function
 ;
 
-function: typename identifier { ctx.defun($2); ++ctx; } '(' paramdecls ')' '{' stmt '}' { ctx.add_function(M($2), M($8), $1); --ctx; } 
+function: typename identifier { ctx.defun($2); ++ctx; } '(' paramdecls ')' compound_stmt '}' { ctx.add_function(M($2), M($7), $1); --ctx; } 
 ;
 paramdecls: paramdecl
 |           %empty
