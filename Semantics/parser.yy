@@ -140,22 +140,22 @@ struct function
 %define api.token.prefix {TOK_}
 %token
   END  0  "end of file"
-  ASSIGN  "="
-  MINUS   "-"
-  PLUS    "+"
-  STAR    "*"
-  SLASH   "/"
-  LPAREN  "("
-  RPAREN  ")"
-  MOD "%"
-  B_OR "|"
-  COMMA ","
-  SEMI_COLON ";"
-  COLON ":"
-  LBRACE "{"
-  RBRACE "}"
-  LSB "["
-  RSB "]"
+  ASSIGN  '='
+  MINUS   '-'
+  PLUS    '+'
+  STAR    '*'
+  SLASH   '/'
+  LPAREN  '('
+  RPAREN  ')'
+  MOD '%'
+  B_OR '|'
+  COMMA ','
+  SEMI_COLON ';'
+  COLON ':'
+  LBRACE '{'
+  RBRACE '}'
+  LSB '['
+  RSB ']'
   AND "&&"
   OR "||"
   PP "++"
@@ -238,7 +238,7 @@ declaration: vardec_stmt
 |            function
 ;
 
-function: typename identifier { ctx.defun($2); ++ctx; } '(' paramdecls ')' compound_stmt '}' { ctx.add_function(M($2), M($7), $1); --ctx; } 
+function: typename identifier { ctx.defun($2); ++ctx; } LPAREN paramdecls RPAREN LBRACE stmt RBRACE { ctx.add_function(M($2), M($8), $1); --ctx; } 
 ;
 paramdecls: paramdecl
 |           %empty
@@ -271,12 +271,12 @@ stmt: compound_stmt '}' { $$ = M($1); --ctx; }
 ;
 expression_stmt: exprs ';' { $$ = M($1); }
 ;
-jump_stmt: CONTINUE ';'
-|          BREAK ';'
-|          RETURN ';'
+jump_stmt: CONTINUE ';' { $$ = n_cont(); }
+|          BREAK ';'  { $$ = n_br(); }
+|          RETURN ';'  { $$ = n_ret(); }
 |          RETURN expr ';'                  { $$ = n_ret(M($2));         }
 ;
-empty_stmt: ';'
+empty_stmt: SEMI_COLON
 ;
 vardec_stmt: typename vardec1
 |            vardec_stmt ',' vardec1
@@ -294,8 +294,8 @@ initializer_list: initializer
 edge: NUMBER ':' NUMBER
 ;
 
-compound_stmt:  '{'
-|               compound_stmt stmt
+compound_stmt:  '{' { $$ = n_comma(); ++ctx; }
+|               compound_stmt stmt { $$ = M($1); $$.params.push_back(M($2)); }
 ;
 selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cand(M($2), M($3)); }
 |               IF p_expr stmt ELSE stmt   
