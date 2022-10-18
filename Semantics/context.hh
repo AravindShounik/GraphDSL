@@ -23,4 +23,6 @@ public:
   void add_function(std::string &&name, node &&code, type_name ret);
   void operator++(); // Enter scope
   void operator--(); // Exit scope
+
+  void printFuncList();
 };
