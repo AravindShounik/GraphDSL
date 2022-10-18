@@ -177,6 +177,7 @@ struct function
   
   VOID "void"
   INT "int"
+  BOOL "bool"
   FLOAT "float"
   CHAR "char"
   STRING "string"
@@ -230,7 +231,7 @@ struct function
 %%
 %start program;
 
-program: { ++ctx; } declarations {--ctx; };
+program: { ++ctx; } declarations {--ctx; ctx.printFuncList(); };
 declarations: declarations declaration { }
 |             %empty
 ;
@@ -238,16 +239,17 @@ declaration: vardec_stmt
 |            function
 ;
 
-function: typename identifier { ctx.defun($2); ++ctx; } LPAREN paramdecls RPAREN LBRACE stmt RBRACE { ctx.add_function(M($2), M($8), $1); --ctx; } 
+function: typename identifier { ctx.defun($2); ++ctx; } LPAREN paramdecls RPAREN compound_stmt RBRACE { ctx.add_function(M($2), M($7), $1); --ctx; } 
 ;
 paramdecls: paramdecl
 |           %empty
 ;
-paramdecl:  paramdecl ',' typename identifier { ctx.defparam($4, $3); }
+paramdecl:  paramdecl COMMA typename identifier { ctx.defparam($4, $3); }
 |           typename identifier { ctx.defparam($2, $1); }
 ;
 typename: VOID
 |         INT
+|         BOOL
 |         CHAR
 |         FLOAT
 |         STRING
@@ -261,47 +263,47 @@ typename: VOID
 |         EDGE_SEQ '<' identifier '>'
 ;
 
-stmt: compound_stmt '}' { $$ = M($1); --ctx; }
+stmt: compound_stmt RBRACE { $$ = M($1); --ctx; }
 |     selection_stmt
 |     jump_stmt
 |     expression_stmt
 |     empty_stmt
-|     vardec_stmt
+|     vardec_stmt SEMI_COLON
 |     iteration_stmt
 ;
-expression_stmt: exprs ';' { $$ = M($1); }
+expression_stmt: exprs SEMI_COLON { $$ = M($1); }
 ;
-jump_stmt: CONTINUE ';' { $$ = n_cont(); }
-|          BREAK ';'  { $$ = n_br(); }
-|          RETURN ';'  { $$ = n_ret(); }
-|          RETURN expr ';'                  { $$ = n_ret(M($2));         }
+jump_stmt: CONTINUE SEMI_COLON { $$ = n_cont(); }
+|          BREAK SEMI_COLON  { $$ = n_br(); }
+|          RETURN SEMI_COLON  { $$ = n_ret(); }
+|          RETURN expr SEMI_COLON                  { $$ = n_ret(M($2));         }
 ;
 empty_stmt: SEMI_COLON
 ;
 vardec_stmt: typename vardec1
-|            vardec_stmt ',' vardec1
+|            vardec_stmt COMMA vardec1
 ;
-vardec1: identifier '=' initializer ';'
-|        identifier ';'
+vardec1: identifier ASSIGN initializer
+|        identifier
 ;
 initializer: expr
 |            edge
-|            '{' initializer_list '}'
+|            LBRACE initializer_list RBRACE
 ;
 initializer_list: initializer
-|                 initializer_list ',' initializer
+|                 initializer_list COMMA initializer
 ;
 edge: NUMBER ':' NUMBER
 ;
 
-compound_stmt:  '{' { $$ = n_comma(); ++ctx; }
+compound_stmt:  LBRACE { $$ = n_comma(); ++ctx; }
 |               compound_stmt stmt { $$ = M($1); $$.params.push_back(M($2)); }
 ;
 selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cand(M($2), M($3)); }
 |               IF p_expr stmt ELSE stmt   
 ;
 iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
-|               FOR '(' expr ';' expr ';' expr ')' stmt
+|               FOR '(' expr SEMI_COLON expr SEMI_COLON expr ')' stmt
 |               FOR '(' typename identifier ':' identifier ')' stmt
 |               BFS '(' typename identifier ':' identifier ')' stmt
 |               DFS '(' typename identifier ':' identifier ')' stmt
@@ -309,7 +311,7 @@ iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
 p_expr: '(' expr ')'
 ;
 exprs: expr                     { $$ = M($1); };
-|      exprs ',' expr
+|      exprs COMMA expr
 ;
 
 expr: NUMBER                    { $$ = $1;    }
@@ -319,7 +321,7 @@ expr: NUMBER                    { $$ = $1;    }
 |     expr '[' exprs ']'        { $$ = n_deref(n_add(M($1), M($3))); }
 |     expr '(' ')'              { $$ = n_fcall(M($1)); }
 |     expr '(' exprs ')'
-|     expr '=' expr             { $$ = M($1) %= M($3); }
+|     expr ASSIGN expr             { $$ = M($1) %= M($3); }
 |     expr '+' expr             { $$ = n_add( M($1), M($3)); }
 |     expr '-' expr %prec '+'   { $$ = n_add( M($1), n_neg(M($3))); }
 |     expr '*' expr             { $$ = n_mul( M($1), M($3)); }

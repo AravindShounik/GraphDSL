@@ -94,6 +94,7 @@ EXP	([Ee][-+]?[0-9]+)
  /* type specifiers */
 "void"     {return yy::parser::make_VOID(loc);}
 "int"      {return yy::parser::make_INT(loc);}
+"bool"      {return yy::parser::make_BOOL(loc);}
 "float"    {return yy::parser::make_FLOAT(loc);}
 "char"    {return yy::parser::make_CHAR(loc);}
 "string"    {return yy::parser::make_STRING(loc);}
