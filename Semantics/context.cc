@@ -8,9 +8,9 @@ const identifier &context::define(const std::string &name, identifier &&f)
   return r.first->second;
 }
 
-node context::def(const std::string &name, type_name type)
+node context::def(const std::string &name)
 {
-  return define(name, identifier{id_type::variable, type, fun.num_vars++, name});
+  return define(name, identifier{id_type::variable, temptype, fun.num_vars++, name});
 }
 
 node context::defun(const std::string &name)
@@ -24,9 +24,10 @@ node context::defparam(const std::string &name, type_name type)
   return define(name, identifier{id_type::parameter, type, fun.num_params++, name});
 }
 
-node context::temp() 
-{ 
-  return def("$I" + std::to_string(tempcounter++), type_name::INT); 
+node context::temp()
+{
+
+  return def("$I" + std::to_string(tempcounter++));
 }
 
 node context::use(const std::string &name)

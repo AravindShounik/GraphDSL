@@ -55,7 +55,7 @@ struct identifier {
   f(addrof) f(deref) \
   f(fcall) \
   f(copy) \
-  f(comma) \
+  f(comma) f(init_list) \
   f(mul) f(div) f(mod) \
   f(ret) f(br) f(cont) f(nop) 
 
@@ -206,7 +206,7 @@ struct function
 %token <int> NUMBER "number"
 %token <double> DOUBLE_CONST "double_const"
 %type<std::string> identifier
-%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr 
+%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr initializer initializer_list vardec1
 %type<type_name> typename
 
 /* Operator precedence */
@@ -280,18 +280,18 @@ jump_stmt: CONTINUE SEMI_COLON { $$ = n_cont(); }
 ;
 empty_stmt: SEMI_COLON
 ;
-vardec_stmt: typename vardec1
-|            vardec_stmt COMMA vardec1
+vardec_stmt: typename vardec1 { ctx.temptype = $1; $$ = n_comma(M($2)); }
+|            vardec_stmt COMMA vardec1 { $$ = M($1); $$.params.push_back(M($3)); ctx.temptype = type_name::INT; }
 ;
-vardec1: identifier ASSIGN initializer
-|        identifier
+vardec1: identifier ASSIGN initializer { $$ = ctx.def($1) %= M($3); }
+|        identifier { $$ = ctx.def($1) %= 0; }
 ;
 initializer: expr
 |            edge
-|            LBRACE initializer_list RBRACE
+|            LBRACE initializer_list RBRACE { $$ = M($2); }
 ;
-initializer_list: initializer
-|                 initializer_list COMMA initializer
+initializer_list: initializer { $$ = n_init_list(M($1)); }
+|                 initializer_list COMMA initializer { $$ = M($1); $$.params.push_back($3); }
 ;
 edge: NUMBER ':' NUMBER
 ;
@@ -303,15 +303,15 @@ selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cand(M($2), M($3)
 |               IF p_expr stmt ELSE stmt   
 ;
 iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
-|               FOR '(' expr SEMI_COLON expr SEMI_COLON expr ')' stmt
-|               FOR '(' typename identifier ':' identifier ')' stmt
-|               BFS '(' typename identifier ':' identifier ')' stmt
-|               DFS '(' typename identifier ':' identifier ')' stmt
+|               FOR '(' expr SEMI_COLON expr SEMI_COLON expr ')' stmt { $$ = n_loop(M($3), M($5), M($7), M($9)); }
+|               FOR '(' typename identifier ':' identifier ')' stmt { $$ = n_loop(M($8)); }
+|               BFS '(' typename identifier ':' identifier ')' stmt { $$ = n_loop(M($8)); }
+|               DFS '(' typename identifier ':' identifier ')' stmt { $$ = n_loop(M($8)); }
 ;
-p_expr: '(' expr ')'
+p_expr: '(' expr ')' { $$ = M($2); }
 ;
-exprs: expr                     { $$ = M($1); };
-|      exprs COMMA expr
+exprs: expr                     { $$ = M($1); }
+|      exprs COMMA expr         { $$ = M($1); $$.params.push_back(M($3)); }
 ;
 
 expr: NUMBER                    { $$ = $1;    }

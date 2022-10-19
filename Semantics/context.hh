@@ -11,11 +11,12 @@ struct context
   std::vector<function> func_list;
   unsigned tempcounter = 0;
   function fun;
+  type_name temptype = type_name::INT;
   std::vector<std::pair<yy::location, std::string>> error_list;
 
 public:
   const identifier &define(const std::string &name, identifier &&f);
-  node def(const std::string &name, type_name type);
+  node def(const std::string &name);
   node defun(const std::string &name);
   node defparam(const std::string &name, type_name type);
   node temp();
