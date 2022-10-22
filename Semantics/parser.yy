@@ -29,6 +29,7 @@ enum class type_name {
   FLOAT,
   CHAR,
   VOID,
+  STRING,
   GRAPH,
   DGRAPH,
   NODE_SET,
@@ -174,7 +175,14 @@ struct function
   BREAK "break"
   CONTINUE "continue"
   RETURN "return"
-  
+  IF "if"
+  ELSE "else"
+  WHILE "while"
+  FOR "for"
+  BFS "BFS"
+  DFS "DFS"
+;
+%token
   VOID "void"
   INT "int"
   BOOL "bool"
@@ -190,12 +198,6 @@ struct function
   EDGE_PROP "edge_prop"
   EDGE_SET "edge_set"
   EDGE_SEQ "edge_seq"
-  IF "if"
-  ELSE "else"
-  WHILE "while"
-  FOR "for"
-  BFS "BFS"
-  DFS "DFS"
   NODES "nodes"
   LEVELS "levels"
   NEIGHBOURS "neighbours"
@@ -247,14 +249,14 @@ paramdecls: paramdecl
 paramdecl:  paramdecl COMMA typename identifier { ctx.defparam($4, $3); }
 |           typename identifier { ctx.defparam($2, $1); }
 ;
-typename: VOID
-|         INT
-|         BOOL
-|         CHAR
-|         FLOAT
-|         STRING
-|         GRAPH
-|         DGRAPH
+typename: VOID { $$ = type_name::VOID; }
+|         INT { $$ = type_name::INT; }
+|         BOOL { $$ = type_name::BOOL; }
+|         CHAR { $$ = type_name::CHAR; }
+|         FLOAT { $$ = type_name::FLOAT; }
+|         STRING { $$ = type_name::STRING; }
+|         GRAPH { $$ = type_name::GRAPH; }
+|         DGRAPH { $$ = type_name::DGRAPH; }
 |         NODE_PROP '<' identifier '>'
 |         NODE_SET '<' identifier '>'
 |         NODE_SEQ '<' identifier '>'
