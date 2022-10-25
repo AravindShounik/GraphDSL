@@ -25,7 +25,7 @@ int Driver::parse (const std::string &f)
 
 void Driver::error (const yy::location& l, const std::string& m)
 {
-    std::cerr << l << ": " << m << std::endl;
+    std::cerr << l.begin.line <<":" << l.begin.column << " error: " << m << std::endl;
 }
 
 void Driver::error (const std::string& m)

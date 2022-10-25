@@ -228,7 +228,7 @@ exprs: expr                     { $$ = M($1); }
 
 expr: NUMBER                    { $$ = $1;    }
 |     STRING_LITERAL            { $$ = M($1); }
-|     identifier                // { $$ = ctx.use($1);   }
+|     identifier                { $$ = ctx.use($1);   }
 |     '(' exprs ')'             { $$ = M($2); }
 |     expr '[' exprs ']'        { $$ = n_deref(n_add(M($1), M($3))); }
 |     expr '(' ')'              { $$ = n_fcall(M($1)); }

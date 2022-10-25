@@ -14,5 +14,7 @@ int main (int argc, char *argv[])
             std::cout << driver.result << std::endl;
         else
             res = 1;
+    for(auto& v : driver.ctx.error_list)
+        driver.error(v.first,v.second);
     return res;
 }
