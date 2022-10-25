@@ -119,7 +119,7 @@ class Driver;
 %token <int> NUMBER "number"
 %token <double> DOUBLE_CONST "double_const"
 %type<std::string> identifier
-%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr initializer initializer_list vardec1
+%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr initializer initializer_list vardec1 edge
 %type<type_name> typename
 
 /* Operator precedence */
@@ -206,7 +206,7 @@ initializer: expr
 initializer_list: initializer { $$ = n_init_list(M($1)); }
 |                 initializer_list COMMA initializer { $$ = M($1); $$.params.push_back($3); }
 ;
-edge: NUMBER ':' NUMBER
+edge: NUMBER COLON NUMBER { $$ = n_edge($1, $3); }
 ;
 
 compound_stmt:  LBRACE { $$ = n_comma(); ++ctx; }
@@ -217,9 +217,9 @@ selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cand(M($2), M($3)
 ;
 iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
 |               FOR '(' expr SEMI_COLON expr SEMI_COLON expr ')' stmt { $$ = n_loop(M($3), M($5), M($7), M($9)); }
-|               FOR '(' typename identifier ':' identifier ')' stmt { $$ = n_loop(M($8)); }
-|               BFS '(' typename identifier ':' identifier ')' stmt { $$ = n_loop(M($8)); }
-|               DFS '(' typename identifier ':' identifier ')' stmt { $$ = n_loop(M($8)); }
+|               FOR '(' typename identifier COLON identifier ')' stmt { $$ = n_loop(M($8)); }
+|               BFS '(' typename identifier COLON identifier ')' stmt { $$ = n_loop(M($8)); }
+|               DFS '(' typename identifier COLON identifier ')' stmt { $$ = n_loop(M($8)); }
 ;
 p_expr: '(' expr ')' { $$ = M($2); }
 ;
@@ -254,7 +254,7 @@ expr: NUMBER                    { $$ = $1;    }
 |     '*' expr  %prec '&'       { $$ = n_deref(M($2));  }
 |     '-' expr  %prec '&'       { $$ = n_neg(M($2));    }
 |     '!' expr  %prec '&'       { $$ = n_eq(M($2), 0); }
-|     expr '?' expr ':' expr    //{ auto i = ctx.temp(); $$ = node_comma(node_cor(node_cand(M($1), node_comma(C(i) %= M($3), 1l)), C(i) %= M($5)), C(i)); }
+|     expr '?' expr COLON expr    //{ auto i = ctx.temp(); $$ = node_comma(node_cor(node_cand(M($1), node_comma(C(i) %= M($3), 1l)), C(i) %= M($5)), C(i)); }
 ;
 
 identifier: IDENTIFIER               { $$ = M($1); };

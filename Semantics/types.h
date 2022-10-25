@@ -43,7 +43,8 @@ struct identifier {
   f(copy) \
   f(comma) f(init_list) \
   f(mul) f(div) f(mod) \
-  f(ret) f(br) f(cont) f(nop) 
+  f(ret) f(br) f(cont) f(nop) \
+  f(edge)
 
 
 #define f(n) n,

@@ -301,6 +301,11 @@ void context::func2(node N, int level)
 
   case 22:
     break;
+  
+  case 23:
+    std::cout << "edge" << std::endl;
+    level++;
+    break;
 
   default:
     break;
