@@ -1,11 +1,11 @@
 int main(int a, int b)
 {
-  int c, d=5;
-  c = e;
+  int c, d=5+e;
 }
 
 
 bool foo(int f, bool c)
 {
-  ;
+  string str = "hello";
+  int a = f + c;
 }

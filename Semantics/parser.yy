@@ -56,6 +56,7 @@ class Driver;
   PLUS    '+'
   STAR    '*'
   SLASH   '/'
+  AMPERSAND '&'
   LPAREN  '('
   RPAREN  ')'
   MOD '%'
@@ -143,7 +144,7 @@ class Driver;
 %%
 %start program;
 
-program: { ++ctx; } declarations {--ctx; ctx.dump_ast(); };
+program: { ++ctx; } declarations { --ctx; ctx.dump_ast(); };
 declarations: declarations declaration { }
 |             %empty
 ;
@@ -192,8 +193,8 @@ jump_stmt: CONTINUE SEMI_COLON { $$ = n_cont(); }
 ;
 empty_stmt: SEMI_COLON
 ;
-vardec_stmt: typename vardec1 { ctx.temptype = $1; $$ = n_comma(M($2)); }
-|            vardec_stmt COMMA vardec1 { $$ = M($1); $$.params.push_back(M($3)); ctx.temptype = type_name::INT; }
+vardec_stmt: typename { ctx.temptype = $1; } vardec1 {  $$ = n_comma(M($3)); }
+|            vardec_stmt COMMA vardec1 { $$ = M($1); $$.params.push_back(M($3)); }
 ;
 vardec1: identifier ASSIGN initializer { $$ = ctx.def($1) %= M($3); }
 |        identifier { $$ = ctx.def($1) %= 0; }
@@ -234,11 +235,11 @@ expr: NUMBER                    { $$ = $1;    }
 |     expr '(' ')'              { $$ = n_fcall(M($1)); }
 |     expr '(' exprs ')'
 |     expr ASSIGN expr             { $$ = M($1) %= M($3); }
-|     expr '+' expr             { $$ = n_add( M($1), M($3)); }
-|     expr '-' expr %prec '+'   { $$ = n_add( M($1), n_neg(M($3))); }
-|     expr '*' expr             { $$ = n_mul( M($1), M($3)); }
-|     expr '/' expr %prec '*'   { $$ = n_div( M($1), M($3)); }
-|     expr '%' expr             { $$ = n_mod( M($1), M($3));}
+|     expr PLUS expr             { $$ = n_add( M($1), M($3)); }
+|     expr MINUS expr %prec '+'   { $$ = n_add( M($1), n_neg(M($3))); }
+|     expr STAR expr             { $$ = n_mul( M($1), M($3)); }
+|     expr SLASH expr %prec '*'   { $$ = n_div( M($1), M($3)); }
+|     expr MOD expr             { $$ = n_mod( M($1), M($3));}
 |     expr "+=" expr            //{ if(!$3.is_pure()) { $$ = ctx.temp() %= node_addrof(M($1)); $1 = node_deref($$.params.back()); } $$ = node_comma(M($$), M($1) %= node_add(C($1), M($3))); }
 |     expr "-=" expr            //{ if(!$3.is_pure()) { $$ = ctx.temp() %= node_addrof(M($1)); $1 = node_deref($$.params.back()); } $$ = node_comma(M($$), M($1) %= node_add(C($1), node_neg(M($3)))); }
 |     "++" expr                 //{ if(!$2.is_pure()) { $$ = ctx.temp() %= node_addrof(M($2)); $2 = node_deref($$.params.back()); } $$ = node_comma(M($$), M($2) %= node_add(C($2),  1l)); }
@@ -249,7 +250,7 @@ expr: NUMBER                    { $$ = $1;    }
 |     expr "&&" expr            { $$ = n_cand(M($1), M($3)); }
 |     expr "==" expr            { $$ = n_eq(  M($1), M($3)); }
 |     expr "!=" expr %prec "==" { $$ = n_eq(n_eq(M($1), M($3)), 0); }
-|     '&' expr                  { $$ = n_addrof(M($2)); }
+|     AMPERSAND expr                  { $$ = n_addrof(M($2)); }
 |     '*' expr  %prec '&'       { $$ = n_deref(M($2));  }
 |     '-' expr  %prec '&'       { $$ = n_neg(M($2));    }
 |     '!' expr  %prec '&'       { $$ = n_eq(M($2), 0); }

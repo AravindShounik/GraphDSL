@@ -64,6 +64,7 @@ EXP	([Ee][-+]?[0-9]+)
 "}"     return yy::parser::make_RBRACE(loc);
 "["     return yy::parser::make_LSB(loc);
 "]"     return yy::parser::make_RSB(loc);
+"&"     return yy::parser::make_AMPERSAND(loc);
 
 
 "&&" {return yy::parser::make_AND(loc); }
