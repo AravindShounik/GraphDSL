@@ -25,3 +25,5 @@ Semantics/position.hh
 Semantics/stack.hh
 Semantics/parser.output
 Semantics/main
+Semantics/parser.tab.cc
+Semantics/parser.tab.hh
