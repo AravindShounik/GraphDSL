@@ -149,7 +149,7 @@ declarations: declarations declaration { }
 |             %empty
 ;
 declaration: function
-|            vardec_stmt SEMI_COLON { $$ = $1; }
+|            vardec_stmt SEMI_COLON { $$ = $1; ctx.global_var_list.push_back($1); }
 ;
 
 function: typename identifier { ctx.defun($2); ++ctx; } LPAREN paramdecls RPAREN compound_stmt RBRACE { ctx.add_function(M($2), M($7), $1); --ctx; } 
@@ -236,6 +236,7 @@ exprs: expr                     { $$ = M($1); }
 ;
 
 expr: NUMBER                    { $$ = $1;    }
+|     DOUBLE_CONST              { $$ = $1; }
 |     STRING_LITERAL            { $$ = M($1); }
 |     identifier                { $$ = ctx.use($1);   }
 |     LPAREN exprs RPAREN             { $$ = M($2); }

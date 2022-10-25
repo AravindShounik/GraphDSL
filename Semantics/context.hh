@@ -10,6 +10,7 @@ struct context
   yy::location loc;
   std::vector<std::map<std::string, identifier>> scopes;
   std::vector<function> func_list;
+  std::vector<node> global_var_list;
   unsigned tempcounter = 0;
   function fun;
   type_name temptype = type_name::INT;

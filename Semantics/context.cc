@@ -318,7 +318,16 @@ void context::dump_ast()
 {
   // printf("%*s", 2 * level, ""); /* indent to this level */
   // level++;
-
+  std::cout << "--------------------------------------------------\n";
+  std::cout << "Global declarations:\n";
+  std::cout << "--------------------------------------------------\n";
+  for(auto& n: global_var_list)
+  {
+    func2(n, 0);
+  }
+  std::cout << "\n\n";
+  std::cout << "--------------------------------------------------\n";
+  std::cout << "Function Declarations\n";
   std::cout << "--------------------------------------------------\n";
   for (auto &f : func_list)
   {
