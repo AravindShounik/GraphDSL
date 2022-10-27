@@ -2,7 +2,7 @@
 
 #ifndef YY_DECL
 #define YY_DECL                                                         \
-    yy::parser::symbol_type GrFlexLexer::yylex(Driver& driver)
+    yy::parser::symbol_type GrFlexLexer::yylex(lexcontext& ctx)
 #endif
 
 // We need this for yyFlexLexer. If we don't #undef yyFlexLexer, the
@@ -20,7 +20,7 @@ public:
     using yyFlexLexer::yyFlexLexer;
 
     // Provide the interface to `yylex`; `flex` will emit the
-    // definition into `calc++-scanner.cc`:
-    yy::parser::symbol_type yylex(Driver& driver);
+    // definition into `context.cc`:
+    yy::parser::symbol_type yylex(lexcontext& ctx);
 
 };

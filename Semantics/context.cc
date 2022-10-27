@@ -25,7 +25,7 @@ std::string ID_Types[] =
         "PARAMETER",
         "VARIABLE"};
 
-const identifier &context::define(const std::string &name, identifier &&f)
+const identifier &lexcontext::define(const std::string &name, identifier &&f)
 {
   auto r = scopes.back().emplace(name, std::move(f));
   if (!r.second)
@@ -33,29 +33,29 @@ const identifier &context::define(const std::string &name, identifier &&f)
   return r.first->second;
 }
 
-node context::def(const std::string &name)
+node lexcontext::def(const std::string &name)
 {
   return define(name, identifier{id_type::variable, temptype, fun.num_vars++, name});
 }
 
-node context::defun(const std::string &name)
+node lexcontext::defun(const std::string &name)
 {
   return define(name, identifier{id_type::function, type_name::FUNC, func_list.size(), name});
 }
 
-node context::defparam(const std::string &name, type_name type)
+node lexcontext::defparam(const std::string &name, type_name type)
 {
   fun.param_types.push_back(type);
   return define(name, identifier{id_type::parameter, type, fun.num_params++, name});
 }
 
-node context::temp()
+node lexcontext::temp()
 {
 
   return def("$I" + std::to_string(tempcounter++));
 }
 
-node context::use(const std::string &name)
+node lexcontext::use(const std::string &name)
 {
   for (auto j = scopes.crbegin(); j != scopes.crend(); ++j)
   {
@@ -67,21 +67,21 @@ node context::use(const std::string &name)
   return {};
 }
 
-void context::add_function(std::string &&name, node &&code, type_name ret)
+void lexcontext::add_function(std::string &&name, node &&code, type_name ret)
 {
   fun.code = std::move(code);
   fun.name = std::move(name);
   fun.ret_type = ret;
-  //   std::cout << "Return Type      : " << Type_Names[context::convert_types_int(fun.ret_type)] << std::endl;
-  // std::cout << context::convert_types_int(ret) << "\n";
+  //   std::cout << "Return Type      : " << Type_Names[lexcontext::convert_types_int(fun.ret_type)] << std::endl;
+  // std::cout << lexcontext::convert_types_int(ret) << "\n";
   func_list.push_back(std::move(fun));
   fun = {};
 }
 
-void context::operator++() { scopes.emplace_back(); } // Enter scope
-void context::operator--() { scopes.pop_back(); }     // Exit scope
+void lexcontext::operator++() { scopes.emplace_back(); } // Enter scope
+void lexcontext::operator--() { scopes.pop_back(); }     // Exit scope
 
-void context::printFuncList()
+void lexcontext::printFuncList()
 {
   int i = 1;
   auto o = [&](type_name t)
@@ -104,7 +104,7 @@ void context::printFuncList()
   }
 }
 
-int context::convert_types_int(type_name T)
+int lexcontext::convert_types_int(type_name T)
 {
   if (T == type_name::INT)
   {
@@ -144,7 +144,7 @@ int context::convert_types_int(type_name T)
   return 8;
 }
 
-int context::convert_id_types_int(id_type T)
+int lexcontext::convert_id_types_int(id_type T)
 {
   if (T == id_type::function)
   {
@@ -164,10 +164,10 @@ int context::convert_id_types_int(id_type T)
   return 3;
 }
 
-void context::func1(function F)
+void lexcontext::func1(function F)
 {
   std::cout << "Function Name    : " << F.name << std::endl;
-  std::cout << "Return Type      : " << Type_Names[context::convert_types_int(F.ret_type)] << std::endl;
+  std::cout << "Return Type      : " << Type_Names[lexcontext::convert_types_int(F.ret_type)] << std::endl;
   std::cout << "No of Paramaters : " << F.num_params << std::endl;
   std::cout << "No of Variables  : " << F.num_vars << std::endl;
 
@@ -177,25 +177,25 @@ void context::func1(function F)
     std::cout << "\nParameter types   :\n";
     while (index_parameters < F.num_params)
     {
-      std::cout << "  " << Type_Names[context::convert_types_int(F.param_types[index_parameters++])] << std::endl;
+      std::cout << "  " << Type_Names[lexcontext::convert_types_int(F.param_types[index_parameters++])] << std::endl;
     }
   }
 
   node code = F.code;
   std::cout << "\nCode dump:\n";
-  context::func2(code, 0);
+  lexcontext::func2(code, 0);
 }
 
-void context::func3(node N, int level)
+void lexcontext::func3(node N, int level)
 {
   int index_params = 0;
-  while (index_params < N.params.size())
+  while (index_params < (int)N.params.size())
   {
     func2(N.params[index_params++], level);
   }
 }
 
-void context::func2(node N, int level)
+void lexcontext::func2(node N, int level)
 {
   printf("%*s", 2 * level, "");
 
@@ -203,7 +203,7 @@ void context::func2(node N, int level)
   {
 
   case 0:
-    std::cout << "(" << ID_Types[context::convert_id_types_int(N.ident.type)] << "," << Type_Names[context::convert_types_int(N.ident.v_type)] << ")" << N.ident.name << std::endl;
+    std::cout << "(" << ID_Types[lexcontext::convert_id_types_int(N.ident.type)] << "," << Type_Names[lexcontext::convert_types_int(N.ident.v_type)] << ")" << N.ident.name << std::endl;
     break;
 
   case 1:
@@ -311,10 +311,10 @@ void context::func2(node N, int level)
     break;
   }
 
-  context::func3(N, level);
+  lexcontext::func3(N, level);
 }
 
-void context::dump_ast()
+void lexcontext::dump_ast()
 {
   // printf("%*s", 2 * level, ""); /* indent to this level */
   // level++;
@@ -331,7 +331,17 @@ void context::dump_ast()
   std::cout << "--------------------------------------------------\n";
   for (auto &f : func_list)
   {
-    context::func1(f);
+    lexcontext::func1(f);
     std::cout << "--------------------------------------------------\n";
   }
+}
+
+void lexcontext::error (const yy::location& l, const std::string& m)
+{
+    std::cerr << l.begin.line <<":" << l.begin.column << " error: " << m << std::endl;
+}
+
+void lexcontext::error (const std::string& m)
+{
+    std::cerr << m << std::endl;
 }

@@ -1,22 +1,18 @@
 #include <iostream>
-#include "driver.hh"
+#include "context.hh"
 
-int main (int argc, char *argv[])
+int main()
 {
-    int res = 0;
-    Driver driver;
-    for (int i = 1; i < argc; ++i)
-        if (argv[i] == std::string ("-p"))
-            driver.trace_parsing = true;
-        else if (argv[i] == std::string ("-s"))
-            driver.trace_scanning = true;
-        else if (!driver.parse (argv[i]))
-        {
-            // std::cout << driver.result << std::endl;
-        }
-        else
-            res = 1;
-    for(auto& v : driver.ctx.error_list)
-        driver.error(v.first,v.second);
-    return res;
+  lexcontext ctx;
+  yy::parser parser(ctx);
+  parser.parse();
+
+  if (ctx.error_list.size())
+  {
+    for (auto &v : ctx.error_list)
+      ctx.error(v.first, v.second);
+  }
+  else
+    ctx.dump_ast();
+  return 0;
 }

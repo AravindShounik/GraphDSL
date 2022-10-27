@@ -1,12 +1,15 @@
+#pragma once
 #include <vector>
 #include <string>
 #include "types.h"
 
 #include <map>
 #include "parser.hh"
+#include "GrFlexLexer.hh"
 
-struct context
+class lexcontext
 {
+public:
   yy::location loc;
   std::vector<std::map<std::string, identifier>> scopes;
   std::vector<function> func_list;
@@ -16,7 +19,10 @@ struct context
   type_name temptype = type_name::INT;
   std::vector<std::pair<yy::location, std::string>> error_list;
 
-public:
+  GrFlexLexer lexer;
+
+  lexcontext() {}
+  virtual ~lexcontext() {}
   const identifier &define(const std::string &name, identifier &&f);
   node def(const std::string &name);
   node defun(const std::string &name);
@@ -34,4 +40,7 @@ public:
   void func1(function F);
   void func2(node N,int level);
   void func3(node N,int level);
+
+  void error (const yy::location& l, const std::string& m);
+  void error (const std::string& m);
 };

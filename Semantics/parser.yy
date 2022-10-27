@@ -16,20 +16,20 @@
 #include <algorithm>
 #include "types.h"
 
-class Driver;
+class lexcontext;
 
 }
 
 
 // The parsing context.
-%param { Driver& driver }
+%param { lexcontext& ctx }
 
 // Location tracking
 %locations
 %initial-action
 {
     // Initialize the initial location.
-    @$.begin.filename = @$.end.filename = &driver.file;
+    /* @$.begin.filename = @$.end.filename = &driver.file; */
 };
 
 // Enable tracing and verbose errors (which may be wrong!)
@@ -39,10 +39,9 @@ class Driver;
 // Parser needs to know about the driver:
 %code
 {
-#include "driver.hh"
-#define yylex driver.lexer.yylex
+#include "context.hh"
+#define yylex ctx.lexer.yylex
 
-#define ctx driver.ctx
 #define M(x) std::move(x)
 #define C(x) node(x)
 }
@@ -144,7 +143,7 @@ class Driver;
 %%
 %start program;
 
-program: { ++ctx; } declarations { --ctx; ctx.dump_ast(); };
+program: { ++ctx; } declarations { --ctx; };
 declarations: declarations declaration { }
 |             %empty
 ;
@@ -274,5 +273,5 @@ identifier: IDENTIFIER               { $$ = M($1); };
 void yy::parser::error (const location_type& l,
                           const std::string& m)
 {
-    driver.error(l, m);
+    ctx.error(l, m);
 }

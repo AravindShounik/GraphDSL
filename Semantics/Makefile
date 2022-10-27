@@ -19,21 +19,20 @@ YFLAGS   := -v -Wall
 ANAME    := main
 PNAME    := parser
 LNAME    := lexer
-DNAME    := driver
 CNAME    := context
 
-${ANAME}: ${ANAME}.o ${DNAME}.o ${PNAME}.o ${LNAME}.o ${CNAME}.o
+${ANAME}: ${ANAME}.o ${CNAME}.o ${PNAME}.o ${LNAME}.o
 
-objs: ${PNAME}.o ${LNAME}.o ${DNAME}.o ${ANAME}.o ${CNAME}.o
+objs: ${CNAME}.o ${PNAME}.o ${LNAME}.o  ${ANAME}.o
 
 # Application dependencies:
-${ANAME}.o: ${ANAME}.cc ${DNAME}.o ${CNAME}.o
+${ANAME}.o: ${ANAME}.cc ${CNAME}.o
 
 # Driver dependencies:
-${DNAME}.o: ${DNAME}.cc ${DNAME}.hh ${PNAME}.hh ${CNAME}.hh
+${CNAME}.o: ${CNAME}.cc ${CNAME}.hh ${PNAME}.hh
 
 # Parser dependencies:
-${PNAME}.o: ${PNAME}.cc ${PNAME}.hh ${CNAME}.hh
+${PNAME}.o: ${PNAME}.cc ${PNAME}.hh
 
 # Lexer dependencies:
 ${LNAME}.o: ${LNAME}.cc ${PNAME}.hh 

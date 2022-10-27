@@ -5,13 +5,9 @@
 #include <cstdlib>
 #include <string>
 
-#include "driver.hh"
+#include "context.hh"
 #include "parser.hh"
 
-// Work around an incompatibility in flex (at least versions
-// 2.5.31 through 2.5.33): it generates code that does
-// not conform to C89.  See Debian bug 333231
-// <http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=333231>.
 # undef yywrap
 # define yywrap() 1
 
@@ -126,7 +122,7 @@ EXP	([Ee][-+]?[0-9]+)
     errno = 0;
     long n = strtol (yytext, NULL, 10);
     if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
-        driver.error (loc, "integer is out of range");
+        ctx.error (loc, "integer is out of range");
     return yy::parser::make_NUMBER(n, loc);
 }
 
@@ -138,17 +134,11 @@ EXP	([Ee][-+]?[0-9]+)
 
 {id}       return yy::parser::make_IDENTIFIER(yytext, loc);
 
-.          driver.error (loc, "invalid character");
+.          ctx.error (loc, "invalid character");
 
 <<EOF>>    return yy::parser::make_END(loc);
 %%
 
-// CHANGE: The "parts of the driver that need lexer data" have been
-// moved to calc++-driver.cc (where they really belong) and access the
-// new lexer object via its public interface.
-
-// CHANGE: The linker will choke if there's no implementation of the
-// default `yylex` even if it's never called.
 int yyFlexLexer::yylex() {
     std::cerr << "'int yyFlexLexer::yylex()' should never be called." << std::endl;
     exit(1);
