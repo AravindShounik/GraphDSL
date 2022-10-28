@@ -16,5 +16,5 @@ int main(int a, int b)
 bool foo(int f, bool c)
 {
   string str = "hello";
-  int a = f + c;
+  int a = f + d;
 }

@@ -4,6 +4,7 @@
 #include <climits>
 #include <cstdlib>
 #include <string>
+#include <iostream>
 
 #include "context.hh"
 #include "parser.hh"
@@ -11,8 +12,7 @@
 # undef yywrap
 # define yywrap() 1
 
-// The location of the current token.
-static yy::location loc;
+#define loc ctx.loc
 
 // CHANGE: "Code run each time a pattern is matched" moved from its
 // own block below (this change was not strictly necessary).
@@ -42,7 +42,7 @@ EXP	([Ee][-+]?[0-9]+)
 %}
 
 {blank}+   loc.step ();
-[\n]+      loc.lines (yyleng); loc.step ();
+[\n]+      {loc.lines (yyleng); loc.step (); }
 
 "-"      return yy::parser::make_MINUS(loc);
 "+"      return yy::parser::make_PLUS(loc);
