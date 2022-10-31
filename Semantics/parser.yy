@@ -192,8 +192,8 @@ jump_stmt: CONTINUE SEMI_COLON { $$ = n_cont(); }
 ;
 empty_stmt: SEMI_COLON
 ;
-vardec_stmt: typename identifier ASSIGN initializer { ctx.temptype = $1;  $$ = n_comma(M(ctx.def($2) %= M($4))); }
-|            typename identifier { ctx.temptype = $1; $$ = n_comma(M(ctx.def($2) %= 0)); }
+vardec_stmt: typename identifier ASSIGN initializer { ctx.temptype = $1;  $$ = n_vardec(M(ctx.def($2) %= M($4))); }
+|            typename identifier { ctx.temptype = $1; $$ = n_vardec(M(ctx.def($2) %= 0)); }
 |            vardec_stmt COMMA identifier ASSIGN initializer { $$ = M($1); $$.params.push_back(M(ctx.def($3) %= M($5))); }
 |            vardec_stmt COMMA identifier { $$ = M($1); $$.params.push_back(M(ctx.def($3) %= 0)); }
 ;

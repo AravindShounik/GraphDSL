@@ -41,7 +41,7 @@ struct identifier {
   f(addrof) f(deref) \
   f(fcall) \
   f(copy) \
-  f(comma) f(init_list) \
+  f(comma) f(init_list) f(vardec)\
   f(mul) f(div) f(mod) \
   f(ret) f(br) f(cont) f(nop) \
   f(edge)
