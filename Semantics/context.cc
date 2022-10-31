@@ -40,7 +40,7 @@ node lexcontext::def(const std::string &name)
 
 node lexcontext::defun(const std::string &name)
 {
-  return define(name, identifier{id_type::function, type_name::FUNC, func_list.size(), name});
+  return define(name, identifier{id_type::function, type_name::FUNC, temporary++, name});
 }
 
 node lexcontext::defparam(const std::string &name, type_name type)
@@ -74,35 +74,19 @@ void lexcontext::add_function(std::string &&name, node &&code, type_name ret)
   fun.ret_type = ret;
   //   std::cout << "Return Type      : " << Type_Names[lexcontext::convert_types_int(fun.ret_type)] << std::endl;
   // std::cout << lexcontext::convert_types_int(ret) << "\n";
-  func_list.push_back(std::move(fun));
+  storage.push_back(std::move(fun));
   fun = {};
+}
+
+void lexcontext::add_decl(node &&decl)
+{
+  storage.push_back(std::move(decl));
+  storage.back().isFunc = false;
 }
 
 void lexcontext::operator++() { scopes.emplace_back(); } // Enter scope
 void lexcontext::operator--() { scopes.pop_back(); }     // Exit scope
 
-void lexcontext::printFuncList()
-{
-  int i = 1;
-  auto o = [&](type_name t)
-  { return t == type_name::INT; };
-  for (auto &f : func_list)
-  {
-    std::cout << "Function Number: " << i++ << "\n";
-    std::cout << "Function Name: " << f.name << "\n";
-    std::cout << "Return Type: " << (o(f.ret_type) ? "INT" : "OTHER") << "\n";
-
-    std::cout << "No. of params: " << f.num_params << "\n";
-
-    int j = 1;
-    for (auto &t : f.param_types)
-    {
-      std::cout << "Param-" << j++ << " Type: " << (o(t) ? "INT" : "OTHER") << "\n";
-    }
-    std::cout << "No. of local variables: " << f.num_vars << "\n";
-    std::cout << "\n";
-  }
-}
 
 int lexcontext::convert_types_int(type_name T)
 {
@@ -182,7 +166,6 @@ void lexcontext::func1(function F)
   }
 
   node code = F.code;
-  std::cout << "\nCode dump:\n";
   lexcontext::func2(code, 0);
 }
 
@@ -318,21 +301,32 @@ void lexcontext::dump_ast()
 {
   // printf("%*s", 2 * level, ""); /* indent to this level */
   // level++;
-  std::cout << "--------------------------------------------------\n";
-  std::cout << "Global declarations:\n";
-  std::cout << "--------------------------------------------------\n";
-  for(auto& n: global_var_list)
+  // std::cout << "--------------------------------------------------\n";
+  // std::cout << "Global declarations:\n";
+  // std::cout << "--------------------------------------------------\n";
+  // for(auto& n: global_var_list)
+  // {
+  //   func2(n, 0);
+  // }
+  // std::cout << "\n\n";
+  // std::cout << "--------------------------------------------------\n";
+  // std::cout << "Function Declarations\n";
+  // std::cout << "--------------------------------------------------\n";
+  // for (auto &f : func_list)
+  // {
+  //   lexcontext::func1(f);
+  //   std::cout << "--------------------------------------------------\n";
+  // }
+
+  std::cout << "All declarations:\n";
+
+  for(auto& decl : storage)
   {
-    func2(n, 0);
-  }
-  std::cout << "\n\n";
-  std::cout << "--------------------------------------------------\n";
-  std::cout << "Function Declarations\n";
-  std::cout << "--------------------------------------------------\n";
-  for (auto &f : func_list)
-  {
-    lexcontext::func1(f);
-    std::cout << "--------------------------------------------------\n";
+    if(decl.isFunc)
+      func1(decl.f);
+    else
+      func2(decl.n, 0);
+    std::cout << "\n";
   }
 }
 

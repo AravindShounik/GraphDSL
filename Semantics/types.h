@@ -25,7 +25,8 @@ enum class type_name {
   EDGE_SEQ,
   FUNC // for function type_name
 };
-struct identifier {
+
+struct identifier{
   id_type type;
   type_name v_type;
   std::size_t index = 0;
@@ -82,7 +83,7 @@ inline node n_##p(T&& ...args) { return node(node_type::p, std::forward<T>(args)
 ENUM_NODES(f)
 #undef f
 
-struct function 
+struct function
 {
   std::string name;
   type_name ret_type;
@@ -91,5 +92,13 @@ struct function
   std::vector<type_name> param_types;
   node code;
   function(){}
+};
+
+struct common_list{
+  node n;
+  function f;
+  bool isFunc = true;
+  common_list(node&& _n) : n(_n) {}
+  common_list(function&& _f) : f(_f) {}
 };
 #endif

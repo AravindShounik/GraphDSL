@@ -12,12 +12,12 @@ class lexcontext
 public:
   yy::location loc;
   std::vector<std::map<std::string, identifier>> scopes;
-  std::vector<function> func_list;
-  std::vector<node> global_var_list;
+  std::vector<common_list> storage;
   unsigned tempcounter = 0;
   function fun;
   type_name temptype = type_name::INT;
   std::vector<std::pair<yy::location, std::string>> error_list;
+  std::size_t temporary = 1;
 
   GrFlexLexer lexer;
 
@@ -30,10 +30,10 @@ public:
   node temp();
   node use(const std::string &name);
   void add_function(std::string &&name, node &&code, type_name ret);
+  void add_decl(node &&decl);
   void operator++(); // Enter scope
   void operator--(); // Exit scope
 
-  void printFuncList();
   int convert_types_int(type_name T);
   int convert_id_types_int(id_type T);
   void dump_ast();

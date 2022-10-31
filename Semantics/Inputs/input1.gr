@@ -6,3 +6,10 @@ int main()
   graph g = {2:3, 2:1};
   int a = 2;
 }
+
+int a, b = 3;
+
+bool func2(graph g, int k)
+{
+  k = 30;
+}
