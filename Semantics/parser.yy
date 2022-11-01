@@ -6,7 +6,7 @@
 %define api.token.constructor
 %define api.value.type variant
 %define parse.assert
-
+/* Adding Header Files required in the parser */
 %code requires
 {
 #include <iostream>
@@ -14,6 +14,7 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+/* types.h contains all the enums which we need in parser.yy */
 #include "types.h"
 
 class lexcontext;

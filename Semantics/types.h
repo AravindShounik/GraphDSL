@@ -10,12 +10,19 @@ struct identifier;
 struct function;
 struct common_list;
 
-
+/**
+ * @brief We are defining an enum for identifiers
+ * 
+ */
 #define ENUM_IDENTIFIERS(f) \
   f(function) \
   f(parameter) \
   f(variable) 
 
+/**
+ * @brief We are defining an enum for nodes
+ * 
+ */
 #define ENUM_NODES(f) \
   f(identifier) f(string) f(number) f(double_const) \
   f(add) f(neg) f(eq) \
@@ -28,19 +35,30 @@ struct common_list;
   f(ret) f(br) f(cont) f(nop) \
   f(edge)
 
+/**
+ * @brief We are defining an enum for type names
+ * 
+ */
 #define ENUM_TYPE_NAMES(f) \
   f(INT) f(BOOL) f(FLOAT) f(CHAR) f(VOID) f(STRING)\
    f(GRAPH) f(DGRAPH) f(FUNC) \
    f(NODE_SET) f(NODE_PROP) f(NODE_SEQ) \
    f(EDGE_SET) f(EDGE_PROP) f(EDGE_SEQ) 
 
+/**
+ * @brief Here, we are defining enums for type names, identifier types, node types according to which token is returned
+ * 
+ */
 #define f(n) n,
 enum class type_name { ENUM_TYPE_NAMES(f) }; \
 enum class id_type { ENUM_IDENTIFIERS(f) }; \
 enum class node_type { ENUM_NODES(f) };
 #undef f
 
-
+/**
+ * @brief This is a struct for identifiers, Each Identifier is stored here, and the enum value which we get using enum class id_type and  is 
+ * 
+ */
 struct identifier{
   id_type type;
   type_name v_type;
@@ -50,6 +68,10 @@ struct identifier{
   identifier(id_type _type, type_name _v_type, std::size_t _index, std::string _name) : type(_type), v_type(_v_type), index(_index), name(_name) { }
 };
 
+/**
+ * @brief This is a node in the AST
+ * 
+ */
 struct node
 {
   node_type type;
@@ -73,6 +95,10 @@ struct node
 
 };
 
+/**
+ * @brief This is the function struct
+ * 
+ */
 struct function
 {
   std::string name;
@@ -84,6 +110,10 @@ struct function
   function(){}
 };
 
+/**
+ * @brief This is the list of functions and variables
+ * 
+ */
 struct common_list{
   node n;
   function f;
@@ -92,12 +122,19 @@ struct common_list{
   common_list(function&& _f) : f(_f) {}
 };
 
-
+/**
+ * @brief This fixes the identifier type when it encounters an identifier
+ * 
+ */
 #define f(p) \
 inline bool is_##p(const identifier& i) { return i.type == id_type::p; }
 ENUM_IDENTIFIERS(f)
 #undef f
 
+/**
+ * @brief This calls the required functions when we get a token
+ * 
+ */
 #define f(p) \
 inline bool is_##p(const node& n) {  return n.type == node_type::p; } \
 template<typename ...T> \
