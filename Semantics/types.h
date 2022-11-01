@@ -2,38 +2,17 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-enum class id_type {
-  function,
-  parameter,
-  variable
-};
+struct node;
+typedef std::vector<struct node> node_vec; 
+struct identifier;
+struct function;
+struct common_list;
 
-enum class type_name {
-  INT,
-  BOOL,
-  FLOAT,
-  CHAR,
-  VOID,
-  STRING,
-  GRAPH,
-  DGRAPH,
-  NODE_SET,
-  NODE_PROP,
-  NODE_SEQ,
-  EDGE_SET,
-  EDGE_PROP,
-  EDGE_SEQ,
-  FUNC // for function type_name
-};
 
-struct identifier{
-  id_type type;
-  type_name v_type;
-  std::size_t index = 0;
-  std::string name;
-  identifier() { }
-  identifier(id_type _type, type_name _v_type, std::size_t _index, std::string _name) : type(_type), v_type(_v_type), index(_index), name(_name) { }
-};
+#define ENUM_IDENTIFIERS(f) \
+  f(function) \
+  f(parameter) \
+  f(variable) 
 
 #define ENUM_NODES(f) \
   f(identifier) f(string) f(number) f(double_const) \
@@ -47,13 +26,28 @@ struct identifier{
   f(ret) f(br) f(cont) f(nop) \
   f(edge)
 
+#define ENUM_TYPE_NAMES(f) \
+  f(INT) f(BOOL) f(FLOAT) f(CHAR) f(VOID) f(STRING)\
+   f(GRAPH) f(DGRAPH) f(FUNC) \
+   f(NODE_SET) f(NODE_PROP) f(NODE_SEQ) \
+   f(EDGE_SET) f(EDGE_PROP) f(EDGE_SEQ) 
 
 #define f(n) n,
+enum class type_name { ENUM_TYPE_NAMES(f) }; \
+enum class id_type { ENUM_IDENTIFIERS(f) }; \
 enum class node_type { ENUM_NODES(f) };
 #undef f
 
-struct node;
-typedef std::vector<struct node> node_vec; 
+
+struct identifier{
+  id_type type;
+  type_name v_type;
+  std::size_t index = 0;
+  std::string name;
+  identifier() { }
+  identifier(id_type _type, type_name _v_type, std::size_t _index, std::string _name) : type(_type), v_type(_v_type), index(_index), name(_name) { }
+};
+
 struct node
 {
   node_type type;
@@ -77,12 +71,6 @@ struct node
 
 };
 
-#define f(p) \
-template<typename ...T> \
-inline node n_##p(T&& ...args) { return node(node_type::p, std::forward<T>(args)...);} 
-ENUM_NODES(f)
-#undef f
-
 struct function
 {
   std::string name;
@@ -101,4 +89,17 @@ struct common_list{
   common_list(node&& _n) : n(_n) {}
   common_list(function&& _f) : f(_f) {}
 };
+
+
+#define f(p) \
+inline bool is_##p(const identifier& i) { return i.type == id_type::p; }
+ENUM_IDENTIFIERS(f)
+#undef f
+
+#define f(p) \
+inline bool is_##p(const node& n) {  return n.type == node_type::p; } \
+template<typename ...T> \
+inline node n_##p(T&& ...args) { return node(node_type::p, std::forward<T>(args)...);} 
+ENUM_NODES(f)
+#undef f
 #endif
