@@ -1,5 +1,6 @@
 #include <iostream>
 #include "context.hh"
+#include "semantics.hh"
 
 int main()
 {
@@ -14,5 +15,9 @@ int main()
   }
   else
     ctx.dump_ast();
+
+  std::vector<common_list> ast = std::move(ctx.storage);
+  
+  doSemantics(ast);
   return 0;
 }
