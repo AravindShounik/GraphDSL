@@ -3,11 +3,11 @@
 std::vector<std::string> doSemantics(const std::vector<common_list> &ast)
 {
   std::vector<std::string> error_list;
-  for (auto &n : ast)
+  for (auto &cn : ast)
   {
-    if (n.isFunc) //
+    if (cn.isFunc) //
     {
-      auto &f = n.f;
+      auto &f = cn.f;
 
       type_name ret = f.ret_type;
       for (auto &stmt : f.code.params)
@@ -39,9 +39,9 @@ std::vector<std::string> doSemantics(const std::vector<common_list> &ast)
             doSemantics(stmt);
           }
         }
-        catch (Exception& e)
+        catch (Exception &e)
         {
-          std::cerr << e.loc.begin.line <<":" << e.loc.begin.column << " error: " << e.msg << std::endl;
+          std::cerr << e.loc.begin.line << ":" << e.loc.begin.column << " error: " << e.msg << std::endl;
         }
       }
     }

@@ -3,6 +3,7 @@
 #include "semantics.hh"
 #include "location.hh"
 #include "types.h"
+// #include "codegen.hh"
 
 static lexcontext ctx;
 
@@ -29,5 +30,7 @@ int main()
   std::vector<common_list> ast = std::move(ctx.storage);
 
   doSemantics(ast);
+
+  // doCodeGen(ast);
   return 0;
 }

@@ -38,9 +38,9 @@ public:
   int convert_id_types_int(id_type T);
   void dump_ast();
   void func1(function F);
-  void func2(node N,int level);
-  void func3(node N,int level);
+  void func2(node N, int level);
+  void func3(node N, int level);
 
-  void error (const yy::location& l, const std::string& m);
-  void error (const std::string& m);
+  void error(const yy::location &l, const std::string &m);
+  void error(const std::string &m);
 };

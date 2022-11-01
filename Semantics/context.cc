@@ -87,7 +87,6 @@ void lexcontext::add_decl(node &&decl)
 void lexcontext::operator++() { scopes.emplace_back(); } // Enter scope
 void lexcontext::operator--() { scopes.pop_back(); }     // Exit scope
 
-
 int lexcontext::convert_types_int(type_name T)
 {
   if (T == type_name::INT)
@@ -211,23 +210,23 @@ void lexcontext::func2(node N, int level)
     level++;
     break;
 
-  case node_type::eq :
+  case node_type::eq:
     std::cout << "==" << std::endl;
     level++;
     break;
 
-  case node_type::cor :
+  case node_type::cor:
     std::cout << "(or)" << std::endl;
     level++;
     break;
 
-  case node_type::cand :
+  case node_type::cand:
     std::cout << "(and)" << std::endl;
     level++;
     break;
 
-  case node_type::cond:    
-  // Need to be written
+  case node_type::cond:
+    // Need to be written
     break;
 
   case node_type::addrof:
@@ -284,7 +283,7 @@ void lexcontext::func2(node N, int level)
 
   case node_type::nop:
     break;
-  
+
   case node_type::edge:
     std::cout << "edge" << std::endl;
     level++;
@@ -320,9 +319,9 @@ void lexcontext::dump_ast()
 
   std::cout << "All declarations:\n";
 
-  for(auto& decl : storage)
+  for (auto &decl : storage)
   {
-    if(decl.isFunc)
+    if (decl.isFunc)
       func1(decl.f);
     else
       func2(decl.n, 0);
@@ -330,12 +329,12 @@ void lexcontext::dump_ast()
   }
 }
 
-void lexcontext::error (const yy::location& l, const std::string& m)
+void lexcontext::error(const yy::location &l, const std::string &m)
 {
-    std::cerr << l.begin.line <<":" << l.begin.column << " error: " << m << std::endl;
+  std::cerr << l.begin.line << ":" << l.begin.column << " error: " << m << std::endl;
 }
 
-void lexcontext::error (const std::string& m)
+void lexcontext::error(const std::string &m)
 {
-    std::cerr << m << std::endl;
+  std::cerr << m << std::endl;
 }
