@@ -1,10 +1,18 @@
 #include <iostream>
 #include "context.hh"
 #include "semantics.hh"
+#include "location.hh"
+#include "types.h"
+
+static lexcontext ctx;
+
+extern yy::location getLoc()
+{
+  return ctx.loc;
+}
 
 int main()
 {
-  lexcontext ctx;
   yy::parser parser(ctx);
   parser.parse();
 
@@ -14,10 +22,12 @@ int main()
       ctx.error(v.first, v.second);
   }
   else
+  {
     ctx.dump_ast();
+  }
 
   std::vector<common_list> ast = std::move(ctx.storage);
-  
-  // doSemantics(ast);
+
+  doSemantics(ast);
   return 0;
 }

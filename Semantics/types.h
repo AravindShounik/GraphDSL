@@ -3,12 +3,16 @@
 #define TYPES_H
 
 #include <string> 
+#include "location.hh"
 
+extern yy::location loc;
 struct node;
 typedef std::vector<struct node> node_vec; 
 struct identifier;
 struct function;
 struct common_list;
+
+yy::location getLoc();
 
 /**
  * @brief We are defining an enum for identifiers
@@ -74,6 +78,7 @@ struct identifier{
  */
 struct node
 {
+  yy::location loc;
   node_type type;
   identifier ident = {};
   std::string strvalue{};
@@ -82,7 +87,7 @@ struct node
   node_vec params;
   // define constructor and required functions
   template<typename... T>
-  node(node_type t, T&&... args) : type(t), params{ std::forward<T>(args)... } {}
+  node(node_type t, T&&... args) : loc(getLoc()), type(t), params{ std::forward<T>(args)... } {}
 
   node()  : type(node_type::nop)  {}
   node(const identifier& i) : type(node_type::identifier), ident(i)  {}
