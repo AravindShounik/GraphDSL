@@ -2,6 +2,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <string> 
+
 struct node;
 typedef std::vector<struct node> node_vec; 
 struct identifier;
