@@ -20,13 +20,14 @@ ANAME    := main
 PNAME    := parser
 LNAME    := lexer
 CNAME    := context
+SNAME		 := semantics
 
-${ANAME}: ${ANAME}.o ${CNAME}.o ${PNAME}.o ${LNAME}.o
+${ANAME}: ${ANAME}.o ${CNAME}.o ${PNAME}.o ${LNAME}.o ${SNAME}.o
 
-objs: ${CNAME}.o ${PNAME}.o ${LNAME}.o  ${ANAME}.o
+objs: ${CNAME}.o ${PNAME}.o ${LNAME}.o  ${ANAME}.o ${SNAME}.o
 
 # Application dependencies:
-${ANAME}.o: ${ANAME}.cc ${CNAME}.o
+${ANAME}.o: ${ANAME}.cc ${CNAME}.o ${SNAME}.o
 
 # Driver dependencies:
 ${CNAME}.o: ${CNAME}.cc ${CNAME}.hh ${PNAME}.hh
