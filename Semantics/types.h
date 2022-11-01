@@ -17,7 +17,7 @@ struct common_list;
 #define ENUM_NODES(f) \
   f(identifier) f(string) f(number) f(double_const) \
   f(add) f(neg) f(eq) \
-  f(cor) f(cand) f(loop) \
+  f(cor) f(cand) f(cond) f(loop) \
   f(addrof) f(deref) \
   f(fcall) \
   f(copy) \

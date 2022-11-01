@@ -18,6 +18,5 @@ int main()
 
   std::vector<common_list> ast = std::move(ctx.storage);
   
-  doSemantics(ast);
   return 0;
 }

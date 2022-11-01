@@ -182,110 +182,110 @@ void lexcontext::func2(node N, int level)
 {
   printf("%*s", 2 * level, "");
 
-  switch (int(N.type))
+  switch (N.type)
   {
 
-  case 0:
+  case node_type::identifier:
     std::cout << "(" << ID_Types[lexcontext::convert_id_types_int(N.ident.type)] << "," << Type_Names[lexcontext::convert_types_int(N.ident.v_type)] << ")" << N.ident.name << std::endl;
     break;
 
-  case 1:
+  case node_type::string:
     std::cout << "(string)" << N.strvalue << std::endl;
     break;
 
-  case 2:
+  case node_type::number:
     std::cout << "(int)" << N.numvalue << std::endl;
     break;
 
-  case 3:
+  case node_type::double_const:
     std::cout << "(double)" << N.doublevalue << std::endl;
     break;
 
-  case 4:
+  case node_type::add:
     std::cout << "+" << std::endl;
     level++;
     break;
 
-  case 5:
+  case node_type::neg:
     std::cout << "neg" << std::endl;
     level++;
     break;
 
-  case 6:
+  case node_type::eq :
     std::cout << "==" << std::endl;
     level++;
     break;
 
-  case 7:
+  case node_type::cor :
     std::cout << "(or)" << std::endl;
     level++;
     break;
 
-  case 8:
+  case node_type::cand :
     std::cout << "(and)" << std::endl;
     level++;
     break;
 
-  case 9:
-    // Need to be written
+  case node_type::cond:    
+  // Need to be written
     break;
 
-  case 10:
+  case node_type::addrof:
     std::cout << " (address) " << std::endl;
     break;
 
-  case 11:
+  case node_type::deref:
     std::cout << "(de-referencing) " << std::endl;
     break;
 
-  case 12:
+  case node_type::fcall:
     // Need to be Done
     break;
 
-  case 13:
+  case node_type::copy:
     std::cout << "=" << std::endl;
     level++;
     break;
 
-  case 14:
+  case node_type::comma:
     // std::cout << "," << std::endl;
     break;
 
-  case 15:
+  case node_type::init_list:
     std::cout << ("List") << std::endl;
     break;
 
-  case 16:
+  case node_type::mul:
     std::cout << "*" << std::endl;
     level++;
     break;
 
-  case 17:
+  case node_type::div:
     std::cout << "/" << std::endl;
     level++;
     break;
 
-  case 18:
+  case node_type::mod:
     std::cout << "%" << std::endl;
     level++;
     break;
 
-  case 19:
+  case node_type::ret:
     std::cout << "return" << std::endl;
     break;
 
-  case 20:
+  case node_type::br:
     std::cout << "break" << std::endl;
     break;
 
-  case 21:
+  case node_type::cont:
     std::cout << "continue" << std::endl;
     break;
 
-  case 22:
+  case node_type::nop:
     break;
   
-  case 23:
+  case node_type::edge:
     std::cout << "edge" << std::endl;
     level++;
     break;

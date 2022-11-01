@@ -219,8 +219,8 @@ edge: NUMBER COLON NUMBER { $$ = n_edge($1, $3); }
 compound_stmt:  LBRACE { $$ = n_comma(); ++ctx; }
 |               compound_stmt stmt { $$ = M($1); $$.params.push_back(M($2)); }
 ;
-selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cand(M($2), M($3)); }
-|               IF p_expr stmt ELSE stmt   
+selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cond(M($2), M($3)); }
+|               IF p_expr stmt ELSE stmt   { $$ = n_cond(M($2),M($3),M($5)); }
 ;
 iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
 |               FOR LPAREN expr SEMI_COLON expr SEMI_COLON expr RPAREN stmt { $$ = n_loop(M($3), M($5), M($7), M($9)); }
