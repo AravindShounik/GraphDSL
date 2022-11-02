@@ -1,7 +1,10 @@
+SHELL := /bin/bash
 USE_CXX_LEXER := 1
 
 CC       := gcc
 CXX      := g++
+CLANG    := clang++
+CLANGFLAGS:= -g -O3 `llvm-config --system-libs --libs core`
 CPPFLAGS :=
 CXXFLAGS := -std=c++11 -pedantic -Wall -Wextra
 
@@ -21,15 +24,15 @@ PNAME    := parser
 LNAME    := lexer
 CNAME    := context
 SNAME		 := semantics
+CGNAME   := codegen
 
-${ANAME}: ${ANAME}.o ${CNAME}.o ${PNAME}.o ${LNAME}.o ${SNAME}.o
-
-objs: ${CNAME}.o ${PNAME}.o ${LNAME}.o  ${ANAME}.o ${SNAME}.o
+${ANAME}: ${ANAME}.o ${CNAME}.o ${PNAME}.o ${LNAME}.o ${SNAME}.o ${CGNAME}.o
+	${CLANG} ${CLANGFLAGS} -o $@ $^
 
 # Application dependencies:
 ${ANAME}.o: ${ANAME}.cc ${CNAME}.o ${SNAME}.o
 
-# Driver dependencies:
+# Context dependencies:
 ${CNAME}.o: ${CNAME}.cc ${CNAME}.hh ${PNAME}.hh
 
 # Parser dependencies:
@@ -37,6 +40,14 @@ ${PNAME}.o: ${PNAME}.cc ${PNAME}.hh
 
 # Lexer dependencies:
 ${LNAME}.o: ${LNAME}.cc ${PNAME}.hh 
+
+# codegen.cc compilation:
+${CGNAME}.o: ${CGNAME}.cc
+	${CLANG} ${CLANGFLAGS} -c -o $@ $<
+
+# main.cc compilation:
+${ANAME}.o: ${ANAME}.cc
+	${CLANG} ${CLANGFLAGS} -c -o $@ $<
 
 
 # Suppress built-in implicit YACC rule:
