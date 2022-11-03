@@ -55,29 +55,87 @@ std::vector<std::string> doSemantics(const std::vector<common_list> &ast)
 
 type_name doSemantics(const node &n)
 {
+  type_name ret1, ret2;
+  ret1 = ret2 = type_name::VOID;
   switch (n.type)
   {
   case node_type::number:
-    return type_name::INT;
+    ret1 = type_name::INT;
+    break;
 
   case node_type::double_const:
-    return type_name::FLOAT;
+    ret1 = type_name::FLOAT;
+    break;
 
   case node_type::string:
-    return type_name::STRING;
+    ret1 = type_name::STRING;
+    break;
 
   case node_type::identifier:
-    return n.ident.v_type;
+    ret1 = n.ident.v_type;
+    break;
 
   case node_type::add:
-    if (doSemantics(n.params[0]) != doSemantics(n.params[1]))
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
     {
-      throw Exception(n.loc, "Adding different types");
+      throw Exception(n.loc, "+ of different types");
     }
     break;
 
+  case node_type::mul:
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    {
+      throw Exception(n.loc, "* of different types");
+    }
+    break;
+
+  case node_type::div:
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    {
+      throw Exception(n.loc, "/ of different types");
+    }
+    break;
+
+  case node_type::mod:
+    if ((doSemantics(n.params[0]) != type_name::INT) || (doSemantics(n.params[1]) != type_name::INT))
+    {
+      throw Exception(n.loc, "\% of non-integers");
+    }
+    ret1 = type_name::INT;
+    break;
+
+  case node_type::neg:
+    ret1 = doSemantics(n.params[0]);
+    break;
+
+  case node_type::eq:
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    {
+      throw Exception(n.loc, "== of different types");
+    }
+    break;
+
+  case node_type::cor:
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    {
+      throw Exception(n.loc, "|| different types");
+    }
+    break;
+
+  case node_type::cand:
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    {
+      throw Exception(n.loc, "&& different types");
+    }
+    break;
+
+  case node_type::ret:
+    if(n.params.size() > 0)
+      ret1 = doSemantics(n.params[0]);
+    break;
+  
   default:
     break;
   }
-  return type_name::INT;
+  return ret1;
 }

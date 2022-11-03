@@ -3,7 +3,7 @@
 #include "semantics.hh"
 #include "location.hh"
 #include "types.h"
-#include "codegen.hh"
+// #include "codegen.hh"
 
 static lexcontext ctx;
 
@@ -31,6 +31,6 @@ int main()
 
   doSemantics(ast);
 
-  doCodeGen(ast);
+  // doCodeGen(ast);
   return 0;
 }

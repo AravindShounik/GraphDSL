@@ -198,15 +198,7 @@ vardec_stmt: typename identifier ASSIGN initializer { ctx.temptype = $1;  $$ = n
 |            vardec_stmt COMMA identifier ASSIGN initializer { $$ = M($1); $$.params.push_back(M(ctx.def($3) %= M($5))); }
 |            vardec_stmt COMMA identifier { $$ = M($1); $$.params.push_back(M(ctx.def($3) %= 0)); }
 ;
-/* vardec1: identifier ASSIGN initializer { $$ = ctx.def($1) %= M($3); }
-|        identifier { $$ = ctx.def($1) %= 0; }
-; */
-/* vardec_stmt: typename { ctx.temptype = $1; } vardec1 {  $$ = n_comma(M($3)); }
-|            vardec_stmt COMMA vardec1 { $$ = M($1); $$.params.push_back(M($3)); }
-;
-vardec1: identifier ASSIGN initializer { $$ = ctx.def($1) %= M($3); }
-|        identifier { $$ = ctx.def($1) %= 0; }
-; */
+
 initializer: expr
 |            edge
 |            LBRACE initializer_list RBRACE { $$ = M($2); }
