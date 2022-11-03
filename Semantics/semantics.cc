@@ -113,6 +113,7 @@ type_name doSemantics(const node &n)
     {
       throw Exception(n.loc, "== of different types");
     }
+    ret1 = type_name::BOOL;
     break;
 
   case node_type::cor:
@@ -120,6 +121,7 @@ type_name doSemantics(const node &n)
     {
       throw Exception(n.loc, "|| different types");
     }
+    ret1 = type_name::BOOL;
     break;
 
   case node_type::cand:
@@ -127,11 +129,35 @@ type_name doSemantics(const node &n)
     {
       throw Exception(n.loc, "&& different types");
     }
+    ret1 = type_name::BOOL;
     break;
 
   case node_type::ret:
     if(n.params.size() > 0)
       ret1 = doSemantics(n.params[0]);
+    break;
+
+  case node_type::copy:
+    if((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    {
+      throw Exception(n.loc,"= different types");
+    }
+    ret1 = type_name::VOID;
+    break;
+
+  case node_type::vardec:
+    for(auto &inits: n.params){
+      ret1 = doSemantics(inits);
+    }
+    ret1 = type_name::VOID;
+    break;
+
+  case node_type::br:
+    ret1 = type_name::VOID;
+    break;
+  
+  case node_type::cont:
+    ret1 = type_name::VOID;
     break;
   
   default:

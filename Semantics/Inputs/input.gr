@@ -1,9 +1,20 @@
 bool foo(int f, bool c)
 {
+  int a = 7,b = 1.1;
   20 + 1.1;
   40 -9.0;
   20/1.1;
   30/12;
   "ff" % 12;
   23.11*1;
+  20 + (13 == 14);
+  int i;
+  for(i = 0;i!=15;i++){
+    if(i!=7){
+      continue;
+    }
+    else{
+      BREAK;
+    }
+  }
 }
