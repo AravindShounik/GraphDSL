@@ -46,6 +46,7 @@ node lexcontext::defun(const std::string &name)
 node lexcontext::defparam(const std::string &name, type_name type)
 {
   fun.param_types.push_back(type);
+  fun.param_names.push_back(name);
   return define(name, identifier{id_type::parameter, type, fun.num_params++, name});
 }
 
@@ -160,7 +161,8 @@ void lexcontext::func1(function F)
     std::cout << "\nParameter types   :\n";
     while (index_parameters < F.num_params)
     {
-      std::cout << "  " << Type_Names[lexcontext::convert_types_int(F.param_types[index_parameters++])] << std::endl;
+      std::cout << "  " << Type_Names[lexcontext::convert_types_int(F.param_types[index_parameters])] << ": " << F.param_names[index_parameters] << std::endl;
+      index_parameters++;
     }
   }
 

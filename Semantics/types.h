@@ -120,6 +120,7 @@ struct function
   unsigned num_params = 0;
   unsigned num_vars = 0;
   std::vector<type_name> param_types;
+  std::vector<std::string> param_names;
   node code;
   function() {}
 };

@@ -119,11 +119,11 @@ class lexcontext;
 %token <int> NUMBER "number"
 %token <double> DOUBLE_CONST "double_const"
 %type<std::string> identifier
-%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr initializer initializer_list vardec1 edge declaration declarations
+%type<node> expr exprs stmt selection_stmt jump_stmt expression_stmt iteration_stmt vardec_stmt empty_stmt compound_stmt p_expr initializer initializer_list edge
 %type<type_name> typename
 
 /* Operator precedence */
-%left  COMMA
+/* %left  COMMA */
 %right '?' COLON ASSIGN PL_EQ MI_EQ
 %left  OR
 %left  AND
@@ -131,10 +131,10 @@ class lexcontext;
 %left  PLUS MINUS
 %left  STAR SLASH MOD
 %right AMPERSAND PP MM
-%left  LPAREN LSB
+%precedence  LPAREN LSB
 
-%nonassoc LOWER_THAN_ELSE
-%nonassoc ELSE
+%precedence LOWER_THAN_ELSE
+%precedence ELSE
 
 // No %destructors are needed, since memory will be reclaimed by the
 // regular destructors.
@@ -145,11 +145,11 @@ class lexcontext;
 %start program;
 
 program: { ++ctx; } declarations { --ctx; };
-declarations: declarations declaration { }
+declarations: declarations declaration
 |             %empty
 ;
 declaration: function
-|            vardec_stmt SEMI_COLON { $$ = $1; ctx.add_decl(M($1)); }
+|            vardec_stmt SEMI_COLON { ctx.add_decl(M($1)); }
 ;
 
 function: typename identifier { ctx.defun($2); ++ctx; } LPAREN paramdecls RPAREN compound_stmt RBRACE { ctx.add_function(M($2), M($7), $1); --ctx; } 
@@ -236,7 +236,7 @@ expr: NUMBER                    { $$ = $1;    }
 |     expr LPAREN RPAREN              { $$ = n_fcall(M($1)); }
 |     expr LPAREN exprs RPAREN
 |     expr ASSIGN expr             { $$ = M($1) %= M($3); }
-|     expr PLUS expr             { $$ = n_add( M($1), M($3)); }
+|     expr PLUS expr             { $$ = n_add( M($1), M($3)); @$ = @2; }
 |     expr MINUS expr %prec PLUS   { $$ = n_add( M($1), n_neg(M($3))); }
 |     expr STAR expr             { $$ = n_mul( M($1), M($3)); }
 |     expr SLASH expr %prec STAR   { $$ = n_div( M($1), M($3)); }

@@ -35,3 +35,5 @@ Value *codegen(const node &n);
 Function *codegen(const function &f);
 
 void doCodeGen(const std::vector<common_list> &ast);
+
+Type* convertType(type_name Ty);

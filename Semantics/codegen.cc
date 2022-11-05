@@ -18,6 +18,7 @@ void doCodeGen(const std::vector<common_list> &ast)
   {
     if (cn.isFunc)
     {
+      std::cout << "## codegen.cc line 21\n";
       HandleFunction(cn.f);
     }
     else
@@ -35,7 +36,15 @@ void HandleNode(const node &n)
 
 void HandleFunction(const function &f)
 {
-  Function *ir = codegen(f);
+  if (auto *FnIR = codegen(f))
+  {
+    fprintf(stderr, "Read function definition:\n");
+    fprintf(stderr, "\n");
+  }
+  else
+  {
+    std::cout << "## Codegen flopped :/\n";
+  }
 }
 
 Value *codegen(const node &n)
@@ -49,7 +58,40 @@ Value *codegen(const node &n)
     return ConstantFP::get(*TheContext, APFloat(n.doublevalue));
 
   case node_type::string:
+
     break;
+
+  case node_type::identifier:
+  {
+    Value *V = NamedValues[n.ident.name];
+    if (!V)
+      fprintf(stderr, "Error: Unknown variable name\n");
+    return V;
+  }
+
+  case node_type::add:
+  {
+    Value *L = codegen(n.params[0]);
+    Value *R = codegen(n.params[1]);
+
+    if (!L || !R)
+      return nullptr;
+    return Builder->CreateFAdd(L, R, "addtmp");
+  }
+
+  case node_type::neg:
+  {
+    Value *L = codegen(0);
+    Value *R = codegen(n.params[0]);
+
+    if (!L || !R)
+      return nullptr;
+    return Builder->CreateFSub(L, R, "subtmp");
+  }
+
+  case node_type::comma:
+    std::cout << "## comma type node\n";
+    return codegen(0);
 
   default:
     break;
@@ -59,5 +101,63 @@ Value *codegen(const node &n)
 
 Function *codegen(const function &f)
 {
+  std::cout << "## Entered function codegen func. line 103\n";
+  std::vector<Type *> param_types(f.param_types.size(), nullptr);
+  for (auto i = 0; i < f.param_types.size(); i++)
+    param_types[i] = convertType(f.param_types[i]);
+
+  FunctionType *FT = FunctionType::get(convertType(f.ret_type), param_types, false);
+
+  Function *F = Function::Create(FT, Function::ExternalLinkage, f.name, TheModule.get());
+
+  // Set names for all arguments
+  unsigned Idx = 0;
+  for (auto &Arg : F->args())
+    Arg.setName(f.param_names[Idx++]);
+
+  // Create a new basic block to start insertion into.
+  BasicBlock *BB = BasicBlock::Create(*TheContext, "entry", F);
+  Builder->SetInsertPoint(BB);
+
+  // Record the function arguments in the NamedValues map.
+  NamedValues.clear();
+  for (auto &Arg : F->args())
+    NamedValues[std::string(Arg.getName())] = &Arg;
+
+  if (Value *RetVal = codegen(f.code))
+  {
+    // Finish off the function.
+    Builder->CreateRet(RetVal);
+
+    // Validate the generated code, checking for consistency.
+    verifyFunction(*F);
+    return F;
+  }
+
+  // Error reading body, remove function.
+  F->eraseFromParent();
+  return nullptr;
+}
+
+/* Util functions for code generation */
+Type *convertType(type_name Ty)
+{
+  switch (Ty)
+  {
+  case type_name::INT:
+    return Type::getInt64Ty(*TheContext);
+
+  case type_name::FLOAT:
+    return Type::getDoubleTy(*TheContext);
+
+  case type_name::BOOL:
+    return Type::getInt1Ty(*TheContext);
+
+  case type_name::VOID:
+    return Type::getVoidTy(*TheContext);
+
+  default:
+    break;
+  }
   return nullptr;
 }
