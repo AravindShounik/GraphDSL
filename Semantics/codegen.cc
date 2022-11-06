@@ -88,10 +88,15 @@ Value *codegen(const node &n)
       return nullptr;
     return Builder->CreateFSub(L, R, "subtmp");
   }
-
+  case node_type::ret:
+    return codegen(n.params[0]);
+    
   case node_type::comma:
     std::cout << "## comma type node\n";
-    return codegen(0);
+    Value* v;
+    for(auto& p : n.params)
+      v = codegen(p);
+    return v;
 
   default:
     break;
