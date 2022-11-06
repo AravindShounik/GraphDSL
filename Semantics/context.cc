@@ -1,5 +1,4 @@
 #include "context.hh"
-#define stringify(name) #name
 
 const identifier &lexcontext::define(const std::string &name, identifier &&f)
 {

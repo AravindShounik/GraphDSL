@@ -159,7 +159,6 @@ ENUM_id_type(f)
 #undef f
 
 /* Printing ENUMS */
-#define f(n) n
 
 #define h(WHICH_ENUM)                         \
   inline std::string toString(WHICH_ENUM inp) \
@@ -172,18 +171,17 @@ ENUM_id_type(f)
   }
 
 #define g(n)          \
-  case id_type::f(n): \
+  case id_type::n: \
     return #n;
 h(id_type)
 #undef g
 
 #define g(n)            \
-  case type_name::f(n): \
+  case type_name::n: \
     return #n;
 h(type_name)
 #undef g
 
 #undef h
-#undef f
 
 #endif
