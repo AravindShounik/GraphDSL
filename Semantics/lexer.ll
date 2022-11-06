@@ -84,8 +84,8 @@ EXP	([Ee][-+]?[0-9]+)
 
 
 "continue"     {return yy::parser::make_CONTINUE(loc);}
-"BREAK"     {return yy::parser::make_BREAK(loc);}
-"RETURN"     {return yy::parser::make_RETURN(loc);}
+"break"     {return yy::parser::make_BREAK(loc);}
+"return"     {return yy::parser::make_RETURN(loc);}
 
 
  /* type specifiers */
