@@ -1,7 +1,7 @@
 
 #ifndef TYPES_H
 #define TYPES_H
-
+#pragma once
 #include <string>
 #include "location.hh"
 
@@ -18,16 +18,16 @@ yy::location getLoc();
  * @brief We are defining an enum for identifiers
  *
  */
-#define ENUM_IDENTIFIERS(f) \
-  f(function)               \
-      f(parameter)          \
+#define ENUM_id_type(f) \
+  f(function)           \
+      f(parameter)      \
           f(variable)
 
 /**
  * @brief We are defining an enum for nodes
  *
  */
-#define ENUM_NODES(f)                                         \
+#define ENUM_node_type(f)                                     \
   f(identifier) f(string) f(number) f(double_const)           \
       f(add) f(neg) f(eq)                                     \
           f(cor) f(cand) f(cond) f(loop)                      \
@@ -43,7 +43,7 @@ yy::location getLoc();
  * @brief We are defining an enum for type names
  *
  */
-#define ENUM_TYPE_NAMES(f)                          \
+#define ENUM_type_name(f)                           \
   f(INT) f(BOOL) f(FLOAT) f(CHAR) f(VOID) f(STRING) \
       f(GRAPH) f(DGRAPH) f(FUNC)                    \
           f(NODE_SET) f(NODE_PROP) f(NODE_SEQ)      \
@@ -56,15 +56,15 @@ yy::location getLoc();
 #define f(n) n,
 enum class type_name
 {
-  ENUM_TYPE_NAMES(f)
+  ENUM_type_name(f)
 };
 enum class id_type
 {
-  ENUM_IDENTIFIERS(f)
+  ENUM_id_type(f)
 };
 enum class node_type
 {
-  ENUM_NODES(f)
+  ENUM_node_type(f)
 };
 #undef f
 
@@ -144,7 +144,7 @@ struct common_list
  */
 #define f(p) \
   inline bool is_##p(const identifier &i) { return i.type == id_type::p; }
-ENUM_IDENTIFIERS(f)
+ENUM_id_type(f)
 #undef f
 
 /**
@@ -155,6 +155,35 @@ ENUM_IDENTIFIERS(f)
   inline bool is_##p(const node &n) { return n.type == node_type::p; } \
   template <typename... T>                                             \
   inline node n_##p(T &&...args) { return node(node_type::p, std::forward<T>(args)...); }
-ENUM_NODES(f)
+    ENUM_node_type(f)
 #undef f
+
+/* Printing ENUMS */
+#define f(n) n
+
+#define h(WHICH_ENUM)                         \
+  inline std::string toString(WHICH_ENUM inp) \
+  {                                           \
+    switch (inp)                              \
+    {                                         \
+      ENUM_##WHICH_ENUM(g)                    \
+    }                                         \
+    return "";                                \
+  }
+
+#define g(n)          \
+  case id_type::f(n): \
+    return #n;
+h(id_type)
+#undef g
+
+#define g(n)            \
+  case type_name::f(n): \
+    return #n;
+h(type_name)
+#undef g
+
+#undef h
+#undef f
+
 #endif

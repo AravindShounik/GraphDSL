@@ -1,30 +1,6 @@
 #include "context.hh"
 #define stringify(name) #name
 
-std::string Type_Names[] =
-    {
-        "INT",
-        "BOOL",
-        "FLOAT",
-        "CHAR",
-        "VOID",
-        "STRING",
-        "GRAPH",
-        "DGRAPH",
-        "NODE_SET",
-        "NODE_PROP",
-        "NODE_SEQ",
-        "EDGE_SET",
-        "EDGE_PROP",
-        "EDGE_SEQ",
-        "FUNC"};
-
-std::string ID_Types[] =
-    {
-        "FUNCTION",
-        "PARAMETER",
-        "VARIABLE"};
-
 const identifier &lexcontext::define(const std::string &name, identifier &&f)
 {
   auto r = scopes.back().emplace(name, std::move(f));
@@ -88,70 +64,10 @@ void lexcontext::add_decl(node &&decl)
 void lexcontext::operator++() { scopes.emplace_back(); } // Enter scope
 void lexcontext::operator--() { scopes.pop_back(); }     // Exit scope
 
-int lexcontext::convert_types_int(type_name T)
-{
-  if (T == type_name::INT)
-  {
-    return 0;
-  }
-
-  if (T == type_name::BOOL)
-  {
-    return 1;
-  }
-
-  if (T == type_name::FLOAT)
-  {
-    return 2;
-  }
-
-  if (T == type_name::CHAR)
-  {
-    return 3;
-  }
-
-  if (T == type_name::VOID)
-  {
-    return 4;
-  }
-
-  if (T == type_name::STRING)
-  {
-    return 5;
-  }
-
-  if (T == type_name::GRAPH)
-  {
-    return 6;
-  }
-
-  return 8;
-}
-
-int lexcontext::convert_id_types_int(id_type T)
-{
-  if (T == id_type::function)
-  {
-    return 0;
-  }
-
-  if (T == id_type::parameter)
-  {
-    return 1;
-  }
-
-  if (T == id_type::variable)
-  {
-    return 2;
-  }
-
-  return 3;
-}
-
 void lexcontext::func1(function F)
 {
   std::cout << "Function Name    : " << F.name << std::endl;
-  std::cout << "Return Type      : " << Type_Names[lexcontext::convert_types_int(F.ret_type)] << std::endl;
+  std::cout << "Return Type      : " << toString(F.ret_type) << std::endl;
   std::cout << "No of Paramaters : " << F.num_params << std::endl;
   std::cout << "No of Variables  : " << F.num_vars << std::endl;
 
@@ -161,7 +77,7 @@ void lexcontext::func1(function F)
     std::cout << "\nParameter types   :\n";
     while (index_parameters < F.num_params)
     {
-      std::cout << "  " << Type_Names[lexcontext::convert_types_int(F.param_types[index_parameters])] << ": " << F.param_names[index_parameters] << std::endl;
+      std::cout << "  " << toString(F.param_types[index_parameters]) << ": " << F.param_names[index_parameters] << std::endl;
       index_parameters++;
     }
   }
@@ -187,7 +103,7 @@ void lexcontext::func2(node N, int level)
   {
 
   case node_type::identifier:
-    std::cout << "(" << ID_Types[lexcontext::convert_id_types_int(N.ident.type)] << "," << Type_Names[lexcontext::convert_types_int(N.ident.v_type)] << ")" << N.ident.name << std::endl;
+    std::cout << "(" << toString(N.ident.type) << "," << toString(N.ident.v_type) << ")" << N.ident.name << std::endl;
     break;
 
   case node_type::string:
@@ -300,25 +216,6 @@ void lexcontext::func2(node N, int level)
 
 void lexcontext::dump_ast()
 {
-  // printf("%*s", 2 * level, ""); /* indent to this level */
-  // level++;
-  // std::cout << "--------------------------------------------------\n";
-  // std::cout << "Global declarations:\n";
-  // std::cout << "--------------------------------------------------\n";
-  // for(auto& n: global_var_list)
-  // {
-  //   func2(n, 0);
-  // }
-  // std::cout << "\n\n";
-  // std::cout << "--------------------------------------------------\n";
-  // std::cout << "Function Declarations\n";
-  // std::cout << "--------------------------------------------------\n";
-  // for (auto &f : func_list)
-  // {
-  //   lexcontext::func1(f);
-  //   std::cout << "--------------------------------------------------\n";
-  // }
-
   std::cout << "All declarations:\n";
 
   for (auto &decl : storage)

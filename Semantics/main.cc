@@ -31,6 +31,6 @@ int main()
 
   // doSemantics(ast);
 
-  doCodeGen(ast);
+  // doCodeGen(ast);
   return 0;
 }
