@@ -10,6 +10,12 @@ static void InitializeModule()
   Builder = std::make_unique<IRBuilder<>>(*TheContext);
 }
 
+static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, Type *Ty, StringRef VarName)
+{
+  IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
+  return TmpB.CreateAlloca(Ty, nullptr, VarName);
+}
+
 void doCodeGen(const std::vector<common_list> &ast)
 {
   InitializeModule();
@@ -66,7 +72,9 @@ Value *codegen(const node &n)
     Value *V = NamedValues[n.ident.name];
     if (!V)
       fprintf(stderr, "Error: Unknown variable name\n");
-    return V;
+
+    // Load the value.
+    return Builder->CreateLoad(convertType(n.ident.v_type), V, n.ident.name.c_str());
   }
 
   case node_type::add:
@@ -90,13 +98,13 @@ Value *codegen(const node &n)
   }
   case node_type::ret:
     return codegen(n.params[0]);
-    
+
   case node_type::comma:
     std::cout << "## comma type node\n";
-    Value* v;
-    for(auto& p : n.params)
+    Value *v;
+    for (auto &p : n.params)
       v = codegen(p);
-    return v;
+    return codegen(0);
 
   default:
     break;
@@ -127,7 +135,16 @@ Function *codegen(const function &f)
   // Record the function arguments in the NamedValues map.
   NamedValues.clear();
   for (auto &Arg : F->args())
-    NamedValues[std::string(Arg.getName())] = &Arg;
+  {
+    // Create an alloca for this variable.
+    AllocaInst *Alloca = CreateEntryBlockAlloca(F, Arg.getType(), Arg.getName());
+
+    // Store the initial value into the alloca.
+    Builder->CreateStore(&Arg, Alloca);
+
+    // Add arguments to variable symbol table.
+    NamedValues[std::string(Arg.getName())] = Alloca;
+  }
 
   if (Value *RetVal = codegen(f.code))
   {

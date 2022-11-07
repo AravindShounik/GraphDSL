@@ -25,15 +25,17 @@ using namespace llvm;
 static std::unique_ptr<LLVMContext> TheContext;
 static std::unique_ptr<Module> TheModule;
 static std::unique_ptr<IRBuilder<>> Builder;
-static std::map<std::string, Value *> NamedValues;
+static std::map<std::string, AllocaInst *> NamedValues;
 
 static void InitializeModule();
+static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, StringRef VarName);
+Type *convertType(type_name Ty);
+
+/* this is called from main.cc */
+void doCodeGen(const std::vector<common_list> &ast);
 
 void HandleNode(const node &n);
 void HandleFunction(const function &f);
 Value *codegen(const node &n);
 Function *codegen(const function &f);
 
-void doCodeGen(const std::vector<common_list> &ast);
-
-Type* convertType(type_name Ty);
