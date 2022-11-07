@@ -1,13 +1,31 @@
 #include "codegen.hh"
 
-static void InitializeModule()
+static void InitializeModuleAndPassManager(void)
 {
-  // Open a new context and module.
+  // Open a new module.
   TheContext = std::make_unique<LLVMContext>();
-  TheModule = std::make_unique<Module>("my cool jit", *TheContext);
+  TheModule = std::make_unique<Module>("gralgo", *TheContext);
+  // TheModule->setDataLayout(T)
 
   // Create a new builder for the module.
   Builder = std::make_unique<IRBuilder<>>(*TheContext);
+
+  // Create a new pass manager attached to it.
+  TheFPM = std::make_unique<legacy::FunctionPassManager>(TheModule.get());
+
+  // Promote allocas to registers.
+  TheFPM->add(createPromoteMemoryToRegisterPass());
+
+  // Do simple peephole optimizations and bit-twiddling optimizations.
+  TheFPM->add(createInstructionCombiningPass());
+  
+  // Eliminate Common SubExpressions.
+  TheFPM->add(createGVNPass());
+
+  // Simplify the control flow graph (deleting unreachable blocks, etc).
+  TheFPM->add(createCFGSimplificationPass());
+
+  TheFPM->doInitialization();
 }
 
 static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, Type *Ty, StringRef VarName)
@@ -18,7 +36,7 @@ static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, Type *Ty, Strin
 
 void doCodeGen(const std::vector<common_list> &ast)
 {
-  InitializeModule();
+  InitializeModuleAndPassManager();
 
   for (auto &cn : ast)
   {
@@ -153,6 +171,9 @@ Function *codegen(const function &f)
 
     // Validate the generated code, checking for consistency.
     verifyFunction(*F);
+
+    // Run the optimizer on the function.
+    TheFPM->run(*F);
     return F;
   }
 
