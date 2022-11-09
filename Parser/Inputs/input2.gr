@@ -1,6 +1,6 @@
 //Double Declaration
 int a = 3;
-Graph G = {
+graph G = {
     1:2,
     2:3
 };

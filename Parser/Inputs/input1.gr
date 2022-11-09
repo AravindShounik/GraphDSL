@@ -2,4 +2,4 @@
     int a=3;
     int b;
     char c;
-    Graph g;
+    graph g;
