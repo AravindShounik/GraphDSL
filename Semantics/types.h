@@ -27,17 +27,16 @@ yy::location getLoc();
  * @brief We are defining an enum for nodes
  *
  */
-#define ENUM_node_type(f)                                     \
-  f(identifier) f(string) f(number) f(double_const)           \
-      f(add) f(neg) f(eq)                                     \
-          f(cor) f(cand) f(cond) f(loop)                      \
-              f(addrof) f(deref)                              \
-                  f(fcall)                                    \
-                      f(copy)                                 \
-                          f(comma) f(init_list) f(vardec)     \
-                              f(mul) f(div) f(mod)            \
-                                  f(ret) f(br) f(cont) f(nop) \
-                                      f(edge)
+#define ENUM_node_type(f)                                 \
+  f(identifier) f(string) f(number) f(double_const)       \
+      f(add) f(neg) f(mul) f(div) f(mod) f(eq)            \
+          f(cor) f(cand) f(cond) f(loop)                  \
+              f(addrof) f(deref)                          \
+                  f(fcall)                                \
+                      f(copy)                             \
+                          f(comma) f(init_list) f(vardec) \
+                              f(ret) f(br) f(cont) f(nop) \
+                                  f(edge)
 
 /**
  * @brief We are defining an enum for type names

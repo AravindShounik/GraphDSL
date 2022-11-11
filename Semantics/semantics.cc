@@ -60,20 +60,16 @@ type_name doSemantics(const node &n)
   switch (n.type)
   {
   case node_type::number:
-    ret1 = type_name::INT;
-    break;
+    return type_name::INT;
 
   case node_type::double_const:
-    ret1 = type_name::FLOAT;
-    break;
+    return type_name::FLOAT;
 
   case node_type::string:
-    ret1 = type_name::STRING;
-    break;
+    return type_name::STRING;
 
   case node_type::identifier:
-    ret1 = n.ident.v_type;
-    break;
+    return n.ident.v_type;
 
   case node_type::add:
     if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
@@ -81,6 +77,9 @@ type_name doSemantics(const node &n)
       throw Exception(n.loc, "+ of different types");
     }
     break;
+
+  case node_type::neg:
+    return doSemantics(n.params[0]);
 
   case node_type::mul:
     if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
@@ -99,13 +98,9 @@ type_name doSemantics(const node &n)
   case node_type::mod:
     if ((doSemantics(n.params[0]) != type_name::INT) || (doSemantics(n.params[1]) != type_name::INT))
     {
-      throw Exception(n.loc, "\% of non-integers");
+      throw Exception(n.loc, "% of non-integers");
     }
     ret1 = type_name::INT;
-    break;
-
-  case node_type::neg:
-    ret1 = doSemantics(n.params[0]);
     break;
 
   case node_type::eq:
@@ -138,28 +133,26 @@ type_name doSemantics(const node &n)
     break;
 
   case node_type::copy:
+  {
     if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
     {
       throw Exception(n.loc, "= different types");
     }
-    ret1 = type_name::VOID;
-    break;
+    return type_name::VOID;
+  }
 
   case node_type::vardec:
     for (auto &inits : n.params)
     {
       ret1 = doSemantics(inits);
     }
-    ret1 = type_name::VOID;
-    break;
+    return type_name::VOID;
 
   case node_type::br:
-    ret1 = type_name::VOID;
-    break;
+    return type_name::VOID;
 
   case node_type::cont:
-    ret1 = type_name::VOID;
-    break;
+    return type_name::VOID;
 
   case node_type::fcall:
   {
@@ -188,8 +181,41 @@ type_name doSemantics(const node &n)
     }
     return f->ret_type;
   }
+
+  case node_type::init_list:
+  {
+    auto prev = node_type::nop;
+    unsigned size = 0;
+    for (auto &p : n.params)
+    {
+      doSemantics(p);
+      if (prev == node_type::nop)
+      {
+        prev = p.type;
+        size = p.params.size();
+      }
+      else
+      {
+        if (p.type != prev)
+        {
+          throw Exception(n.loc, "Expected init list of same types.");
+        }
+        if (p.params.size() != size)
+        {
+          throw Exception(n.loc, "Expected init lists of same sizes.");
+        }
+      }
+    }
+    /*
+    pending:
+    recursive type check also for children
+    */
+    return type_name::INT;
+  }
+
   default:
     break;
   }
   return ret1;
 }
+/* not required for conditional stmts, loops */

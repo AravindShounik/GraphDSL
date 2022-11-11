@@ -2,7 +2,7 @@
 #include <map>
 #include "types.h"
 
-static std::map<std::string, function*> func_map;
+static std::map<std::string, function *> func_map;
 std::vector<std::string> doSemantics(std::vector<common_list> &ast);
 type_name doSemantics(const node &n);
 
