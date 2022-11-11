@@ -212,7 +212,7 @@ edge: NUMBER COLON NUMBER { $$ = n_edge($1, $3); }
 compound_stmt:  LBRACE { $$ = n_comma(); ++ctx; }
 |               compound_stmt stmt { $$ = M($1); $$.params.push_back(M($2)); }
 ;
-selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cond(M($2), M($3)); }
+selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cond(M($2), M($3), n_comma()); }
 |               IF p_expr stmt ELSE stmt   { $$ = n_cond(M($2),M($3),M($5)); }
 ;
 iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
@@ -223,7 +223,7 @@ iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
 ;
 p_expr: LPAREN expr RPAREN { $$ = M($2); }
 ;
-exprs: expr                     { $$ = M($1); }
+exprs: expr                     { $$ = n_comma(M($1)); }
 |      exprs COMMA expr         { $$ = M($1); $$.params.push_back(M($3)); }
 ;
 
@@ -233,8 +233,8 @@ expr: NUMBER                    { $$ = $1;    }
 |     identifier                { $$ = ctx.use($1);   }
 |     LPAREN exprs RPAREN             { $$ = M($2); }
 |     expr LSB exprs RSB      { $$ = n_deref(n_add(M($1), M($3))); }
-|     expr LPAREN RPAREN              { $$ = n_fcall(M($1)); }
-|     expr LPAREN exprs RPAREN
+|     identifier LPAREN RPAREN              { $$ = n_fcall(ctx.use($1), n_comma()); }
+|     identifier LPAREN exprs RPAREN        { $$ = n_fcall(ctx.use($1), M($3)); }
 |     expr ASSIGN expr             { $$ = M($1) %= M($3); }
 |     expr PLUS expr             { $$ = n_add( M($1), M($3)); @$ = @2; }
 |     expr MINUS expr %prec PLUS   { $$ = n_add( M($1), n_neg(M($3))); }

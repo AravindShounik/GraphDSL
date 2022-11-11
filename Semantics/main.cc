@@ -29,8 +29,8 @@ int main()
 
   std::vector<common_list> ast = std::move(ctx.storage);
 
-  // doSemantics(ast);
+  doSemantics(ast);
 
-  doCodeGen(ast);
+  // doCodeGen(ast);
   return 0;
 }

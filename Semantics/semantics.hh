@@ -1,7 +1,9 @@
 #include <vector>
+#include <map>
 #include "types.h"
 
-std::vector<std::string> doSemantics(const std::vector<common_list> &ast);
+static std::map<std::string, function*> func_map;
+std::vector<std::string> doSemantics(std::vector<common_list> &ast);
 type_name doSemantics(const node &n);
 
 struct Exception

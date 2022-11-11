@@ -1,6 +1,6 @@
 #include "semantics.hh"
 
-std::vector<std::string> doSemantics(const std::vector<common_list> &ast)
+std::vector<std::string> doSemantics(std::vector<common_list> &ast)
 {
   std::vector<std::string> error_list;
   for (auto &cn : ast)
@@ -8,7 +8,7 @@ std::vector<std::string> doSemantics(const std::vector<common_list> &ast)
     if (cn.isFunc) //
     {
       auto &f = cn.f;
-
+      func_map[f.name] = &f;
       type_name ret = f.ret_type;
       for (auto &stmt : f.code.params)
       {
@@ -133,20 +133,21 @@ type_name doSemantics(const node &n)
     break;
 
   case node_type::ret:
-    if(n.params.size() > 0)
+    if (n.params.size() > 0)
       ret1 = doSemantics(n.params[0]);
     break;
 
   case node_type::copy:
-    if((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
     {
-      throw Exception(n.loc,"= different types");
+      throw Exception(n.loc, "= different types");
     }
     ret1 = type_name::VOID;
     break;
 
   case node_type::vardec:
-    for(auto &inits: n.params){
+    for (auto &inits : n.params)
+    {
       ret1 = doSemantics(inits);
     }
     ret1 = type_name::VOID;
@@ -155,11 +156,38 @@ type_name doSemantics(const node &n)
   case node_type::br:
     ret1 = type_name::VOID;
     break;
-  
+
   case node_type::cont:
     ret1 = type_name::VOID;
     break;
-  
+
+  case node_type::fcall:
+  {
+    if (n.params[0].ident.type != id_type::function)
+    {
+      throw Exception(n.loc, "Expected a function name.");
+    }
+    auto f = func_map[n.params[0].ident.name];
+
+    if (n.params[1].params.size() > f->num_params)
+    {
+      throw Exception(n.loc, "Expected fewer arguments.");
+    }
+    else if (n.params[1].params.size() < f->num_params)
+    {
+      throw Exception(n.loc, "Too few arguments.");
+    }
+
+    unsigned i = 0;
+    for (i = 0; i < f->num_params; i++)
+    {
+      if (doSemantics(n.params[1].params[i]) != f->param_types[i])
+      {
+        throw Exception(n.loc, "Expected argument of type " + toString(f->param_types[i]));
+      }
+    }
+    return f->ret_type;
+  }
   default:
     break;
   }

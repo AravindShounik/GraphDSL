@@ -160,28 +160,51 @@ ENUM_id_type(f)
 
 /* Printing ENUMS */
 
-#define h(WHICH_ENUM)                         \
-  inline std::string toString(WHICH_ENUM inp) \
-  {                                           \
-    switch (inp)                              \
-    {                                         \
-      ENUM_##WHICH_ENUM(g)                    \
-    }                                         \
-    return "";                                \
+#define h(WHICH_ENUM)                                               \
+  inline std::string toString(WHICH_ENUM inp)                       \
+  {                                                                 \
+    switch (inp)                                                    \
+    {                                                               \
+      ENUM_##WHICH_ENUM(g)                                          \
+    }                                                               \
+    return "";                                                      \
+  }                                                                 \
+  inline std::ostream &operator<<(std::ostream &os, WHICH_ENUM inp) \
+  {                                                                 \
+    os << toString(inp);                                            \
+    return os;                                                      \
   }
 
-#define g(n)          \
+#define g(n)       \
   case id_type::n: \
     return #n;
-h(id_type)
+        h(id_type)
 #undef g
 
-#define g(n)            \
+#define g(n)         \
   case type_name::n: \
     return #n;
-h(type_name)
+            h(type_name)
 #undef g
 
+#define g(n)         \
+  case node_type::n: \
+    return #n;
+                h(node_type)
+#undef g
+
+    // python like print
+    inline void print()
+{
+  std::cout << '\n';
+}
+
+template <typename T, typename... TAIL>
+inline void print(const T &t, TAIL... tail)
+{
+  std::cout << t << ' ';
+  print(tail...);
+}
 #undef h
 
 #endif
