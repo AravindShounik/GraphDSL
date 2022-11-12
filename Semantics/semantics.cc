@@ -10,6 +10,7 @@ std::vector<std::string> doSemantics(std::vector<common_list> &ast)
       auto &f = cn.f;
       func_map[f.name] = &f;
       type_name ret = f.ret_type;
+      bool hasRetStmt = false;
       for (auto &stmt : f.code.params)
       {
         try
@@ -17,20 +18,21 @@ std::vector<std::string> doSemantics(std::vector<common_list> &ast)
           // if it returns, do semantics on it
           if (stmt.type == node_type::ret)
           {
+            hasRetStmt = true;
             // check return type of function
             if (ret == type_name::VOID && stmt.params.size() > 0)
             {
-              // error
+              throw Exception("Unexpected return statement.");
             }
             else if (ret != type_name::VOID && stmt.params.size() == 0)
             {
-              // error
+              throw Exception("Return statement doesn't return anything.");
             }
             else if (ret != type_name::VOID && stmt.params.size() > 0)
             {
               if (ret != doSemantics(stmt.params[0]))
               {
-                // error
+                throw Exception("Return types don't match.");
               }
             }
           }
@@ -44,10 +46,29 @@ std::vector<std::string> doSemantics(std::vector<common_list> &ast)
           std::cerr << e.loc.begin.line << ":" << e.loc.begin.column << " error: " << e.msg << std::endl;
         }
       }
+      if (ret != type_name::VOID && !hasRetStmt)
+      {
+        try
+        {
+          throw Exception("Expected return statement.");
+        }
+        catch (Exception &e)
+        {
+          std::cerr << e.loc.begin.line << ":" << e.loc.begin.column << " error: " << e.msg << std::endl;
+        }
+      }
     }
     else
     {
       // declaration type should match rhs
+      try
+      {
+        doSemantics(cn.n);
+      }
+      catch (Exception &e)
+      {
+        std::cerr << e.loc.begin.line << ":" << e.loc.begin.column << " error: " << e.msg << std::endl;
+      }
     }
   }
   return error_list;
