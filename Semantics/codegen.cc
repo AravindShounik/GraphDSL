@@ -180,7 +180,10 @@ Value *codegen(const node &n)
 
     if (!L || !R)
       return nullptr;
-    return Builder->CreateFAdd(L, R, "addtmp");
+    auto Inst = BinaryOperator::CreateAdd(L,R,"addtmp");
+    auto block = Builder->GetInsertBlock();
+    block->getInstList().push_back(Inst);
+    return Inst;
   }
 
   case node_type::neg:
