@@ -188,12 +188,7 @@ Value *codegen(const node &n)
 
   case node_type::neg:
   {
-    Value *L = codegen(0);
-    Value *R = codegen(n.params[0]);
-
-    if (!L || !R)
-      return nullptr;
-    return Builder->CreateFSub(L, R, "subtmp");
+    return Builder->CreateNeg(codegen(n.params[0]), "subtmp");
   }
   case node_type::ret:
     return codegen(n.params[0]);
