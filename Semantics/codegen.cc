@@ -191,7 +191,12 @@ Value *codegen(const node &n)
     return Builder->CreateNeg(codegen(n.params[0]), "subtmp");
   }
   case node_type::ret:
-    return codegen(n.params[0]);
+  {
+    Value* v = codegen(n.params[0]);
+    return Builder->CreateRet(v);
+
+  }
+
 
   case node_type::vardec:
   {
