@@ -47,4 +47,5 @@ void HandleNode(const node &n);
 void HandleFunction(const function &f);
 Value *codegen(const node &n);
 Function *codegen(const function &f);
+void emit(const node_vec &v);
 
