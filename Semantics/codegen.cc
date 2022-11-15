@@ -81,7 +81,7 @@ Type *convertType(type_name Ty)
   switch (Ty)
   {
   case type_name::INT:
-    return Type::getInt64Ty(*TheContext);
+    return Type::getInt32Ty(*TheContext);
 
   case type_name::FLOAT:
     return Type::getDoubleTy(*TheContext);
