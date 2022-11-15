@@ -195,12 +195,15 @@ Value *codegen(const node &n)
   case node_type::ret:
     return codegen(n.params[0]);
 
-  case node_type::comma:
-    std::cout << "## comma type node\n";
-    Value *v;
-    for (auto &p : n.params)
-      v = codegen(p);
-    return codegen(0);
+  case node_type::vardec:
+  {
+    for(auto& var:n.params){
+      Value* v=codegen(var.params[0]);
+      auto alloca = Builder->CreateAlloca(convertType(var.params[1].ident.v_type));
+      NamedValues[var.params[1].ident.name] = alloca;
+      auto store = Builder->CreateStore(v,alloca);
+    }
+  }
 
   default:
     break;
