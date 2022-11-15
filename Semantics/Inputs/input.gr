@@ -1,6 +1,6 @@
 int foo(int f, int c)
 {
-  
+  return 2+3;
 }
 
 int main()

@@ -50,7 +50,11 @@ void doCodeGen(const std::vector<common_list> &ast)
       HandleNode(cn.n);
     }
   }
-  TheModule->print(errs(), nullptr);
+
+  raw_ostream *out = &errs();
+  std::error_code EC;
+  out = new raw_fd_ostream("test.ll", EC);
+  TheModule->print(*out, nullptr);
 }
 
 void HandleNode(const node &n)
