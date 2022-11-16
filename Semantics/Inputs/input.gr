@@ -5,5 +5,7 @@ int foo(int f, int c)
 
 int main()
 {
-  int x = 3;
+  int x = 2+3-3;
+  
+  return x;
 }

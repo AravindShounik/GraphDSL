@@ -210,6 +210,60 @@ Value *codegen(const node &n)
       }
     }
   }
+  case node_type::cond:
+  {
+    // return nullptr;
+    Value *CondV = codegen(n.params[0]);
+    if (!CondV)
+      return nullptr;
+
+    // Convert condition to a bool by comparing non-equal to 0
+    CondV = Builder->CreateFCmpONE(CondV, ConstantFP::get(*TheContext, APFloat(0.0)), "ifcond");
+    Function *TheFunction = Builder->GetInsertBlock()->getParent();
+
+    BasicBlock *ThenBB = BasicBlock::Create(*TheContext, "then", TheFunction);
+
+    BasicBlock *ElseBB = BasicBlock::Create(*TheContext, "else");
+    BasicBlock *MergeBB = BasicBlock::Create(*TheContext, "ifcont");
+
+    Builder->CreateCondBr(CondV, ThenBB, ElseBB);
+
+    // Emit the value.
+    Builder->SetInsertPoint(ThenBB);
+
+    Value *ThenV = codegen(n.params[1]);
+    if (!ThenV)
+      return nullptr;
+
+    Builder->CreateBr(MergeBB);
+
+    // Codegen of the 'Then' can change the current block, update ThenBB for the PHI.
+    ThenBB = Builder->GetInsertBlock();
+
+    // Emit else block.
+    TheFunction->getBasicBlockList().push_back(ElseBB);
+    Builder->SetInsertPoint(ElseBB);
+
+    Value *ElseV = codegen(n.params[2]);
+
+    if (!ElseV)
+      return nullptr;
+
+    Builder->CreateBr(MergeBB);
+    // Codegen of 'Else' can change the current block, update ElseBB for the PHI.
+    ElseBB = Builder->GetInsertBlock();
+
+    // Emit merge block.
+    TheFunction->getBasicBlockList().push_back(MergeBB);
+    Builder->SetInsertPoint(MergeBB);
+    PHINode *PN = Builder->CreatePHI(Type::getDoubleTy(*TheContext), 2, "iftmp");
+    // return nullptr;
+
+    PN->addIncoming(ThenV, ThenBB);
+    PN->addIncoming(ElseV, ElseBB);
+
+    return PN;
+  }
 
   default:
     break;
