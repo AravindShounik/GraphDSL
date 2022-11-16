@@ -36,6 +36,8 @@ static std::unique_ptr<IRBuilder<>> Builder;
 static std::map<std::string, AllocaInst *> NamedValues;
 static std::unique_ptr<legacy::FunctionPassManager> TheFPM;
 
+static StructType *graph;
+
 static void InitializeModuleAndPassManager(void);
 static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, StringRef VarName);
 Type *convertType(type_name Ty);
@@ -48,4 +50,4 @@ void HandleFunction(const function &f);
 Value *codegen(const node &n);
 Function *codegen(const function &f);
 void emit(const node_vec &v);
-
+Type *createGraph();

@@ -22,10 +22,10 @@ int main()
     for (auto &v : ctx.error_list)
       ctx.error(v.first, v.second);
   }
-  else
-  {
-    ctx.dump_ast();
-  }
+  // else
+  // {
+  //   ctx.dump_ast();
+  // }
 
   std::vector<common_list> ast = std::move(ctx.storage);
 

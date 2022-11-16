@@ -5,5 +5,8 @@ int foo(int f, int c)
 
 int main()
 {
-  int x = 3;
+  graph g;
+  node_set ns;
+  int x = 20;
+  return x;
 }
