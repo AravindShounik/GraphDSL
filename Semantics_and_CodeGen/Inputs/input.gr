@@ -6,6 +6,7 @@ int foo(int f, int c)
 int main()
 {
   int x = 2+3-3;
-  
+  graph g;
+  node_set n;  
   return x;
 }
