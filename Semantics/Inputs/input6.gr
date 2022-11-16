@@ -1,0 +1,6 @@
+// Using a non declared variable
+int main()
+{
+    int a = 3;
+    b = a + 3;
+}
