@@ -18,7 +18,7 @@ static void InitializeModuleAndPassManager(void)
 
   // Do simple peephole optimizations and bit-twiddling optimizations.
   TheFPM->add(createInstructionCombiningPass());
-  
+
   // Eliminate Common SubExpressions.
   TheFPM->add(createGVNPass());
 
@@ -42,7 +42,7 @@ void doCodeGen(const std::vector<common_list> &ast)
   {
     if (cn.isFunc)
     {
-      std::cout << "## codegen.cc line 21\n";
+      // std::cout << "## codegen.cc line 21\n";
       HandleFunction(cn.f);
     }
     else
@@ -64,15 +64,7 @@ void HandleNode(const node &n)
 
 void HandleFunction(const function &f)
 {
-  if (auto *FnIR = codegen(f))
-  {
-    fprintf(stderr, "Read function definition:\n");
-    fprintf(stderr, "\n");
-  }
-  else
-  {
-    std::cout << "## Codegen flopped :/\n";
-  }
+  codegen(f);
 }
 
 /* Util functions for code generation */
@@ -92,16 +84,23 @@ Type *convertType(type_name Ty)
   case type_name::VOID:
     return Type::getVoidTy(*TheContext);
 
+  case type_name::GRAPH:
+  {
+    return createGraph();
+  }
+  case type_name::NODE_SET:
+  {
+    return ArrayType::get(convertType(type_name::INT), 10);
+  }
   default:
     break;
   }
   return nullptr;
 }
 
-
 Function *codegen(const function &f)
 {
-  std::cout << "## Entered function codegen func. line 103\n";
+  // std::cout << "## Entered function codegen func. line 103\n";
   std::vector<Type *> param_types(f.param_types.size(), nullptr);
   for (auto i = 0; i < f.param_types.size(); i++)
     param_types[i] = convertType(f.param_types[i]);
@@ -152,7 +151,6 @@ Function *codegen(const function &f)
   return F;
 }
 
-
 Value *codegen(const node &n)
 {
   switch (n.type)
@@ -164,7 +162,6 @@ Value *codegen(const node &n)
     return ConstantFP::get(*TheContext, APFloat(n.doublevalue));
 
   case node_type::string:
-
     break;
 
   case node_type::identifier:
@@ -184,7 +181,7 @@ Value *codegen(const node &n)
 
     if (!L || !R)
       return nullptr;
-    auto Inst = BinaryOperator::CreateAdd(L,R,"addtmp");
+    auto Inst = BinaryOperator::CreateAdd(L, R, "addtmp");
     auto block = Builder->GetInsertBlock();
     block->getInstList().push_back(Inst);
     return Inst;
@@ -196,19 +193,21 @@ Value *codegen(const node &n)
   }
   case node_type::ret:
   {
-    Value* v = codegen(n.params[0]);
+    Value *v = codegen(n.params[0]);
     return Builder->CreateRet(v);
-
   }
-
 
   case node_type::vardec:
   {
-    for(auto& var:n.params){
-      Value* v=codegen(var.params[0]);
+    for (auto &var : n.params)
+    {
       auto alloca = Builder->CreateAlloca(convertType(var.params[1].ident.v_type));
       NamedValues[var.params[1].ident.name] = alloca;
-      auto store = Builder->CreateStore(v,alloca);
+      if (var.params[0].type != node_type::nop)
+      {
+        Value *v = codegen(var.params[0]);
+        auto store = Builder->CreateStore(v, alloca);
+      }
     }
   }
 
@@ -218,8 +217,17 @@ Value *codegen(const node &n)
   return nullptr;
 }
 
-void emit(const node_vec &stmts){
-  for(auto& stmt:stmts){
+void emit(const node_vec &stmts)
+{
+  for (auto &stmt : stmts)
+  {
     codegen(stmt);
   }
+}
+
+Type *createGraph()
+{
+  StringRef Name = "graph";
+  std::vector<Type *> v = {convertType(type_name::INT), convertType(type_name::INT)};
+  return StructType::create(*TheContext, v, Name);
 }
