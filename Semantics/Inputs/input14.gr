@@ -1,0 +1,8 @@
+// Array accessing
+
+int main()
+{
+    int a[4] = {1,2,3,4};
+    int b = a[3];
+    int c = a[6];
+}

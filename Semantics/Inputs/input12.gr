@@ -1,0 +1,10 @@
+// Syntax Check 2
+// Using a symbol or a word not present in Syntax
+
+int main()
+{
+    int a = 3;
+    string c $ "Aravind Shounik";
+    strign b = "Compilers";
+    string d = 4;
+}
