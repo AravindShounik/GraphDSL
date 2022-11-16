@@ -7,6 +7,6 @@ int main()
 {
   graph g;
   node_set ns;
-  int x = 20;
+  int x = 21;
   return x;
 }
