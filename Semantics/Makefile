@@ -64,11 +64,12 @@ ${ANAME}.o: ${ANAME}.cc
 %.i: %.cc
 	${CXX} -E ${CPPFLAGS} ${CXXFLAGS} -o $@ $<
 
-# test: test1
-# 	llc test.ll && gcc test.s -o test
-# 	./test
-# 	echo $?
-# 	rm -f test
+test: 
+	./main < Inputs/input.gr
+	llc test.ll && gcc test.s -o test
+	./test
+	echo $?
+	rm -f test
 
 clean:
 	rm -f $(LNAME:=.cc) $(LNAME:=.hh) $(PNAME:=.hh) $(PNAME:=.cc) 

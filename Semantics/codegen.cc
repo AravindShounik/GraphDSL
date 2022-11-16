@@ -162,7 +162,6 @@ Value *codegen(const node &n)
     return ConstantFP::get(*TheContext, APFloat(n.doublevalue));
 
   case node_type::string:
-
     break;
 
   case node_type::identifier:
