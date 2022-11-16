@@ -1,0 +1,7 @@
+// Type Mismatch in Expressions
+int main()
+{
+    int a = 3;
+    string b = "Aravind Shounik";
+    int c = a + b;
+}
