@@ -306,7 +306,13 @@ Value *codegen(const node &n)
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
     return CallFunc;
   }
-  c
+  case node_type::copy:
+  {
+    Value* rvalue = codegen(n.params[0]);
+    auto store = Builder->CreateStore(rvalue,NamedValues[n.params[1].ident.name]);
+    return rvalue;
+
+  }
   default:
     break;
   }
