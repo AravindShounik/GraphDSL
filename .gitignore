@@ -27,4 +27,4 @@ Parser/test.*
 **/main
 **/parser.tab.cc
 **/parser.tab.hh
-**/test.ll
+**/*.s
