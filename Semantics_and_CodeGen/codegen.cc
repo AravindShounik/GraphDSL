@@ -187,6 +187,32 @@ Value *codegen(const node &n)
     return Inst;
   }
 
+  case node_type::mul:
+  {
+    Value *L = codegen(n.params[0]);
+    Value *R = codegen(n.params[1]);
+    
+    if(!L || !R)
+      return nullptr;
+    auto Inst = BinaryOperator::CreateMul(L,R,"multmp");
+    auto block = Builder->GetInsertBlock();
+    block->getInstList().push_back(Inst);
+    return Inst;
+  }
+
+  case node_type::div:
+  {
+    Value *L = codegen(n.params[0]);
+    Value *R = codegen(n.params[1]);
+
+    if(!L || !R)
+      return nullptr;
+    auto Inst = BinaryOperator::CreateSDiv(L,R,"multmp");
+    auto block = Builder->GetInsertBlock();
+    block->getInstList().push_back(Inst);
+    return Inst;
+  }
+
   case node_type::neg:
   {
     return Builder->CreateNeg(codegen(n.params[0]), "subtmp");
@@ -210,6 +236,27 @@ Value *codegen(const node &n)
       }
     }
   }
+
+  // case node_type::loop:
+  // {
+  //   Value *start = codegen(n.params[0]);
+  //   Value *end = codegen(n.params[1]);
+  //   Value *step = codegen(n.params[2]);
+
+  //   if(!start){
+  //     return nullptr;
+  //   }
+
+  //   Function *TheFunction = Builder->GetInsertBlock()->getParent();
+  //   BasicBlock *PreheaderBB = Builder->GetInsertBlock();
+  //   BasicBlock *LoopBB = BasicBlock::Create(TheContext,"loop",TheFunction);
+
+  //   Builder->SetInsertPoint(LoopBB);
+  //   PHINode *Variable = Builder->CreatePHI(convertType(TheContext),2, "for".c_str());
+  //   Variable->addIncoming(start,PreheaderBB);
+    
+  // }
+
   case node_type::cond:
   {
     // return nullptr;
