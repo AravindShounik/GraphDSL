@@ -1,0 +1,8 @@
+// Accepting all types of escape characters in strings
+
+int main()
+{
+    string a = "Aravind Shounik";
+    string b = "Aravind \n Shounik";
+    string c = "\"Aravind \" Shounik ";
+}

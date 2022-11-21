@@ -17,13 +17,14 @@ lex.yy.c
 
 Parser/test.*
 
-Semantics/lexer.cc
-Semantics/location.hh
-Semantics/parser.cc
-Semantics/parser.hh
-Semantics/position.hh
-Semantics/stack.hh
-Semantics/parser.output
-Semantics/main
-Semantics/parser.tab.cc
-Semantics/parser.tab.hh
+**/lexer.cc
+**/location.hh
+**/parser.cc
+**/parser.hh
+**/position.hh
+**/stack.hh
+**/parser.output
+**/main
+**/parser.tab.cc
+**/parser.tab.hh
+**/test.ll

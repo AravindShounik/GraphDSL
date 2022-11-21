@@ -1,0 +1,7 @@
+// Syntax Check 1
+// Missing Semicolon
+int main()
+{
+    int a = 3;
+    int b = 4
+}
