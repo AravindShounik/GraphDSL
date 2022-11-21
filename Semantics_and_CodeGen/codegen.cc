@@ -290,6 +290,28 @@ Value *codegen(const node &n)
     Builder->SetInsertPoint(MergeBB);
     return CondV;
   }
+
+  case node_type::loop:
+  {
+    Function *TheFunction = Builder->GetInsertBlock()->getParent();
+
+    BasicBlock *LoopBB = BasicBlock::Create(*TheContext, "loop", TheFunction);
+    BasicBlock *AfterBB = BasicBlock::Create(*TheContext, "afterloop",TheFunction);
+    
+    Builder->CreateBr(LoopBB);
+    Builder->SetInsertPoint(LoopBB);
+    emit(n.params[1].params);
+
+    Value* CondV = codegen(n.params[0]);
+    CondV = Builder->CreateICmpNE(CondV, Builder->getInt32(0),"ifcond");
+    Builder->CreateCondBr(CondV,LoopBB,AfterBB);
+
+    Builder->SetInsertPoint(AfterBB);
+
+    return CondV;
+    
+
+  }
   case node_type::fcall:
   {
     auto& f = n.params[0];

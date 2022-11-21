@@ -3,10 +3,13 @@ int main()
   int x = 2+3-3;
   int y = 20;
   if(2){
-    int a=foo(3,4);
+    int a=foo(4,4);
   }
   else{
-    int z=foo(3,6);
+    int z=foo(4,6);
+  }
+  while(4){
+    int k=foo(4,1);
   }
   return 4;
 }
