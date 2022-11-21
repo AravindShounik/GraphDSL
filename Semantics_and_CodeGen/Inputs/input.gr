@@ -2,6 +2,11 @@ int main()
 {
   int x = 2+3-3;
   int y = 20;
-  int z = foo(2, 5);
-  return foo(x, y+2);
+  if(2.0){
+    y=2;
+  }
+  else {
+    y=32;
+  }
+  return y;
 }

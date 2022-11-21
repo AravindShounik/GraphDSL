@@ -287,7 +287,7 @@ Value *codegen(const node &n)
     Builder->CreateBr(MergeBB);
 
     Builder->SetInsertPoint(MergeBB);
-    
+    return CondV;
   }
   case node_type::fcall:
   {
@@ -306,7 +306,7 @@ Value *codegen(const node &n)
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
     return CallFunc;
   }
-
+  c
   default:
     break;
   }
