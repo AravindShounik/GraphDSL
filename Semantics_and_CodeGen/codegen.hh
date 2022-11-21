@@ -36,6 +36,9 @@ static std::unique_ptr<IRBuilder<>> Builder;
 static std::map<std::string, AllocaInst *> NamedValues;
 static std::unique_ptr<legacy::FunctionPassManager> TheFPM;
 
+static std::map<std::string, FunctionType*> funcList;
+static std::map<std::string, FunctionType*> builtInFuncList;
+
 static StructType *graph;
 
 static void InitializeModuleAndPassManager(void);
@@ -45,9 +48,11 @@ Type *convertType(type_name Ty);
 /* this is called from main.cc */
 void doCodeGen(const std::vector<common_list> &ast);
 
-void HandleNode(const node &n);
-void HandleFunction(const function &f);
-Value *codegen(const node &n);
-Function *codegen(const function &f);
+static void HandleNode(const node &n);
+static void HandleFunction(const function &f);
+static Value *codegen(const node &n);
+static Function *codegen(const function &f);
 void emit(const node_vec &v);
 Type *createGraph();
+
+static void AddBuiltInFuncs();

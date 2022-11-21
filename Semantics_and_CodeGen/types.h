@@ -78,6 +78,7 @@ struct identifier
   std::size_t index = 0;
   std::string name;
   identifier() {}
+
   identifier(id_type _type, type_name _v_type, std::size_t _index, std::string _name) : type(_type), v_type(_v_type), index(_index), name(_name) {}
 };
 

@@ -40,7 +40,7 @@ node lexcontext::use(const std::string &name)
       return i->second;
   }
   error_list.emplace_back(loc, "Undefined identifier <" + name + ">");
-  return {};
+  return identifier(id_type::function, type_name::FUNC, 0, name);
 }
 
 void lexcontext::add_function(std::string &&name, node &&code, type_name ret)

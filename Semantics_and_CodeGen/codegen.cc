@@ -38,6 +38,8 @@ void doCodeGen(const std::vector<common_list> &ast)
 {
   InitializeModuleAndPassManager();
 
+  AddBuiltInFuncs();
+  
   for (auto &cn : ast)
   {
     if (cn.isFunc)
@@ -106,6 +108,7 @@ Function *codegen(const function &f)
     param_types[i] = convertType(f.param_types[i]);
 
   FunctionType *FT = FunctionType::get(convertType(f.ret_type), param_types, false);
+  funcList[f.name] = FT;
 
   Function *F = Function::Create(FT, Function::ExternalLinkage, f.name, TheModule.get());
 
@@ -311,6 +314,23 @@ Value *codegen(const node &n)
 
     return PN;
   }
+  case node_type::fcall:
+  {
+    auto& f = n.params[0];
+    auto& params = n.params[1].params;
+
+    auto& fname = f.ident.name;
+
+    std::vector<Value*> Args;
+
+    for(auto& p : params)
+    {
+      Args.push_back(codegen(p));
+    }
+    CallInst* CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
+    Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
+    return CallFunc;
+  }
 
   default:
     break;
@@ -331,4 +351,17 @@ Type *createGraph()
   StringRef Name = "graph";
   std::vector<Type *> v = {convertType(type_name::INT), convertType(type_name::INT)};
   return StructType::create(*TheContext, v, Name);
+}
+
+void AddBuiltInFuncs()
+{
+  /*foo func*/
+  unsigned n_args = 2;
+  std::vector<Type *> param_types;
+  param_types.push_back(convertType(type_name::INT));
+  param_types.push_back(convertType(type_name::INT));
+
+  FunctionType *FT = FunctionType::get(convertType(type_name::INT), param_types, false);
+  funcList["foo"] = FT;
+  Function *F = Function::Create(FT, Function::ExternalLinkage, "foo", TheModule.get());
 }
