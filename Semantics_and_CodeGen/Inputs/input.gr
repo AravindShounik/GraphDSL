@@ -1,12 +1,7 @@
-int foo(int f, int c)
-{
-  return 2+3;
-}
-
 int main()
 {
   int x = 2+3-3;
-  graph g;
-  node_set n;  
-  return x;
+  int y = 20;
+  int z = foo(2, 5);
+  return foo(x, y+2);
 }

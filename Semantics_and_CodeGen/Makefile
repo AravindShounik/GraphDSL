@@ -64,9 +64,20 @@ ${ANAME}.o: ${ANAME}.cc
 %.i: %.cc
 	${CXX} -E ${CPPFLAGS} ${CXXFLAGS} -o $@ $<
 
+test: test.ll
+	clang++ -S -emit-llvm funcs.cpp -o funcs.ll
+	llvm-link test.ll funcs.ll -o linked.ll
+	llc linked.ll
+	rm test.ll funcs.ll
+	gcc linked.s -o a.out
+
+test.ll:
+	./main < Inputs/input.gr
+
 clean:
 	rm -f $(LNAME:=.cc) $(LNAME:=.hh) $(PNAME:=.hh) $(PNAME:=.cc) 
 	rm -f $(PNAME:=.output) position.hh stack.hh location.hh
 	rm -f ${ANAME}
 	rm -f smake.* *~ *.o *.i *.tab.cc *.tab.hh
 	rm -f test*
+	rm -f linked.* a.out
