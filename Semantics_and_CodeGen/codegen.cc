@@ -268,7 +268,8 @@ Value *codegen(const node &n)
       return nullptr;
 
     // Convert condition to a bool by comparing non-equal to 0
-    CondV = Builder->CreateFCmpONE(CondV, ConstantFP::get(*TheContext, APFloat(0.0)), "ifcond");
+    CondV = Builder->CreateICmpNE(CondV, Builder->getInt32(0),"ifcond");
+
 
     Function *TheFunction = Builder->GetInsertBlock()->getParent();
 
@@ -306,13 +307,13 @@ Value *codegen(const node &n)
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
     return CallFunc;
   }
-  case node_type::copy:
-  {
-    Value* rvalue = codegen(n.params[0]);
-    auto store = Builder->CreateStore(rvalue,NamedValues[n.params[1].ident.name]);
-    return rvalue;
+  // case node_type::copy:
+  // {
+  //   Value* rvalue = codegen(n.params[0]);
+  //   auto create = Builder->CreateStore(rvalue,NamedValues[n.params[1].ident.name]);
+  //   return rvalue;
+  // }
 
-  }
   default:
     break;
   }

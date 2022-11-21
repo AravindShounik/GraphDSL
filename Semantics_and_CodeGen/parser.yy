@@ -235,7 +235,7 @@ expr: NUMBER                    { $$ = $1;    }
 |     expr LSB exprs RSB      { $$ = n_deref(n_add(M($1), M($3))); }
 |     identifier LPAREN RPAREN              { $$ = n_fcall(ctx.use($1), n_comma()); }
 |     identifier LPAREN exprs RPAREN        { $$ = n_fcall(ctx.use($1), M($3)); }
-|     expr ASSIGN expr             { $$ = M($1) %= M($3); }
+|     expr ASSIGN expr             { $$ = (M($1) %= M($3)); }
 |     expr PLUS expr             { $$ = n_add( M($1), M($3)); @$ = @2; }
 |     expr MINUS expr %prec PLUS   { $$ = n_add( M($1), n_neg(M($3))); }
 |     expr STAR expr             { $$ = n_mul( M($1), M($3)); }
