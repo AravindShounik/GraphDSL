@@ -28,3 +28,6 @@ Parser/test.*
 **/parser.tab.cc
 **/parser.tab.hh
 **/*.s
+**/funcs.ll
+**/test.ll
+**/linked.ll

@@ -25,7 +25,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-
+#include <set>
 #include "types.h"
 
 using namespace llvm;
@@ -36,10 +36,10 @@ static std::unique_ptr<IRBuilder<>> Builder;
 static std::map<std::string, AllocaInst *> NamedValues;
 static std::unique_ptr<legacy::FunctionPassManager> TheFPM;
 
-static std::map<std::string, FunctionType*> funcList;
-static std::map<std::string, FunctionType*> builtInFuncList;
+static std::map<std::string, FunctionType *> funcList;
+static std::map<std::string, FunctionType *> builtInFuncList;
 
-static StructType *graph;
+static std::map<std::string, std::pair<GlobalVariable *, int>> graphList;
 
 static void InitializeModuleAndPassManager(void);
 static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, StringRef VarName);

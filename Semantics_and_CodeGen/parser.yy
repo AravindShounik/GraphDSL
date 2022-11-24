@@ -168,6 +168,7 @@ typename: VOID { $$ = type_name::VOID; }
 |         STRING { $$ = type_name::STRING; }
 |         GRAPH { $$ = type_name::GRAPH; }
 |         DGRAPH { $$ = type_name::DGRAPH; }
+|         NODE { $$ = type_name::NODE; }
 |         NODE_SET { $$ = type_name::NODE_SET; }
 |         EDGE_SET { $$ = type_name::EDGE_SET; }
 |         NODE_PROP '<' identifier '>'
@@ -193,17 +194,17 @@ jump_stmt: CONTINUE SEMI_COLON { $$ = n_cont(); }
 ;
 empty_stmt: SEMI_COLON
 ;
-vardec_stmt: typename identifier ASSIGN initializer { ctx.temptype = $1; $$ =n_vardec(); $$.params.push_back(M(ctx.def($2) %= M($4))); }
-|            typename identifier { ctx.temptype = $1; $$ = n_vardec(); $$.params.push_back(M(ctx.def($2) %= n_nop())); }
-|            vardec_stmt COMMA identifier ASSIGN initializer { $$ = M($1); $$.params.push_back(M(ctx.def($3) %= M($5))); }
-|            vardec_stmt COMMA identifier { $$ = M($1); $$.params.push_back(M(ctx.def($3) %= n_nop())); }
+vardec_stmt: typename identifier ASSIGN initializer { ctx.temptype = $1; ctx.def($2); $$ = n_vardec(n_copy(ctx.def($2), M($4))); }
+|            typename identifier { ctx.temptype = $1; $$ = n_vardec(); ctx.def($2); $$.params.push_back(n_copy(M($2))); }
+|            vardec_stmt COMMA identifier ASSIGN initializer { $$ = M($1); ctx.def($3); $$.params.push_back(n_copy(ctx.def($3), M($5))); }
+|            vardec_stmt COMMA identifier { $$ = M($1); ctx.def($3); $$.params.push_back(n_copy(M($3))); }
 ;
 
 initializer: expr
-|            edge
+|            edge { $$ = M($1); }
 |            LBRACE initializer_list RBRACE { $$ = M($2); }
 ;
-initializer_list: initializer { $$ = n_init_list(M($1)); }
+initializer_list: initializer { $$ = n_init_list($1); }
 |                 initializer_list COMMA initializer { $$ = M($1); $$.params.push_back($3); }
 ;
 edge: NUMBER COLON NUMBER { $$ = n_edge($1, $3); }
@@ -218,8 +219,8 @@ selection_stmt: IF p_expr stmt %prec LOWER_THAN_ELSE  { $$ = n_cond(M($2), M($3)
 iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
 |               FOR LPAREN expr SEMI_COLON expr SEMI_COLON expr RPAREN stmt { $$ = n_loop(M($3), M($5), M($7), M($9)); }
 |               FOR LPAREN typename identifier COLON identifier RPAREN stmt { $$ = n_loop(M($8)); }
-|               BFS LPAREN typename identifier COLON identifier RPAREN stmt { $$ = n_loop(M($8)); }
-|               DFS LPAREN typename identifier COLON identifier RPAREN stmt { $$ = n_loop(M($8)); }
+|               BFS LPAREN typename identifier COLON identifier RPAREN stmt { $$ = n_bfs(M($4), ctx.use($6), M($8)); }
+|               DFS LPAREN typename identifier COLON identifier RPAREN stmt { $$ = n_dfs(M($4), ctx.use($6), M($8)); }
 ;
 p_expr: LPAREN expr RPAREN { $$ = M($2); }
 ;

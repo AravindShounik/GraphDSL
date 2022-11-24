@@ -30,7 +30,7 @@ yy::location getLoc();
 #define ENUM_node_type(f)                                 \
   f(identifier) f(string) f(number) f(double_const)       \
       f(add) f(neg) f(mul) f(div) f(mod) f(eq)            \
-          f(cor) f(cand) f(cond) f(loop)                  \
+          f(cor) f(cand) f(cond) f(loop) f(bfs) f(dfs)    \
               f(addrof) f(deref)                          \
                   f(fcall)                                \
                       f(copy)                             \
@@ -45,8 +45,9 @@ yy::location getLoc();
 #define ENUM_type_name(f)                           \
   f(INT) f(BOOL) f(FLOAT) f(CHAR) f(VOID) f(STRING) \
       f(GRAPH) f(DGRAPH) f(FUNC)                    \
-          f(NODE_SET) f(NODE_PROP) f(NODE_SEQ)      \
-              f(EDGE_SET) f(EDGE_PROP) f(EDGE_SEQ)
+          f(NODE)                                   \
+              f(NODE_SET) f(NODE_PROP) f(NODE_SEQ)  \
+                  f(EDGE_SET) f(EDGE_PROP) f(EDGE_SEQ)
 
 /**
  * @brief Here, we are defining enums for type names, identifier types, node types according to which token is returned

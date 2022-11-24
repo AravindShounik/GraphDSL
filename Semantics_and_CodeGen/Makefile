@@ -68,11 +68,15 @@ test: test.ll
 	clang++ -S -emit-llvm funcs.cpp -o funcs.ll
 	llvm-link test.ll funcs.ll -o linked.ll -d
 	llc linked.ll
-	rm test.ll funcs.ll linked.ll
 	gcc linked.s -o a.out
 
 test.ll:
 	./main < Inputs/input.gr
+
+nt: test.ll
+	llc test.ll
+	clang++ test.s
+
 
 clean:
 	rm -f $(LNAME:=.cc) $(LNAME:=.hh) $(PNAME:=.hh) $(PNAME:=.cc) 

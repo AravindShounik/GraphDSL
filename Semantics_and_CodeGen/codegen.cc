@@ -39,7 +39,7 @@ void doCodeGen(const std::vector<common_list> &ast)
   InitializeModuleAndPassManager();
 
   AddBuiltInFuncs();
-  
+
   for (auto &cn : ast)
   {
     if (cn.isFunc)
@@ -86,14 +86,6 @@ Type *convertType(type_name Ty)
   case type_name::VOID:
     return Type::getVoidTy(*TheContext);
 
-  case type_name::GRAPH:
-  {
-    return createGraph();
-  }
-  case type_name::NODE_SET:
-  {
-    return ArrayType::get(convertType(type_name::INT), 10);
-  }
   default:
     break;
   }
@@ -135,22 +127,6 @@ Function *codegen(const function &f)
     NamedValues[std::string(Arg.getName())] = Alloca;
   }
   emit(f.code.params);
-  // if (Value *RetVal = codegen(f.code))
-  // {
-  //   // Finish off the function.
-  //   Builder->CreateRet(RetVal);
-
-  //   // Validate the generated code, checking for consistency.
-  //   verifyFunction(*F);
-
-  //   // Run the optimizer on the function.
-  //   TheFPM->run(*F);
-  //   return F;
-  // }
-
-  // // Error reading body, remove function.
-  // F->eraseFromParent();
-  // return nullptr;
   return F;
 }
 
@@ -194,10 +170,10 @@ Value *codegen(const node &n)
   {
     Value *L = codegen(n.params[0]);
     Value *R = codegen(n.params[1]);
-    
-    if(!L || !R)
+
+    if (!L || !R)
       return nullptr;
-    auto Inst = BinaryOperator::CreateMul(L,R,"multmp");
+    auto Inst = BinaryOperator::CreateMul(L, R, "multmp");
     auto block = Builder->GetInsertBlock();
     block->getInstList().push_back(Inst);
     return Inst;
@@ -208,9 +184,9 @@ Value *codegen(const node &n)
     Value *L = codegen(n.params[0]);
     Value *R = codegen(n.params[1]);
 
-    if(!L || !R)
+    if (!L || !R)
       return nullptr;
-    auto Inst = BinaryOperator::CreateSDiv(L,R,"multmp");
+    auto Inst = BinaryOperator::CreateSDiv(L, R, "multmp");
     auto block = Builder->GetInsertBlock();
     block->getInstList().push_back(Inst);
     return Inst;
@@ -230,35 +206,79 @@ Value *codegen(const node &n)
   {
     for (auto &var : n.params)
     {
-      auto alloca = Builder->CreateAlloca(convertType(var.params[1].ident.v_type));
-      NamedValues[var.params[1].ident.name] = alloca;
-      if (var.params[0].type != node_type::nop)
+
+      if (var.params[0].ident.v_type == type_name::GRAPH)
       {
-        Value *v = codegen(var.params[0]);
-        auto store = Builder->CreateStore(v, alloca);
+        /********preprocess**********/
+        auto initlist = var.params[1].params;
+        std::set<int> nodes;
+        std::set<int> mm;
+        for (auto &edge : initlist)
+        {
+          if (edge.type == node_type::edge)
+          {
+            auto v1 = edge.params[0].numvalue - 1, v2 = edge.params[1].numvalue - 1;
+            // print(v1, v2);
+            nodes.insert(v1);
+            nodes.insert(v2);
+          }
+          else
+            break;
+        }
+        int n_size = nodes.size();
+        for (auto &edge : initlist)
+        {
+          if (edge.type == node_type::edge)
+          {
+            auto v1 = edge.params[0].numvalue - 1, v2 = edge.params[1].numvalue - 1;
+            mm.insert(v1 * n_size + v2);
+            mm.insert(v2 * n_size + v1);
+          }
+          else
+            break;
+        }
+        print("n_size is :", n_size);
+
+        /******************************/
+        auto Ty = ArrayType::get(convertType(type_name::INT), n_size * n_size);
+
+        auto v_name = var.params[0].ident.name;
+        auto *arr = new GlobalVariable(*TheModule, Ty, false, GlobalValue::ExternalLinkage, 0, v_name);
+
+        std::vector<llvm::Constant *> values;
+        for (int i = 0; i < n_size * n_size; i++)
+        {
+          ConstantInt *c = ConstantInt::get(*TheContext, APInt(32, (mm.find(i) != mm.end() ? 1 : 0)));
+          values.push_back(c);
+        }
+
+        llvm::Constant *init = llvm::ConstantArray::get(Ty, values);
+        arr->setInitializer(init);
+
+        graphList[v_name] = std::make_pair(arr, n_size);
+
+        // std::vector<APInt *> indx = {ConstantInt::get(*TheContext, APInt(32, 0)), ConstantInt::get(*TheContext, APInt(32, 0))};
+      }
+      else
+      {
+        auto alloca = Builder->CreateAlloca(convertType(var.params[0].ident.v_type));
+
+        NamedValues[var.params[0].ident.name] = alloca;
+
+        if (var.params[0].type != node_type::nop)
+        {
+          Value *v = codegen(var.params[1]);
+          auto store = Builder->CreateStore(v, alloca);
+        }
       }
     }
   }
 
-  // case node_type::loop:
-  // {
-  //   Value *start = codegen(n.params[0]);
-  //   Value *end = codegen(n.params[1]);
-  //   Value *step = codegen(n.params[2]);
+  case node_type::init_list:
+  {
 
-  //   if(!start){
-  //     return nullptr;
-  //   }
-
-  //   Function *TheFunction = Builder->GetInsertBlock()->getParent();
-  //   BasicBlock *PreheaderBB = Builder->GetInsertBlock();
-  //   BasicBlock *LoopBB = BasicBlock::Create(TheContext,"loop",TheFunction);
-
-  //   Builder->SetInsertPoint(LoopBB);
-  //   PHINode *Variable = Builder->CreatePHI(convertType(TheContext),2, "for".c_str());
-  //   Variable->addIncoming(start,PreheaderBB);
-    
-  // }
+    return nullptr;
+  }
 
   case node_type::cond:
   {
@@ -268,14 +288,13 @@ Value *codegen(const node &n)
       return nullptr;
 
     // Convert condition to a bool by comparing non-equal to 0
-    CondV = Builder->CreateICmpNE(CondV, Builder->getInt32(0),"ifcond");
-
+    CondV = Builder->CreateICmpNE(CondV, Builder->getInt32(0), "ifcond");
 
     Function *TheFunction = Builder->GetInsertBlock()->getParent();
 
     BasicBlock *ThenBB = BasicBlock::Create(*TheContext, "then", TheFunction);
-    BasicBlock *ElseBB = BasicBlock::Create(*TheContext, "else",TheFunction);
-    BasicBlock *MergeBB = BasicBlock::Create(*TheContext, "ifcont",TheFunction);
+    BasicBlock *ElseBB = BasicBlock::Create(*TheContext, "else", TheFunction);
+    BasicBlock *MergeBB = BasicBlock::Create(*TheContext, "ifcont", TheFunction);
 
     Builder->CreateCondBr(CondV, ThenBB, ElseBB);
 
@@ -296,45 +315,75 @@ Value *codegen(const node &n)
     Function *TheFunction = Builder->GetInsertBlock()->getParent();
 
     BasicBlock *LoopBB = BasicBlock::Create(*TheContext, "loop", TheFunction);
-    BasicBlock *AfterBB = BasicBlock::Create(*TheContext, "afterloop",TheFunction);
-    
+    BasicBlock *AfterBB = BasicBlock::Create(*TheContext, "afterloop", TheFunction);
+
     Builder->CreateBr(LoopBB);
     Builder->SetInsertPoint(LoopBB);
     emit(n.params[1].params);
 
-    Value* CondV = codegen(n.params[0]);
-    CondV = Builder->CreateICmpNE(CondV, Builder->getInt32(0),"ifcond");
-    Builder->CreateCondBr(CondV,LoopBB,AfterBB);
+    Value *CondV = codegen(n.params[0]);
+    CondV = Builder->CreateICmpNE(CondV, Builder->getInt32(0), "ifcond");
+    Builder->CreateCondBr(CondV, LoopBB, AfterBB);
 
     Builder->SetInsertPoint(AfterBB);
 
     return CondV;
-    
-
   }
   case node_type::fcall:
   {
-    auto& f = n.params[0];
-    auto& params = n.params[1].params;
+    auto &f = n.params[0];
+    auto &params = n.params[1].params;
 
-    auto& fname = f.ident.name;
+    auto &fname = f.ident.name;
 
-    std::vector<Value*> Args;
+    std::vector<Value *> Args;
 
-    for(auto& p : params)
+    for (auto &p : params)
     {
       Args.push_back(codegen(p));
     }
-    CallInst* CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
+    CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
     return CallFunc;
   }
-  // case node_type::copy:
-  // {
-  //   Value* rvalue = codegen(n.params[0]);
-  //   auto create = Builder->CreateStore(rvalue,NamedValues[n.params[1].ident.name]);
-  //   return rvalue;
-  // }
+    // case node_type::copy:
+    // {
+    //   Value* rvalue = codegen(n.params[0]);
+    //   auto create = Builder->CreateStore(rvalue,NamedValues[n.params[1].ident.name]);
+    //   return rvalue;
+    // }
+
+  case node_type::bfs:
+  {
+    auto &fname = "main_bfs";
+    std::vector<Value *> Args;
+
+    auto v_name = n.params[1].ident.name;
+    auto g = graphList[v_name];
+
+    int n_size = g.second;
+    print(n_size);
+    auto Ty = ArrayType::get(convertType(type_name::INT), n_size * n_size);
+
+    auto arr = TheModule->getOrInsertGlobal(v_name, Ty);
+
+    SmallVector<Value *, 2> idxs;
+
+    // return nullptr;
+    idxs.push_back(Builder->getInt32(0));
+    idxs.push_back(Builder->getInt32(0));
+
+    auto gepInst = Builder->CreateGEP(Ty, arr, idxs, "graph_gep");
+
+    Args.push_back(gepInst);
+    Args.push_back(codegen(n_size));
+
+    Args.push_back(codegen(1));
+
+    CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
+    Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
+    return CallFunc;
+  }
 
   default:
     break;
@@ -359,13 +408,34 @@ Type *createGraph()
 
 void AddBuiltInFuncs()
 {
-  /*foo func*/
-  unsigned n_args = 2;
+  unsigned n_args;
+  std::string fname;
   std::vector<Type *> param_types;
+  FunctionType *FT;
+  Function *F;
+
+  /*foo func*/
+  n_args = 2;
+  fname = "foo";
+  param_types.clear();
   param_types.push_back(convertType(type_name::INT));
   param_types.push_back(convertType(type_name::INT));
 
-  FunctionType *FT = FunctionType::get(convertType(type_name::INT), param_types, false);
-  funcList["foo"] = FT;
-  Function *F = Function::Create(FT, Function::ExternalLinkage, "foo", TheModule.get());
+  FT = FunctionType::get(convertType(type_name::INT), param_types, false);
+  funcList[fname] = FT;
+  F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
+
+  /*BFS func*/
+  n_args = 3;
+  fname = "main_bfs";
+  param_types.clear();
+
+  auto int_ptr = PointerType::getInt32PtrTy(*TheContext);
+  param_types.push_back(int_ptr);
+  param_types.push_back(convertType(type_name::INT));
+  param_types.push_back(convertType(type_name::INT));
+
+  FT = FunctionType::get(int_ptr, param_types, false);
+  funcList[fname] = FT;
+  F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
 }

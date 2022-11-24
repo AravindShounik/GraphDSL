@@ -1,15 +1,11 @@
 int main()
 {
-  int x = 2+3-3;
-  int y = 20;
-  if(2){
-    int a=foo(4,4);
+  graph g = {1:2, 2:3, 3:4, 1:4};
+
+  BFS(node n : g)
+  {
+    
   }
-  else{
-    int z=foo(4,6);
-  }
-  while(4){
-    int k=foo(4,1);
-  }
+
   return 4;
 }
