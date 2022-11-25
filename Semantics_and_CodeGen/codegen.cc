@@ -151,7 +151,7 @@ Value *codegen(const node &n)
 
     // Load the value.
     auto x = Builder->CreateLoad(convertType(n.ident.v_type), V, n.ident.name.c_str());
-    if(!x)
+    if (!x)
     {
       print("yes var not found");
     }
@@ -337,22 +337,22 @@ Value *codegen(const node &n)
     auto &fname = f.ident.name;
 
     std::vector<Value *> Args;
-    if(fname == "print")
+    if (fname == "print")
     {
       std::string pfname = "";
-      for(auto &p : params)
+      for (auto &p : params)
       {
         type_name ty = doSemantics(p);
-        switch(ty)
+        switch (ty)
         {
-          case type_name::INT:
-            pfname = "print_i";
-            break;
-          case type_name::FLOAT:
-            pfname = "print_f";
-            break; 
+        case type_name::INT:
+          pfname = "print_i";
+          break;
+        case type_name::FLOAT:
+          pfname = "print_f";
+          break;
         }
-        Value* v = codegen(p);
+        Value *v = codegen(p);
         Args.push_back(v);
         Builder->CreateCall(TheModule->getOrInsertFunction(pfname, funcList[pfname]), Args);
         Args.pop_back();
@@ -365,7 +365,7 @@ Value *codegen(const node &n)
     {
       Args.push_back(codegen(p));
     }
-    
+
     CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
     return CallFunc;
@@ -455,8 +455,11 @@ Value *codegen(const node &n)
     IndVar->addIncoming(Builder->getInt32(0), PreheaderBB);
 
     // Builder->CreateStore(Builder->getInt32(1),NamedValues[n.params[0].ident.name]);
-
-    // Value* gep = Builder->CreateGEP(ret_Ty,ret_arr,,"gep");
+    idxs.pop_back();
+    idxs.push_back(IndVar);
+    Value *gep = Builder->CreateGEP(ret_Ty, ret_arr, idxs, "gep");
+    Value *load = Builder->CreateLoad(gep, "load");
+    Value *storeN = Builder->CreateStore(load, alloca);
 
     emit(n.params[2].params);
     Value *StepVal = Builder->getInt32(1);
@@ -557,5 +560,4 @@ void AddBuiltInFuncs()
   FT = FunctionType::get(convertType(type_name::VOID), param_types, false);
   funcList[fname] = FT;
   F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
-
 }
