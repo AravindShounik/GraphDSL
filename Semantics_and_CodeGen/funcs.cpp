@@ -101,8 +101,8 @@ int has_cycle(int * matrix, int size)
     int front = 0;
     int back = 0;
 
-    visited_bfs[root] = 1;
-    qu[back] = root;
+    visited_bfs[0] = 1;
+    qu[back] = 0;
     back++;
     while (front != back)
     {
@@ -127,6 +127,8 @@ int has_cycle(int * matrix, int size)
     }
     return 0;
 }
+
+void prims_algo(int * matrix, int size)
 
 
   void dijkstras(int *matrix, int size, int root, int *dists) {
