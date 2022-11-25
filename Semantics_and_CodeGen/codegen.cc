@@ -272,12 +272,7 @@ Value *codegen(const node &n)
         }
       }
     }
-  }
-
-  case node_type::init_list:
-  {
-
-    return nullptr;
+    break;
   }
 
   case node_type::cond:
@@ -346,13 +341,21 @@ Value *codegen(const node &n)
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
     return CallFunc;
   }
-    // case node_type::copy:
-    // {
-    //   Value* rvalue = codegen(n.params[0]);
-    //   auto create = Builder->CreateStore(rvalue,NamedValues[n.params[1].ident.name]);
-    //   return rvalue;
-    // }
-
+  case node_type::comma:
+  {
+    // print(n.params.size());
+    emit(n.params);
+    break;
+  }
+  case node_type::asgn:
+  {
+    if (n.params[0].type == node_type::identifier)
+    {
+      Value *v = codegen(n.params[1]);
+      Builder->CreateStore(v, NamedValues[n.params[0].ident.name]);
+    }
+    break;
+  }
   case node_type::bfs:
   case node_type::dfs:
   {
@@ -408,6 +411,7 @@ void emit(const node_vec &stmts)
 {
   for (auto &stmt : stmts)
   {
+    print(stmt.type, stmt.params.size());
     codegen(stmt);
   }
 }

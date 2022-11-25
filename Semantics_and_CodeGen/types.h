@@ -29,7 +29,7 @@ yy::location getLoc();
  */
 #define ENUM_node_type(f)                                 \
   f(identifier) f(string) f(number) f(double_const)       \
-      f(add) f(neg) f(mul) f(div) f(mod) f(eq)            \
+      f(add) f(neg) f(mul) f(div) f(mod) f(eq) f(asgn)    \
           f(cor) f(cand) f(cond) f(loop) f(bfs) f(dfs)    \
               f(addrof) f(deref)                          \
                   f(fcall)                                \

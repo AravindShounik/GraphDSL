@@ -164,7 +164,7 @@ void lexcontext::func2(node N, int level)
     break;
 
   case node_type::comma:
-    // std::cout << "," << std::endl;
+    std::cout << "," << std::endl;
     break;
 
   case node_type::init_list:

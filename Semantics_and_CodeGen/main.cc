@@ -24,7 +24,7 @@ int main()
   // }
   // else
   // {
-  //   ctx.dump_ast();
+    ctx.dump_ast();
   // }
 
   std::vector<common_list> ast = std::move(ctx.storage);

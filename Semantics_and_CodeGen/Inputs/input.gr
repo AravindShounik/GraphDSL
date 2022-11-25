@@ -1,16 +1,12 @@
 int main()
 {
-  graph g = {1:2, 2:3, 3:4,4:5,1:6};
+  int a = 3;
 
-  BFS(node n : g)
+  while(a)
   {
-    
+    a = a-1;
   }
 
-  DFS(node n : g)
-  {
-    
-  }
 
   return 4;
 }
