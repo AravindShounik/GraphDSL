@@ -1,0 +1,15 @@
+//Code which contains various data types contained in our language
+int main()
+{
+    int a = 10;
+    double b = 100.0;
+    bool t = true;
+    graph G = {
+        1:2,
+        2:3,
+        3:4
+        1:42
+    }
+    print(a);
+    return 0;
+}

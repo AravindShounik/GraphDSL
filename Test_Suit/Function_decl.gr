@@ -1,0 +1,15 @@
+//Program with function Declaration
+int foo(int x, int y)
+{
+    return x+y;
+}
+
+int main()
+{
+    int x = 10;
+    int y = 20;
+    print(foo(x,y);
+    print(foo(10,y));
+    print(foo(foo(x,y),10));
+    return 0;
+}

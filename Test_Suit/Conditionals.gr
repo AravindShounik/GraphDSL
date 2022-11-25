@@ -1,0 +1,17 @@
+int main()
+{
+    int a = 10;
+    if(a == 10)
+    {
+        print("Value of a is 10");
+    }
+    else if(a == 20)
+    {
+        print("Value of a is 20");
+    }
+    else
+    {
+        printf("Value of a is neither 10 or 20");
+    }
+    return 0;
+}
