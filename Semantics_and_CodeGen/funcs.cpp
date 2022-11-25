@@ -226,8 +226,9 @@ extern "C"
     }
     for (int v = 0; v < size; v++)
     {
-      printf("%d \n", dists[v]);
+      printf("%d ", dists[v]);
     }
+    printf("\n");
   }
 
 #ifdef __cplusplus

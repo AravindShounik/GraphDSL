@@ -161,6 +161,24 @@ type_name doSemantics(const node &n)
   {
     if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
     {
+      // throw Exception(n.loc, "= different types");
+    }
+    return type_name::VOID;
+  }
+
+  case node_type::comma:
+  {
+    for(auto& p : n.params)
+    {
+      doSemantics(p);
+    }
+    break;
+  }
+  
+  case node_type::asgn:
+  {
+    if ((ret1 = doSemantics(n.params[0])) != (ret2 = doSemantics(n.params[1])))
+    {
       throw Exception(n.loc, "= different types");
     }
     return type_name::VOID;

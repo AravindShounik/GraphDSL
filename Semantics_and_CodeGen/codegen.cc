@@ -147,7 +147,10 @@ Value *codegen(const node &n)
   {
     Value *V = NamedValues[n.ident.name];
     if (!V)
+    {
+      print(n.ident.name);
       fprintf(stderr, "Error: Unknown variable name\n");
+    }
 
     // Load the value.
     auto x = Builder->CreateLoad(convertType(n.ident.v_type), V, n.ident.name.c_str());
@@ -361,14 +364,59 @@ Value *codegen(const node &n)
       Builder->CreateCall(TheModule->getOrInsertFunction(pfname, funcList[pfname]), Args);
       return nullptr;
     }
-    for (auto &p : params)
+    else if (fname == "dijkstras")
     {
-      Args.push_back(codegen(p));
-    }
+      std::vector<Value *> Args;
 
-    CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
-    Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
-    return CallFunc;
+      auto v_name = params[0].ident.name;
+      auto g = graphList[v_name];
+
+      int n_size = g.second;
+      // print(n_size);
+      auto Ty = ArrayType::get(convertType(type_name::INT), n_size * n_size);
+
+      auto arr = TheModule->getOrInsertGlobal(v_name, Ty);
+
+      SmallVector<Value *, 2> idxs;
+
+      // return nullptr;
+      idxs.push_back(Builder->getInt32(0));
+      idxs.push_back(Builder->getInt32(0));
+
+      auto gepInst = Builder->CreateGEP(Ty, arr, idxs, "g_gep");
+
+      Args.push_back(gepInst);
+
+      print(params[1].numvalue);
+      Args.push_back(codegen(n_size));
+      Args.push_back(codegen(params[1].numvalue - 1));
+
+      auto ret_Ty = ArrayType::get(convertType(type_name::INT), n_size);
+
+      auto *ret_arr = new GlobalVariable(*TheModule, ret_Ty, false, GlobalValue::CommonLinkage, 0);
+
+      std::vector<llvm::Constant *> values(n_size, ConstantInt::get(*TheContext, APInt(32, 0)));
+
+      llvm::Constant *init = llvm::ConstantArray::get(Ty, values);
+      ret_arr->setInitializer(init);
+
+      auto ret_gepInst = Builder->CreateGEP(ret_Ty, ret_arr, idxs, "ret_g_gep");
+      Args.push_back(ret_gepInst);
+
+      Builder->CreateCall(TheModule->getOrInsertFunction(fname, funcList[fname]), Args);
+      return nullptr;
+    }
+    else
+    {
+      for (auto &p : params)
+      {
+        Args.push_back(codegen(p));
+      }
+
+      CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
+      Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
+      return CallFunc;
+    }
   }
   case node_type::comma:
   {
@@ -459,7 +507,7 @@ Value *codegen(const node &n)
     idxs.pop_back();
     idxs.push_back(IndVar);
     Value *gep = Builder->CreateGEP(ret_Ty, ret_arr, idxs, "gep");
-    Value *load = Builder->CreateLoad(Builder->getInt32Ty(),gep, "load");
+    Value *load = Builder->CreateLoad(Builder->getInt32Ty(), gep, "load");
     Value *storeN = Builder->CreateStore(load, alloca);
 
     emit(n.params[2].params);
@@ -558,6 +606,19 @@ void AddBuiltInFuncs()
   n_args = 0;
   fname = "print";
   param_types.clear();
+  FT = FunctionType::get(convertType(type_name::VOID), param_types, false);
+  funcList[fname] = FT;
+  F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
+
+  // void dijkstras(int *matrix, int size, int root, int *dists)
+  /*dijkstras func*/
+  n_args = 0;
+  fname = "dijkstras";
+  param_types.clear();
+  param_types.push_back(int_ptr);
+  param_types.push_back(convertType(type_name::INT));
+  param_types.push_back(convertType(type_name::INT));
+  param_types.push_back(int_ptr);
   FT = FunctionType::get(convertType(type_name::VOID), param_types, false);
   funcList[fname] = FT;
   F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());

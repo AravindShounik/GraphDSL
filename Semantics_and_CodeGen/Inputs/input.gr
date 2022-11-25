@@ -6,10 +6,9 @@ int main()
     a=a-1;
   }
   graph g={1:2,2:3,1:6,3:4,4:5};
+  dijkstras(g, 1);
   DFS(node n:g){
     print(n);
   }
-
-
   return 4;
 }
