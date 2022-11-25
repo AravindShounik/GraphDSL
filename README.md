@@ -11,16 +11,16 @@ the normal usage.
 
 ### `Table of Contents`
 
-| SNo. | **Contents**                                                                                                                        |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 1.   | [About](#about)                                                                                                                     |
-| 2.   | [Features](#features)                                                                                                               |
-| 3.   | [Screenshots](#screenshots)                                                                                                         |
-| 4.   | [Installation](#installation)                                                                                                       |
-| 4.   | [Lexer](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/tree/main/Lexer/readme.md)                              |
-| 4.   | [Parser](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/tree/main/Parser/README.md)                            |
-| 4.   | [Semantic and Code Generation](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/tree/main/Semantic_and_CodeGen/) |
-| 5.   | [References For Development](#references-for-development)                                                                           |
+| SNo. | **Contents**                                                                                                                                 |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.   | [About](#about)                                                                                                                              |
+| 2.   | [Features](#features)                                                                                                                        |
+| 3.   | [Screenshots](#screenshots)                                                                                                                  |
+| 4.   | [Installation](#installation)                                                                                                                |
+| 4.   | [Lexer](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/tree/main/Lexer/readme.md)                                       |
+| 4.   | [Parser](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/tree/main/Parser/README.md)                                     |
+| 4.   | [Semantic and Code Generation](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/tree/main/Semantic_and_CodeGen/README.md) |
+| 5.   | [References For Development](#references-for-development)                                                                                    |
 
 ---
 
