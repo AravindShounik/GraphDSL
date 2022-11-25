@@ -1,5 +1,5 @@
 #include "codegen.hh"
-
+#include "semantics.hh"
 static void InitializeModuleAndPassManager(void)
 {
   // Open a new module.
@@ -34,8 +34,6 @@ static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, Type *Ty, Strin
   return TmpB.CreateAlloca(Ty, nullptr, VarName);
 }
 
-/* This Function does code generation for all the functions
- stored in "ast" */
 void doCodeGen(const std::vector<common_list> &ast)
 {
   InitializeModuleAndPassManager();
@@ -61,13 +59,11 @@ void doCodeGen(const std::vector<common_list> &ast)
   TheModule->print(*out, nullptr);
 }
 
-/* This function handles the code generation for nodes */
 void HandleNode(const node &n)
 {
   Value *ir = codegen(n);
 }
 
-/* This function handles the code generation for functions */
 void HandleFunction(const function &f)
 {
   codegen(f);
@@ -336,11 +332,35 @@ Value *codegen(const node &n)
     auto &fname = f.ident.name;
 
     std::vector<Value *> Args;
-
+    if(fname == "print")
+    {
+      std::string pfname = "";
+      for(auto &p : params)
+      {
+        type_name ty = doSemantics(p);
+        switch(ty)
+        {
+          case type_name::INT:
+            pfname = "print_i";
+            break;
+          case type_name::FLOAT:
+            pfname = "print_f";
+            break; 
+        }
+        Value* v = codegen(p);
+        Args.push_back(v);
+        Builder->CreateCall(TheModule->getOrInsertFunction(pfname, funcList[pfname]), Args);
+        Args.pop_back();
+      }
+      pfname = "print";
+      Builder->CreateCall(TheModule->getOrInsertFunction(pfname, funcList[pfname]), Args);
+      return nullptr;
+    }
     for (auto &p : params)
     {
       Args.push_back(codegen(p));
     }
+    
     CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
     return CallFunc;
@@ -427,9 +447,6 @@ Type *createGraph()
   return StructType::create(*TheContext, v, Name);
 }
 
-/* This Function adds built in functions 
-  so that user can use them.
-*/
 void AddBuiltInFuncs()
 {
   unsigned n_args;
@@ -470,4 +487,31 @@ void AddBuiltInFuncs()
   fname = "main_dfs";
   funcList[fname] = FT;
   F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
+
+  /*print_i func*/
+  n_args = 1;
+  fname = "print_i";
+  param_types.clear();
+  param_types.push_back(convertType(type_name::INT));
+  FT = FunctionType::get(convertType(type_name::VOID), param_types, false);
+  funcList[fname] = FT;
+  F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
+
+  /*print_f func*/
+  n_args = 1;
+  fname = "print_f";
+  param_types.clear();
+  param_types.push_back(convertType(type_name::FLOAT));
+  FT = FunctionType::get(convertType(type_name::VOID), param_types, false);
+  funcList[fname] = FT;
+  F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
+
+  /*print func*/
+  n_args = 0;
+  fname = "print";
+  param_types.clear();
+  FT = FunctionType::get(convertType(type_name::VOID), param_types, false);
+  funcList[fname] = FT;
+  F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
+
 }

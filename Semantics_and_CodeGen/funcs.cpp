@@ -128,7 +128,69 @@ int has_cycle(int * matrix, int size)
     return 0;
 }
 
+// int min_key(int key[], bool mst_set[], int size)
+// {
+//   int min = INT_MAX;
+//   int min_index;
 
+//   for(int v = 0;v<size;v++)
+//   {
+//     if(mst_set[v] == false && key[v] < min)
+//     {
+//       min = key[v];
+//       min_index = v;
+//     }
+//   }
+//   return min_index;
+// }
+// void prims_algo(int * matrix, int size)
+// {
+//   int parent[size];
+//   int key[size];
+//   bool mst_set[size];
+
+//   for(int i = 0;i<size;i++)
+//   {
+//     key[i] = INT_MAX;
+//     mst_set[i] = false;
+//   }
+
+//   key[0] = 0;
+//   parent[0] = -1;
+//   for(int count = 0;count < size-1;count++)
+//   {
+//     int u = min_key(key,mst_set);
+//     mst_set[u] = true;
+//     for(int v = 0; v< size;v++)
+//     {
+//       if(*((matrix + u*size)+v) && mst_set[v] == false
+//       && *((matrix + u*size)+v) < key[v] )
+//       {
+//         parent[v] = u;
+//         key[v] = *((matrix + u*size)+v);
+//       }
+//     }
+//   }
+//   return;
+// }
+
+void print()
+{
+  printf("\n");
+}
+
+void print_i(int a)
+{
+  printf("%d ", a);
+  return;
+}
+
+
+void print_f(double a)
+{
+  printf("%lf ", a);
+  return;
+}
 
   void dijkstras(int *matrix, int size, int root, int *dists) {
     bool sptSet[size];
