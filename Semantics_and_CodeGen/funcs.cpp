@@ -69,12 +69,54 @@ extern "C"
   //   }
   // }
 
-  int *main_dfs(int *matrix, int size, int root)
-  {
-    // sub_DFS(matrix, size, root);
-    printf("DFS func in funcs.cpp\n");
-    return nullptr;
-  }
+  // void * sub_dfs(int * matrix, int size, int root, int* dfs_final, int * visited,int pos_dfs)
+  // {
+  //   dfs_final[pos_final] = root;
+  //   pos_dfs++;
+  //   visited[root] = 1;
+  //   for(int j = 0;j<size;j++)
+  //   {
+  //     if (*((matrix + root * size) + j) == 1 && !visited_dfs[j])
+  //     {
+  //       sub_dfs(matrix,size,j,dfs_final,visited,pos_dfs);
+  //     }
+  //   }
+  // }
+
+void main_dfs(int * matrix, int size, int root, int * dfs_final)
+{
+    int visited_dfs[size];
+    for(int i = 0;i<size;i++)
+    {
+        visited_dfs[i] = 0;
+    }
+    int pos_dfs = 0;
+    int st[1000];
+    int top = 0;
+    st[top] = root;
+    top++;
+    while(top)
+    {
+        int t = st[top-1];
+        top--;
+        visited_dfs[t] = 1;
+        dfs_final[pos_dfs] = t;
+        pos_dfs++;
+        for(int i = 0 ; i<size; i++)
+        {
+            if (*((matrix + t * size) + i) == 1 && visited_dfs[i] == 0)
+            {
+                st[top] = i;
+                top++; 
+            }
+        }
+    }
+    for(int i = 0;i<size;i++)
+    {
+      printf("%d ",dfs_final[i]);
+    } 
+    printf("\n");
+}
 
 #ifdef __cplusplus
 }
