@@ -34,6 +34,8 @@ static AllocaInst *CreateEntryBlockAlloca(Function *TheFunction, Type *Ty, Strin
   return TmpB.CreateAlloca(Ty, nullptr, VarName);
 }
 
+/* This Function does code generation for all the functions
+ stored in "ast" */
 void doCodeGen(const std::vector<common_list> &ast)
 {
   InitializeModuleAndPassManager();
@@ -59,11 +61,13 @@ void doCodeGen(const std::vector<common_list> &ast)
   TheModule->print(*out, nullptr);
 }
 
+/* This function handles the code generation for nodes */
 void HandleNode(const node &n)
 {
   Value *ir = codegen(n);
 }
 
+/* This function handles the code generation for functions */
 void HandleFunction(const function &f)
 {
   codegen(f);
@@ -423,6 +427,9 @@ Type *createGraph()
   return StructType::create(*TheContext, v, Name);
 }
 
+/* This Function adds built in functions 
+  so that user can use them.
+*/
 void AddBuiltInFuncs()
 {
   unsigned n_args;

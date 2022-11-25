@@ -1,5 +1,9 @@
 #include "context.hh"
 
+/* This function checks if there is already identifier with given "name"
+  if present , it stores the error message or else it define identifier with
+  given "name" (Stores)
+*/
 const identifier &lexcontext::define(const std::string &name, identifier &&f)
 {
   auto r = scopes.back().emplace(name, std::move(f));
@@ -8,16 +12,31 @@ const identifier &lexcontext::define(const std::string &name, identifier &&f)
   return r.first->second;
 }
 
+
+/* This function is called , when we want to define identifier for variable
+like : int a;
+       char c;
+*/
 node lexcontext::def(const std::string &name)
 {
   return define(name, identifier{id_type::variable, temptype, fun.num_vars++, name});
 }
 
+/* This function is called , when we want to define identifier for function
+like : int a(int a,float b);
+       char c(int a);
+*/
 node lexcontext::defun(const std::string &name)
 {
   return define(name, identifier{id_type::function, type_name::FUNC, temporary++, name});
 }
 
+
+/* This function is called , when we want to define identifier for paramter
+like : int func(int a,float b);  (a,b are identifiers)
+It also add the paramter type into it's respective function parameter types 
+and parameter names into it's respective function parameter names
+*/
 node lexcontext::defparam(const std::string &name, type_name type)
 {
   fun.param_types.push_back(type);

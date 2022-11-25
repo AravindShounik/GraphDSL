@@ -1,5 +1,9 @@
 #include "semantics.hh"
 
+/* This function does the semantics for all the functions 
+   and code stored in ast and stores all the errors if any
+   as " vector<string> " and returns it
+*/
 std::vector<std::string> doSemantics(std::vector<common_list> &ast)
 {
   std::vector<std::string> error_list;
