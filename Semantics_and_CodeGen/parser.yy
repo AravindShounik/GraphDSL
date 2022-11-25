@@ -194,10 +194,10 @@ jump_stmt: CONTINUE SEMI_COLON { $$ = n_cont(); }
 ;
 empty_stmt: SEMI_COLON
 ;
-vardec_stmt: typename identifier ASSIGN initializer { ctx.temptype = $1; ctx.def($2); $$ = n_vardec(n_copy(ctx.def($2), M($4))); }
-|            typename identifier { ctx.temptype = $1; $$ = n_vardec(); ctx.def($2); $$.params.push_back(n_copy(M($2))); }
+vardec_stmt: typename identifier ASSIGN initializer { ctx.temptype = $1; $$ = n_vardec(n_copy(ctx.def($2), M($4))); }
+|            typename identifier { ctx.temptype = $1; $$ = n_vardec(); ; $$.params.push_back(n_copy(ctx.def($2), n_nop())); }
 |            vardec_stmt COMMA identifier ASSIGN initializer { $$ = M($1); ctx.def($3); $$.params.push_back(n_copy(ctx.def($3), M($5))); }
-|            vardec_stmt COMMA identifier { $$ = M($1); ctx.def($3); $$.params.push_back(n_copy(M($3))); }
+|            vardec_stmt COMMA identifier { $$ = M($1); $$.params.push_back(n_copy(ctx.def($3), n_nop())); }
 ;
 
 initializer: expr

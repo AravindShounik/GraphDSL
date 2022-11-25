@@ -265,7 +265,7 @@ Value *codegen(const node &n)
 
         NamedValues[var.params[0].ident.name] = alloca;
 
-        if (var.params[0].type != node_type::nop)
+        if (var.params[1].type != node_type::nop)
         {
           Value *v = codegen(var.params[1]);
           auto store = Builder->CreateStore(v, alloca);
