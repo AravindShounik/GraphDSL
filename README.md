@@ -104,8 +104,8 @@ To run the command, we have to use the command
 
 # `References for development`
 
-- [Flex](https://github.com/)
-- [Bison](https://github.com/)
+- [Flex](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/blob/main/Resources/flex.pdf)
+- [Bison](https://github.com/IITH-COMPILERS2/compilers-2-project-team-5-aug22/blob/main/Resources/bison.pdf)
 - [O'Reilly](https://github.com/jmparis/flex-bison-oreilly)
 - [Flex Bison Cpp Example](https://github.com/ezaquarii/bison-flex-cpp-example)
 - [LLVM Kaleidoscope](https://llvm.org/docs/index.html)
