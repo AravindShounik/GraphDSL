@@ -57,7 +57,7 @@ For Proper usage Details, Refer [Final Report](https://github.com).
 
 # 4. Code Generation Example
 
-   <img src = "Screenshots/Codegen.png">
+   <img src = "Screenshots/CodeGen.png">
 
 ---
 
