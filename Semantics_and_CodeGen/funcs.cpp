@@ -128,10 +128,6 @@ int has_cycle(int * matrix, int size)
     return 0;
 }
 
-void prims_algo(int * matrix, int size)
-{
-  return;
-}
 
 
   void dijkstras(int *matrix, int size, int root, int *dists) {
