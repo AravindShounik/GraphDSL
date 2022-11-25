@@ -373,15 +373,28 @@ Value *codegen(const node &n)
     idxs.push_back(Builder->getInt32(0));
     idxs.push_back(Builder->getInt32(0));
 
-    auto gepInst = Builder->CreateGEP(Ty, arr, idxs, "graph_gep");
+    auto gepInst = Builder->CreateGEP(Ty, arr, idxs, "g_gep");
 
     Args.push_back(gepInst);
     Args.push_back(codegen(n_size));
 
     Args.push_back(codegen(1));
 
+    auto ret_Ty = ArrayType::get(convertType(type_name::INT), n_size);
+
+    auto *ret_arr = new GlobalVariable(*TheModule, ret_Ty, false, GlobalValue::CommonLinkage, 0);
+
+    std::vector<llvm::Constant *> values(n_size, ConstantInt::get(*TheContext, APInt(32, 0)));
+
+    llvm::Constant *init = llvm::ConstantArray::get(Ty, values);
+    ret_arr->setInitializer(init);
+
+    auto ret_gepInst = Builder->CreateGEP(ret_Ty, ret_arr, idxs, "ret_g_gep");
+    Args.push_back(ret_gepInst);
+
     CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
     Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
+
     return CallFunc;
   }
 
@@ -426,14 +439,16 @@ void AddBuiltInFuncs()
   F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
 
   /*BFS func*/
-  n_args = 3;
+  n_args = 4;
   fname = "main_bfs";
   param_types.clear();
 
   auto int_ptr = PointerType::getInt32PtrTy(*TheContext);
+
   param_types.push_back(int_ptr);
   param_types.push_back(convertType(type_name::INT));
   param_types.push_back(convertType(type_name::INT));
+  param_types.push_back(int_ptr);
 
   FT = FunctionType::get(int_ptr, param_types, false);
   funcList[fname] = FT;

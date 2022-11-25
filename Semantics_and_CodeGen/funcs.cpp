@@ -13,9 +13,8 @@ extern "C"
     return a + b;
   }
 
-  void sub_BFS(int *matrix, int size, int root)
+  void main_bfs(int *matrix, int size, int root, int *bfs_final)
   {
-    int bfs_final[1000];
     int visited_bfs[1000];
     int pos_bfs = 0;
     int qu[1000];
@@ -43,24 +42,13 @@ extern "C"
         }
       }
     }
-    printf("finished bfs\n");
-  }
-
-  int *main_bfs(int *matrix, int size, int root)
-  {
-    printf("BFS func in funcs.cpp\n");
-
-    auto p = matrix;
-
-    int n = size * size;
-    while (n--)
+    auto ret = bfs_final;
+    while (size--)
     {
-      printf("%d ", *p);
-      p++;
+      printf("%d ", *ret);
+      ret++;
     }
     printf("\n");
-    sub_BFS(matrix, size, root);
-    return nullptr;
   }
 
   // int visited_dfs[1000];
