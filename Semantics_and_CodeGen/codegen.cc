@@ -354,8 +354,9 @@ Value *codegen(const node &n)
     // }
 
   case node_type::bfs:
+  case node_type::dfs:
   {
-    auto &fname = "main_bfs";
+    std::string fname = "main_" + toString(n.type);
     std::vector<Value *> Args;
 
     auto v_name = n.params[1].ident.name;
@@ -392,10 +393,9 @@ Value *codegen(const node &n)
     auto ret_gepInst = Builder->CreateGEP(ret_Ty, ret_arr, idxs, "ret_g_gep");
     Args.push_back(ret_gepInst);
 
-    CallInst *CallFunc = CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args, fname);
-    Builder->GetInsertBlock()->getInstList().push_back(CallFunc);
+    // CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args);
 
-    return CallFunc;
+    Builder->CreateCall(TheModule->getOrInsertFunction(fname, funcList[fname]), Args);
   }
 
   default:
@@ -450,7 +450,13 @@ void AddBuiltInFuncs()
   param_types.push_back(convertType(type_name::INT));
   param_types.push_back(int_ptr);
 
-  FT = FunctionType::get(int_ptr, param_types, false);
+  FT = FunctionType::get(convertType(type_name::VOID), param_types, false);
+  funcList[fname] = FT;
+  F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
+
+  /*DFS func*/
+  n_args = 4;
+  fname = "main_dfs";
   funcList[fname] = FT;
   F = Function::Create(FT, Function::ExternalLinkage, fname, TheModule.get());
 }
