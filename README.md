@@ -33,7 +33,7 @@ This language **Gralgo** is mainly created for the user to use the Graph Algorit
 # `Features`
 
 In this Language, we can use functions for **Traversal** like
-**BFS** , **DFS** , **Cycle Detection** , **Shortest Path Algorithms** like **Dijkstra's Algorithm** , **Minimum Spanning Tree Algorithms** like **Prim's Algorithm** , etc.
+**BFS** , **DFS** , **Cycle Detection** , **Shortest Path Algorithms** like **Dijkstra's Algorithm**  etc.
 
 <!-- Add Final Report Link After Adding Final Report to Github -->
 
