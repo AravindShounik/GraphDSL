@@ -21,7 +21,10 @@ public:
 
   GrFlexLexer lexer;
 
-  lexcontext() {}
+  lexcontext() {
+    scopes.emplace_back();
+    scopes.back()["print"] = identifier(id_type::function, type_name::FUNC, 0, "print");
+  }
   virtual ~lexcontext() {}
   const identifier &define(const std::string &name, identifier &&f);
   node def(const std::string &name);
