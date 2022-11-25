@@ -389,6 +389,7 @@ Value *codegen(const node &n)
   case node_type::dfs:
   {
     std::string fname = "main_" + toString(n.type);
+    // print(n.type);
     std::vector<Value *> Args;
 
     auto v_name = n.params[1].ident.name;
@@ -458,7 +459,7 @@ Value *codegen(const node &n)
     idxs.pop_back();
     idxs.push_back(IndVar);
     Value *gep = Builder->CreateGEP(ret_Ty, ret_arr, idxs, "gep");
-    Value *load = Builder->CreateLoad(gep, "load");
+    Value *load = Builder->CreateLoad(Builder->getInt32Ty(),gep, "load");
     Value *storeN = Builder->CreateStore(load, alloca);
 
     emit(n.params[2].params);

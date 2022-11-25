@@ -222,7 +222,7 @@ iteration_stmt: WHILE p_expr stmt          { $$ = n_loop(M($2), M($3)); }
 |               FOR LPAREN expr SEMI_COLON expr SEMI_COLON expr RPAREN stmt { $$ = n_loop(M($3), M($5), M($7), M($9)); }
 |               FOR LPAREN typename identifier COLON identifier RPAREN stmt { $$ = n_loop(M($8)); }
 |               BFS LPAREN typename identifier COLON identifier RPAREN {ctx.temptype = type_name::INT; temp1 = ctx.def($4); } compound_stmt  RBRACE {$$ = n_bfs(temp1, ctx.use($6), M($9));}
-|               DFS LPAREN typename identifier COLON identifier RPAREN {ctx.temptype = type_name::INT; temp1 = ctx.def($4); } compound_stmt  RBRACE {$$ = n_bfs(temp1, ctx.use($6), M($9));}
+|               DFS LPAREN typename identifier COLON identifier RPAREN {ctx.temptype = type_name::INT; temp1 = ctx.def($4); } compound_stmt  RBRACE {$$ = n_dfs(temp1, ctx.use($6), M($9));}
 ;
 p_expr: LPAREN expr RPAREN { $$ = M($2); }
 ;
