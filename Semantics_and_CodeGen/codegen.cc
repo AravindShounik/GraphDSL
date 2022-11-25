@@ -150,7 +150,12 @@ Value *codegen(const node &n)
       fprintf(stderr, "Error: Unknown variable name\n");
 
     // Load the value.
-    return Builder->CreateLoad(convertType(n.ident.v_type), V, n.ident.name.c_str());
+    auto x = Builder->CreateLoad(convertType(n.ident.v_type), V, n.ident.name.c_str());
+    if(!x)
+    {
+      print("yes var not found");
+    }
+    return x;
   }
 
   case node_type::add:
@@ -237,7 +242,7 @@ Value *codegen(const node &n)
           else
             break;
         }
-        print("n_size is :", n_size);
+        // print("n_size is :", n_size);
 
         /******************************/
         auto Ty = ArrayType::get(convertType(type_name::INT), n_size * n_size);
@@ -390,7 +395,7 @@ Value *codegen(const node &n)
     auto g = graphList[v_name];
 
     int n_size = g.second;
-    print(n_size);
+    // print(n_size);
     auto Ty = ArrayType::get(convertType(type_name::INT), n_size * n_size);
 
     auto arr = TheModule->getOrInsertGlobal(v_name, Ty);
@@ -423,6 +428,45 @@ Value *codegen(const node &n)
     // CallInst::Create(TheModule->getOrInsertFunction(fname, funcList[fname]), Args);
 
     Builder->CreateCall(TheModule->getOrInsertFunction(fname, funcList[fname]), Args);
+
+    // loop
+    Function *TheFunction = Builder->GetInsertBlock()->getParent();
+
+    // iteration variable
+    // print(n.params[0].type, n.params[0].ident.v_type);
+    // break;
+    auto alloca = Builder->CreateAlloca(convertType(n.params[0].ident.v_type));
+
+    NamedValues[n.params[0].ident.name] = alloca;
+    auto store = Builder->CreateStore(Builder->getInt32(1), alloca);
+
+    // auto v = Builder->CreateLoad(convertType(type_name::INT), alloca, "n");
+    // Builder->CreateRet(v);
+
+    BasicBlock *PreheaderBB = Builder->GetInsertBlock();
+
+    BasicBlock *LoopBB = BasicBlock::Create(*TheContext, "loop", TheFunction);
+    BasicBlock *AfterBB = BasicBlock::Create(*TheContext, "afterloop", TheFunction);
+
+    Builder->CreateBr(LoopBB);
+    Builder->SetInsertPoint(LoopBB);
+
+    PHINode *IndVar = Builder->CreatePHI(Type::getInt32Ty(*TheContext), 2, "i");
+    IndVar->addIncoming(Builder->getInt32(0), PreheaderBB);
+
+    // Builder->CreateStore(Builder->getInt32(1),NamedValues[n.params[0].ident.name]);
+
+    // Value* gep = Builder->CreateGEP(ret_Ty,ret_arr,,"gep");
+
+    emit(n.params[2].params);
+    Value *StepVal = Builder->getInt32(1);
+    Value *NextVal = Builder->CreateAdd(IndVar, StepVal, "nextval");
+    Value *CondV = codegen(0);
+    CondV = Builder->CreateICmpSLT(IndVar, Builder->getInt32(n_size - 1), "ifcond");
+    Builder->CreateCondBr(CondV, LoopBB, AfterBB);
+
+    Builder->SetInsertPoint(AfterBB);
+    IndVar->addIncoming(NextVal, LoopBB);
   }
 
   default:
@@ -435,7 +479,7 @@ void emit(const node_vec &stmts)
 {
   for (auto &stmt : stmts)
   {
-    print(stmt.type, stmt.params.size());
+    // print(stmt.type, stmt.params.size());
     codegen(stmt);
   }
 }
