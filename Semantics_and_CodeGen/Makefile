@@ -68,7 +68,7 @@ test: test.ll
 	clang++ -S -emit-llvm funcs.cpp -o funcs.ll
 	llvm-link test.ll funcs.ll -o linked.ll -d
 	llc linked.ll
-	gcc linked.s -o a.out
+	clang++ linked.s -o a.out
 
 test.ll:
 	./main < Inputs/input.gr

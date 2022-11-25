@@ -1,5 +1,6 @@
 #include <stdio.h>
-
+#include <limits.h>
+#include <stdbool.h>
 #ifdef __cplusplus
 extern "C"
 {
@@ -69,54 +70,40 @@ extern "C"
   //   }
   // }
 
-  // void * sub_dfs(int * matrix, int size, int root, int* dfs_final, int * visited,int pos_dfs)
-  // {
-  //   dfs_final[pos_final] = root;
-  //   pos_dfs++;
-  //   visited[root] = 1;
-  //   for(int j = 0;j<size;j++)
-  //   {
-  //     if (*((matrix + root * size) + j) == 1 && !visited_dfs[j])
-  //     {
-  //       sub_dfs(matrix,size,j,dfs_final,visited,pos_dfs);
-  //     }
-  //   }
-  // }
+  int *main_dfs(int *matrix, int size, int root)
+  {
+    // sub_DFS(matrix, size, root);
+    printf("DFS func in funcs.cpp\n");
+    return nullptr;
+  }
+  void dijkstras(int *matrix, int size, int root, int *dists) {
+    bool sptSet[size];
+    for (int i = 0; i < size; i++){
+      dists[i] = INT_MAX, sptSet[i] = false;
+    }
+    dists[root] = 0;
+    for (int count = 0; count < size - 1; count++) {
+      int min = INT_MAX, min_index;
 
-void main_dfs(int * matrix, int size, int root, int * dfs_final)
-{
-    int visited_dfs[size];
-    for(int i = 0;i<size;i++)
-    {
-        visited_dfs[i] = 0;
-    }
-    int pos_dfs = 0;
-    int st[1000];
-    int top = 0;
-    st[top] = root;
-    top++;
-    while(top)
-    {
-        int t = st[top-1];
-        top--;
-        visited_dfs[t] = 1;
-        dfs_final[pos_dfs] = t;
-        pos_dfs++;
-        for(int i = 0 ; i<size; i++)
-        {
-            if (*((matrix + t * size) + i) == 1 && visited_dfs[i] == 0)
-            {
-                st[top] = i;
-                top++; 
-            }
+      for (int v = 0; v < size; v++){
+        if (sptSet[v] == false && dists[v] <= min){
+          min = dists[v], min_index = v;
         }
+      }
+
+      int u = min_index;
+      sptSet[u] = true;
+      for (int v = 0; v < size; v++){
+        if (!sptSet[v] && *((matrix + u * size) + v) && dists[u] != INT_MAX &&
+            dists[u] + *((matrix + u * size) + v) < dists[v]){
+          dists[v] = dists[u] + *((matrix + u * size) + v);
+        }
+      }
     }
-    for(int i = 0;i<size;i++)
-    {
-      printf("%d ",dfs_final[i]);
-    } 
-    printf("\n");
-}
+    for (int v = 0; v < size; v++) {
+        printf("%d \n", dists[v]);
+    }
+  }
 
 #ifdef __cplusplus
 }
